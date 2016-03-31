@@ -1,0 +1,50 @@
+<script src="js/groups.js"></script>
+
+<div class="user-table-cont">
+  <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp user-table">
+    <thead>
+      <tr>
+        <th style="width:5px"></th>
+        <th class="mdl-data-table__cell--non-numeric">Group-Name</th>
+        <th class="mdl-data-table__cell--non-numeric">public</th>
+        <th class="">creator</th>
+        <th class="">created</th>
+      </tr>
+    </thead>
+    <tbody class="user-table-body">
+    </tbody>
+  </table>
+</div>
+<style>
+  .user-table-cont {
+    padding: 20px;
+  }
+
+  .user-table {
+    width: 100%;
+  }
+</style>
+<script type="text/javascript">
+  function initExpTable() {
+    $("[id^=expTable]")
+      .click(function(event) {
+        if (this == event.target) {
+          var nameTable = $(this).attr('id');
+          $(this).children('table').toggle('medium');
+        }
+        return false;
+      });
+  };
+
+  var res = amivaccess.groups.GET({
+    embedded: '{"owner":1}'
+  })['_items'];
+  console.log(res);
+  for (var i = 0; i < res.length; i++) {
+    $('.user-table-body').append('<tr class="expList" data-id="' + res[i]['id'] +
+      '"><td><div class="icon material-icons">add</div></td><td class="mdl-data-table__cell--non-numeric">' + res[i]['name'] +
+      '</td><td class="mdl-data-table__cell--non-numeric">' + res[i]['is_public'] + '</td><td class="">' + res[i]['owner']["nethz"] + '</td><td class="">' + res[i]['_created'] + '</tr>');
+  }
+
+  initExpTable();
+</script>

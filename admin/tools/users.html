@@ -1,0 +1,270 @@
+<div class="users-icons">
+  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored users-icons-back">
+    <i class="material-icons">arrow_back</i>
+  </button>
+  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored users-icons-set">
+  </button>
+  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored users-icons-next">
+    <i class="material-icons">arrow_forward</i>
+  </button>
+  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored users-icons-srq">
+    <i class="material-icons">search</i>
+  </button>
+  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored users-icons-add">
+    <i class="material-icons">add_box</i>
+  </button>
+</div>
+<div class="users-table-cont">
+  <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp users-table">
+    <thead>
+      <tr>
+        <th class="" width="25px;"></th>
+        <th class="mdl-data-table__cell--non-numeric users-table-sortable">Firstname</th>
+        <th class="mdl-data-table__cell--non-numeric users-table-sortable">Lastname</th>
+        <th class="mdl-data-table__cell--non-numeric users-table-sortable">EMail</th>
+        <th class="mdl-data-table__cell--non-numeric users-table-sortable">Membership</th>
+        <th class="" width="10px;"></th>
+      </tr>
+    </thead>
+    <tbody class="users-table-body">
+    </tbody>
+  </table>
+</div>
+<style>
+  .users-icons {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    z-index: 1000;
+  }
+
+  .users-table-cont {
+    padding: 20px;
+    margin-bottom: 65px;
+    overflow: scroll!important;
+  }
+
+  .users-table {
+    width: 100%;
+  }
+
+  .users-table-sortable {
+    cursor: pointer;
+  }
+
+  .users-expand-button:hover {
+    cursor: pointer;
+  }
+
+  .users-details-row {
+    transition: all 0.25s;
+    display: none;
+  }
+
+  .users-details-row table {
+    width: 100%;
+  }
+
+  .users-details-row>td {
+    padding: 0!important;
+  }
+
+  .users-details-row table tr td:first-child {
+    text-align: left;
+    width: 1%;
+    min-width: 1%;
+    white-space: nowrap;
+  }
+
+  .show {
+    display: inline;
+  }
+</style>
+<script type="text/javascript">
+  // Generate Subfolders
+  function genList($srqQuery) {
+    $('.users-icons-set').text(toolLib.page.current());
+    if (toolLib.sort.current() == '0') toolLib.sort.set('id');
+    amivaccess.users.GET({
+      data: {
+        where: $srqQuery,
+        sort: toolLib.sort.current(),
+        page: parseInt(toolLib.page.current()),
+      },
+    }, function(res) {
+      res = res['_items'];
+      var opened = false;
+      $('.users-table-body').html('');
+      for (var i = 0; i < res.length; i++) {
+        //Main Row
+        $('.users-table-body').append('<tr data-id="' + res[i]['id'] + '" class="users-main-row"><td><i class="material-icons users-expand-button">add_circle_outline</i></td><td class="mdl-data-table__cell--non-numeric">' + res[i]['firstname'] +
+          '</td><td class="mdl-data-table__cell--non-numeric">' + res[i]['lastname'] +
+          '</td><td class="mdl-data-table__cell--non-numeric">' + res[i]['email'] + '</td><td class="mdl-data-table__cell--non-numeric">' + res[i]['membership'] +
+          '</td><td class="users-delete-user"><i class="material-icons">delete</i></td></tr>');
+
+        // Detail Row
+        var appendDetails = '<tr class="users-details-row"><td colspan="100%"><table class="mdl-data-table mdl-js-data-table"><tbody>';
+        for (var k in res[i])
+          appendDetails += ('<tr data-id="' + res[i]['id'] + '" data-attr="' + k + '" data-attr-data="' + res[i][k] + '" class="users-details-row-child"><td class"mdl-data-table__cell--non-numeric">' + k +
+            '</td><td class"mdl-data-table__cell--non-numeric">' + res[i][k] + '</td></tr>');
+        appendDetails += '</tbody></table></td></tr>';
+        $('.users-table-body').append(appendDetails);
+      }
+
+      // Toggle Details View
+      $('.users-main-row td:not(.users-delete-user)').click(function() {
+        if (opened) {
+          $('.users-details-row').hide();
+          opened = false;
+        } else {
+          $(this).parent().next().toggle('.show');
+          opened = true;
+        }
+      });
+
+      //Edit Row Popup
+      $('.users-details-row-child').click(function() {
+        var curId = $(this).attr('data-id');
+        var curAttr = $(this).attr('data-attr');
+        var curAttrData = $(this).attr('data-attr-data');
+        amivaccess.getEtag('users', curId, function(resEtag) {
+          makePopup({
+            title: 'Edit Field',
+            fields: {
+              [curAttr]: {
+                type: 'text',
+                content: curAttrData,
+              }
+            },
+          }, function(res) {
+            amivaccess.users.PATCH({
+              id: curId,
+              header: {
+                'If-Match': resEtag
+              },
+              data: res,
+            }, function(res_b) {
+              if (res_b['_status'] == 'OK') mkMsg('User Updated');
+              else {
+                var mkMsgErr = '';
+                for (var curErr in res_b['responseJSON']['_issues'])
+                  mkMsgErr += '<br>' + curErr + ': ' + res_b['responseJSON']['_issues'][curErr];
+                mkMsg('Error: ' + mkMsgErr, true);
+              }
+              toolLib.reload();
+            });
+          });
+        });
+      });
+
+      // Delete User
+      $('.users-delete-user').click(function() {
+        var curId = $(this).parent().attr('data-id');
+        makePopup({
+          title: 'Delete The User?'
+        }, function() {
+          amivaccess.getEtag('users', curId, function(resEtag) {
+            amivaccess.users.DELETE({
+              id: curId,
+              header: {
+                'If-Match': resEtag
+              }
+            }, function() {
+              mkMsg('User Deleted');
+              toolLib.reload();
+            });
+          });
+        });
+      });
+      toolLib.updateDOM();
+    });
+  }
+
+  // Add User Button
+  $('.users-icons-add').click(function() {
+    var popupLib = {
+      title: 'Create User:',
+      fields: {},
+    };
+    var requiredFields = amivaccess.getRequiredFields('users', 'POST');
+    for (var f in requiredFields)
+      popupLib['fields'][f] = {
+        type: 'text',
+        msg: requiredFields[f].name,
+      };
+    makePopup(popupLib, function(res) {
+      amivaccess.users.POST({
+        data: res
+      }, function(res_b) {
+        if (res_b['_status'] == 'OK') mkMsg('User Created');
+        else {
+          var mkMsgErr = '';
+          for (var curErr in res_b['responseJSON']['_issues'])
+            mkMsgErr += '<br>' + curErr + ': ' + res_b['responseJSON']['_issues'][curErr];
+          mkMsg('Error: ' + mkMsgErr, true);
+        }
+        toolLib.reload();
+      });
+    });
+  });
+
+  // Search
+  $('.users-icons-srq').click(function() {
+    makePopup({
+      title: 'Search',
+      fields: {
+        'dom': {
+          type: 'text',
+          msg: 'Domain...'
+        },
+        'query': {
+          type: 'text',
+          msg: 'Search...'
+        }
+      }
+    }, function(attr) {
+      if (attr.dom != '' && attr.query != '') {
+        toolLib.page.set(0);
+        genList(attr.dom + '==' + attr.query);
+      }
+    });
+  });
+
+  // Sort table
+  $('.users-table-sortable').click(function() {
+    var tmp = $(this).text().toLowerCase();
+    if (toolLib.sort.current() == tmp)
+      toolLib.sort.invert();
+    else
+      toolLib.sort.set(tmp);
+    genList();
+  });
+
+  $('.users-icons-next').click(function(event) {
+    toolLib.page.next();
+    genList();
+  });
+
+  $('.users-icons-back').click(function(event) {
+    toolLib.page.prev();
+    genList();
+  });
+
+  $('.users-icons-set').click(function(event) {
+    makePopup({
+      title: 'Go to page',
+      fields: {
+        'page': {
+          type: 'number',
+          msg: 'Page...',
+          content: toolLib.page.current(),
+        }
+      }
+    }, function(attr) {
+      toolLib.page.set(parseInt(attr.page));
+      genList();
+    });
+  });
+
+  genList();
+</script>

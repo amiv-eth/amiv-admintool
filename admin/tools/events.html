@@ -1,0 +1,120 @@
+<button id="fab" onclick="addEvent()" class="floating mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+  <i id="fab-icon" class="material-icons">add</i>
+</button>
+<div class="event-card-cont">
+  <div id="new-event-card" class="event-card mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__title">
+      <h2 class="mdl-card__title-text">New Event</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="spots">
+        <label class="mdl-textfield__label" for="sample4">Spots</label>
+        <span class="mdl-textfield__error">Input is not a number!</span>
+      </div>
+      <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
+        <input type="checkbox" id="switch-2" class="mdl-switch__input">
+        <span class="mdl-switch__label">Public event</span>
+      </label>
+    </div>
+
+    <div class="mdl-card__actions mdl-card--border">
+      <a onclick="clickSubmit()" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+Submit
+</a>
+    </div>
+  </div>
+</div>
+
+
+
+<style>
+  .floating {
+    position: fixed;
+    top: 90px;
+    right: 25px;
+    z-index: 1000;
+  }
+
+  .event-card-cont {
+    padding: 20px;
+  }
+
+  .event-card {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  #new-event-card {
+    height: 100%;
+  }
+</style>
+<script>
+  drawEvents();
+
+  function drawEvents() {
+    console.log(amivaccess.events.GET());
+    var eventsArray = amivaccess.events.GET()['_items'];
+    for (var key in eventsArray) {
+      $('.event-card-cont').append('<div class="event-card mdl-card mdl-shadow--2dp">\
+          <div class="mdl-card__title">\
+            <h2 class="mdl-card__title-text">' + eventsArray[key].title_de +
+        '</h2>\
+          </div>\
+          <div class="mdl-card__supporting-text">\
+            <div class="dl-card__subtitle-text">\
+              ' + eventsArray[key].catchphrase_de + '\
+            </div>\
+            ' +
+        eventsArray[key].description_de +
+        '\
+          </div>\
+          <div class="mdl-card__actions mdl-card--border">\
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">\
+              View Details\
+            </a>\
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">\
+              Edit\
+            </a>\
+            <a onclick="deleteEvent(' +
+        eventsArray[key].id + ', \'' + eventsArray[key]._etag + '\'); return false;" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">\
+              Delete\
+            </a>\
+          </div>\
+        </div>'
+      );
+    }
+  }
+
+  $('#new-event-card').hide();
+
+  function addEvent() {
+    console.log("fab clicked");
+    $('.event-card').fadeOut();
+    // $('.event-card').remove();
+    $('#fab').fadeOut();
+    $('#new-event-card').fadeIn();
+  }
+
+  function clickSubmit() {
+    console.log(amivaccess.events.POST({
+      "spots": 0,
+      "is_public": false,
+      "title_de": "fuck yeah this works"
+    }));
+  }
+
+  function deleteEvent(eventId, etag) {
+    mkDialog("Are you sure you want to delete event " + eventId, function() {
+      amivaccess.events.DELETE({
+        _id: eventId.toString()
+      }, eventId, {
+        'If-Match': etag
+      });
+    });
+    // mkDialog('New User?', function() {
+    //  alert('ok');
+    //  });
+  }
+</script>
