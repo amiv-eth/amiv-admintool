@@ -22,12 +22,13 @@ var tools = {
 	},
 	
 	// Ajax loading gunction and getting the tools
-	curHash: null,
+	curTool: null,
 	getTool: function(tool) {
-		var nextTool = tool || window.location.hash.slice(1);
-		if(tools.curTool != nextTool){
-			tools.curTool = window.location.hash = nextTool;
-		}
+		var nextTool = (typeof tool != 'object')? tool : window.location.hash.slice(1);
+		if(tools.curTool == nextTool)
+			return;
+		tools.curTool = nextTool;
+		window.location.hash = nextTool;
 		$('#wheel-logo').css('transform', 'rotate(360deg)');
 	  $('#main-content').fadeOut(100,function() {
 		  $.ajax({
