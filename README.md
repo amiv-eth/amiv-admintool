@@ -15,6 +15,28 @@
 * ```bootstrap /3.3.6```
 * ```amivaccess /1.0```
 
+# Structure
+* admin (Admintool)
+	* lib (Libraries)
+		* bootstrap
+		* jquery
+		* amiv (amivaccess)
+		* cust (custom files)
+			* main.js (our js file)
+			* main.css (our css file)
+	* res (Resources)
+		* bg (big pictures and backgrounds)
+		* favicon
+		* fonts
+		* logo
+	* tools (tools)
+		* main.tool
+		* users.tool
+		* ...
+* public (Website)	
+		
+	
+
 ### Library ```tools```:
 The JS library ```tools``` is the backbone of the single tools. It enables the tool itself to take actions, such as store data, spawn alert boxes, load new tools and more.
 
