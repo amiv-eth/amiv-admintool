@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admintool</title>
+
+    <link href="bs/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="row">
+	    <div class="col-sm-3"></div>
+	    <div class="col-sm-6">
+		    <form role="form">
+				  <div class="form-group">
+				    <label for="email">nethz-Login:</label>
+				    <input type="email" class="form-control loginField" id="email" name="user">
+				  </div>
+				  <div class="form-group">
+				    <label for="pwd">Password:</label>
+				    <input type="password" class="form-control loginField" id="pwd" name="password">
+				  </div>
+				  <div class="checkbox">
+				    <label><input type="checkbox"> Remember me</label>
+				  </div>
+				  <button type="submit" class="btn btn-default" id="loginButton">Submit</button>
+				</form>
+	    </div>
+	    <div class="col-sm-3"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="bs/js/bootstrap.min.js"></script>
+    <script>
+	  	'use strict';
+			
+	    var core_lib = {
+		    api_url: 'https://amiv-apidev.vsos.ethz.ch',
+	    };
+	    
+	    function log(msg, type){
+		   console.log(msg); 
+	    }
+	    
+	    $('#loginButton').click(function(e){
+		    e.preventDefault();
+		    getTkn();
+	    });
+	    
+	    /*
+		    Request Function
+		    Attr: data, path, method.
+		    Callback: function that gets calle
+	    */
+	    function req(attr, callback) {
+			  callback = callback || function(msg) {
+	        console.log(msg);
+	      };
+	      $.ajax({
+	        url: core_lib.api_url + attr.path,
+	        data: attr.data,
+	        method: attr.method,
+	        dataType: 'json',
+	        timeout: 3000,
+	        headers: attr.headers,
+	        success: function(res) {
+	          callback(res);
+	          return true;
+	        },
+	        error: function(res) {
+	          if (core_lib.show_errors) console.log(res);
+	          callback(res);
+	          return false;
+	        },
+	      });
+	    }
+    
+	    function getTkn(){
+		    var curData = {};
+		    $('.loginField').each(function(){
+			    curData[$(this).attr('name')] = $(this).val();
+		    });
+		    req({
+	        path: '/sessions/',
+	        method: 'POST',
+	        data: JSON.stringify(curData),
+	        headers: {
+	          'Content-Type': 'application/json',
+	        }
+	      }, function(ret){
+		      console.log(ret);
+	      });
+	    }
+    </script>
+
+    
+  </body>
+</html>
