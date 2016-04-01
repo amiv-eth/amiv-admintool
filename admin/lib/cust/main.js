@@ -34,8 +34,8 @@ var tools = {
 		  $.ajax({
 		    url: 'tools/' + tools.curTool + '.tool',
 		    dataType: 'html',
-		    error: function(msg) {
-		      tools.log(msg, 's');
+		    error: function() {
+		      tools.log('Tool not found', 'e');
 		    }
 		  }).done(function(data){
 		    $('#main-content').html(data);
@@ -82,12 +82,20 @@ var tools = {
 	Initialization of page
 */
 
+//Binding tool change whenever the hash is changed
+window.onhashchange = tools.getTool;
 //Setting home if no other tool is selected
 if(window.location.hash == '' || window.location.hash == null)
 	window.location.hash = 'home';
-tools.getTool();
-//Binding tool change whenever the hash is changed
-window.onhashchange = tools.getTool;
 
-// Binding the button for toggeling the sidemenu
+// Binding the buttons
 $('.toggleSidebarBtn').click(tools.toggleSideMenu);
+
+amivaccess.ready(function(){
+	
+	tools.getTool();
+	
+	if(amivaccess.authenticated())
+		$('.loginPanel').css({'top':'-100%'});
+	
+});
