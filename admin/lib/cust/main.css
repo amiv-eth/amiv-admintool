@@ -56,7 +56,11 @@ body {
 	justify-content: center;
 	position: fixed;
 	z-index: 20;
-	background: rgba(31, 45, 84, 0.95);
+	//background: rgba(30,30,30,.9);
+	background: rgba(31, 45, 84, 1);
+}
+.loginPanel>div{
+	box-shadow: 0 0 2em #000;
 }
 
 /*
