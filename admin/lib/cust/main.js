@@ -22,13 +22,17 @@ var tools = {
 	},
 	
 	// Ajax loading gunction and getting the tools
-	curTool: null,
+	curTool: '',
 	getTool: function(tool) {
-		var nextTool = (typeof tool != 'object')? tool : window.location.hash.slice(1);
+		//Setting home if no other tool is selected
+		if(window.location.hash == '' || window.location.hash == null)
+			window.location.hash = 'home';
+		// If tool is specfied, get it
+		var nextTool = (tool && typeof tool != 'object')? tool : window.location.hash.slice(1);
 		if(tools.curTool == nextTool)
 			return;
 		tools.curTool = nextTool;
-		window.location.hash = nextTool;
+		window.location.hash = tools.curTool;
 		$('#wheel-logo').css('transform', 'rotate(360deg)');
 	  $('#main-content').fadeOut(100,function() {
 		  $.ajax({
@@ -46,9 +50,18 @@ var tools = {
 	  });
 	},
 	
-	//Toggle the sidemenu
-	toggleSideMenu: function(){
-		$('.wrapper-main').toggleClass('toggled');
+	// UI Stuff
+	ui: {
+		//Toggle the sidemenu
+		toggleSideMenu: function(){
+			$('.wrapper-main').toggleClass('toggled');
+		},
+		login: function(){
+			$('.loginPanel').css({'top':'-100%'});
+		},
+		logout: function(){
+			$('.loginPanel').css({'top':'0%'});
+		},
 	},
 	
 	// Memory to store stuff
@@ -84,18 +97,38 @@ var tools = {
 
 //Binding tool change whenever the hash is changed
 window.onhashchange = tools.getTool;
-//Setting home if no other tool is selected
-if(window.location.hash == '' || window.location.hash == null)
-	window.location.hash = 'home';
 
+
+// Login function
+function loginFunc(){
+	$('.loginPanel input').attr('readonly', 1);
+	amivcore.login($('#loginUsername').val(),$('#loginPassword').val(), function(ret){
+		if(ret !== true)
+			tools.log('Wrong Credentials', 'w');
+		$('.loginPanel input').removeAttr('readonly');
+	});
+}
+			
 // Binding the buttons
-$('.toggleSidebarBtn').click(tools.toggleSideMenu);
+$('.toggleSidebarBtn').click(tools.ui.toggleSideMenu);
+$('.loginAction').click(loginFunc);
+$('.logoutAction').click(function(){
+	console.log('log out call');
+	amivcore.logout();
+});
+$('.loginPanel').keypress(function(e){
+	if(e.which == 13){
+		e.preventDefault();
+		loginFunc();
+	}
+})
 
-amivaccess.ready(function(){
-	
+amivcore.on('ready', function(){
 	tools.getTool();
-	
-	if(amivaccess.authenticated())
-		$('.loginPanel').css({'top':'-100%'});
-	
+});
+amivcore.on('login', function(){
+	tools.ui.login();	
+});
+amivcore.on('logout', function(){
+	tools.ui.logout();	
 });
