@@ -9,7 +9,7 @@
   background-clip: padding-box;
 }
 .card span.card-title {
-    color: #fff;
+    color: #E8452B;
     font-size: 24px;
     font-weight: 300;
     text-transform: uppercase;
@@ -49,12 +49,12 @@
   padding: 16px;
 }
 .card .card-action a {
-  color: #ffab40;
+  color: #414d70;
   margin-right: 16px;
   transition: color 0.3s ease;
   text-transform: uppercase;
 }
 .card .card-action a:hover {
-  color: #ffd8a6;
+  color: #1f2d54;
   text-decoration: none;
 }
