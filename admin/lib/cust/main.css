@@ -135,7 +135,7 @@ body {
 	height: calc(100vh - 51px);
 	background: #eee;
 	width: 100%;
-	overflow: scroll;
+	//overflow: scroll;
 }
 
 /*

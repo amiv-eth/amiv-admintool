@@ -43,6 +43,7 @@ var tools = {
 		    }
 		  }).done(function(data){
 		    $('#main-content').html(data);
+		    tools.ui.resizeTool();
 	      $('#main-content').fadeIn(250,function() {
 	        $('#wheel-logo').css('transform', 'rotate(0deg)');
 	      });
@@ -62,6 +63,10 @@ var tools = {
 		logout: function(){
 			$('.loginPanel').css({'top':'0%'});
 		},
+		resizeTool: function(){
+			console.log('Resizing');
+			$('tools-full-height').height( $(window).height() - $('.navbar-main').height() );
+		}
 	},
 	
 	// Memory to store stuff
@@ -112,16 +117,15 @@ function loginFunc(){
 // Binding the buttons
 $('.toggleSidebarBtn').click(tools.ui.toggleSideMenu);
 $('.loginAction').click(loginFunc);
-$('.logoutAction').click(function(){
-	console.log('log out call');
-	amivcore.logout();
-});
+$('.logoutAction').click(amivcore.logout);
 $('.loginPanel').keypress(function(e){
 	if(e.which == 13){
 		e.preventDefault();
 		loginFunc();
 	}
 })
+
+window.onresize = tools.ui.resizeTools;
 
 amivcore.on('ready', function(){
 	tools.getTool();
