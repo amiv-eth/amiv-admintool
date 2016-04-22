@@ -29,9 +29,11 @@ var tools = {
         $('.modalCont .modal-body').html(attr.body);
         $('.modalCont .modal-footer .btn-primary').html(attr.button).click(function() {
             $('.modalCont').off('hide.bs.modal').modal('hide');
-            attr.success();
+            if (typeof(attr.success) == 'function')
+                attr.success();
         });
-        $('.modalCont').modal('show').on('hide.bs.modal', attr.cancel);
+        if (typeof(attr.cancel) == 'function')
+            $('.modalCont').modal('show').on('hide.bs.modal', attr.cancel);
     },
 
     // Ajax loading gunction and getting the tools
