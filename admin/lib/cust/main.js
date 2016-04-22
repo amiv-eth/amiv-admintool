@@ -35,6 +35,8 @@ var tools = {
         window.location.hash = tools.curTool;
         $('#wheel-logo').css('transform', 'rotate(360deg)');
         $('#main-content').fadeOut(100, function() {
+            // Reset Custom menu
+            tools.ui.menu();
             $.ajax({
                 url: 'tools/' + tools.curTool + '.tool',
                 dataType: 'html',
