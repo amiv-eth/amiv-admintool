@@ -21,6 +21,19 @@ var tools = {
         console.log(msg);
     },
 
+    // Modal function
+    modalStatus: 0,
+    modal: function(attr) {
+        attr = attr || {};
+        $('.modalCont .modal-title').html(attr.head);
+        $('.modalCont .modal-body').html(attr.body);
+        $('.modalCont .modal-footer .btn-primary').html(attr.button).click(function() {
+            $('.modalCont').off('hide.bs.modal').modal('hide');
+            attr.success();
+        });
+        $('.modalCont').modal('show').on('hide.bs.modal', attr.cancel);
+    },
+
     // Ajax loading gunction and getting the tools
     curTool: '',
     getTool: function(tool) {
