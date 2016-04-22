@@ -1,39 +1,36 @@
 <div class="users-table-wrapper">
-	<div class="tools-full-height">
-		<table class="table table-hover users-table">
-			<thead>
-				<tr>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-	</div>
+	<table class="table table-hover users-table">
+		<thead>
+			<tr>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
 </div>
 
 <style>
 	.users-table-wrapper {
-		position: relative;
-	}
-
-	.users-table-wrapper>div {
+		width: 100%;
+		height: 100%;
 		overflow: auto;
-	}
-
-	.users-sidebar {
-		background: #fff;
 	}
 </style>
 <script type="text/javascript">
 	tools.ui.menu({
-			'Add User': {
-				callback: function(){
-					console.log('noice');
-				}
+		'Add User': {
+			callback: function() {
+				console.log('noice');
 			}
+		}
 	});
 
-	var showInTable = ['firstname', 'lastname', 'email', 'membership'];
+	function showDetails() {
+		console.log($(this).attr('data-id'));
+	}
+
+	var showInTable = ['firstname', 'lastname', 'email', 'membership'],
+		curData = null;
 	amivcore.users.GET({
 		data: {
 			'max_results': '50'
@@ -45,6 +42,8 @@
 			return;
 		}
 
+		curData = ret['_items'];
+
 		showInTable.forEach(function(i) {
 			$('.users-table thead tr').append('<th>' + i + '</th>');
 		});
@@ -54,8 +53,8 @@
 			showInTable.forEach(function(i) {
 				tmp += '<td>' + ret['_items'][n][i] + '</td>';
 			});
-			$('.users-table tbody').append('<tr>' + tmp + '</tr>');
-			//$('.users-table tbody').append('<tr><td>'+ret['_items'][n].firstname+'</td></tr>');
+			$('.users-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
 		}
+		$('.users-table tbody tr').click(showDetails);
 	});
 </script>
