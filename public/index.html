@@ -110,12 +110,20 @@
                     }
 					var datenum = new Date(item.time_start);
 					
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+datenum.getMonth()+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+datenum.getMinutes()+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">Anmeldung</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
+					/*Minuten immer Zweistellig*/
+					var minutes = datenum.getMinutes();
+					if (minutes < 10){
+						minutes = "0" + minutes;
+					}
+					var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+					
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">Anmeldung</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
         });
     </script>
     
+<!--
     <script>
 	    $(function() {
 			var container = document.createElement('div');
@@ -137,7 +145,9 @@
 			$('#card').append(html);
 		});
 	</script>
+-->
     
+<!--
     <div class="col-xs-12 col-md-4 col-lg-3">
 		<div class="card card-1">
 			<div class="card-image">
@@ -160,6 +170,7 @@
             </div>
         </div>
     </div>
+-->
 </body>
 
 </html>
