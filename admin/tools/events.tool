@@ -3,6 +3,10 @@
     <table class="table table-hover events-table" id="events-table">
       <thead>
         <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>on website</th>
+          <th>spots</th>
         </tr>
       </thead>
       <tbody>
@@ -39,7 +43,7 @@
 </div>
 
 <!-- modal for creating new events-->
-<div class="modal fade" id="new-modal" role="dialog">
+<div class="modal show" id="new-event-modal" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -49,59 +53,59 @@
 			<div class="modal-body">
           <div class="form-group">
             <label for="title_de">Title</label>
-            <input type="text" class="form-control" id="title_de"></input>
+            <input type="text" class="form-control" name="title_de"></input>
           </div>
           <div class="form-group">
             <label for="description_de">Description</label>
-            <textarea type="text" class="form-control" rows="3" id="description_de"></textarea>
+            <textarea type="text" class="form-control" rows="3" name="description_de"></textarea>
           </div>
           <div class="form-group">
             <label for="catchphrase_de">Catchphrase</label>
-            <input type="text" class="form-control" id="catchphrase_de"></input>
+            <input type="text" class="form-control" name="catchphrase_de"></input>
           </div>
 
           <div class="form-group">
             <label for="time_start">Start Time</label>
-            <input type="datetime" class="form-control" id="time_start"></input>
+            <input type="datetime" class="form-control" name="time_start"></input>
           </div>
           <div class="form-group">
             <label for="time_end">End Time</label>
-            <input type="datetime" class="form-control" id="time_end"></input>
+            <input type="datetime" class="form-control" name="time_end"></input>
           </div>
 
           <label class="checkbox-inline">
-            <input type="checkbox" id="signup-required" value="">No Signup
+            <input type="checkbox" name="signup-required" value="">No Signup
           </label>
           <label class="checkbox-inline">
-            <input type="checkbox" id="no-signup-limit" value="">No Signup Limit
+            <input type="checkbox" name="no-signup-limit" value="">No Signup Limit
           </label>
 
           <div class="form-group">
             <label for="spots">Spots</label>
-            <input type="number" class="form-control" id="spots"></input>
+            <input type="number" class="form-control" name="spots"></input>
           </div>
 
           <label class="checkbox-inline">
-            <input type="checkbox" id="allow_email_signup" value="">Only amiv Members
+            <input type="checkbox" name="allow_email_signup" value="">Only amiv Members
           </label>
 
           <div class="form-group">
             <label for="time_register_start">Start of Registration</label>
-            <input type="datetime" class="form-control" id="time_register_start"></input>
+            <input type="datetime" class="form-control" name="time_register_start"></input>
           </div>
           <div class="form-group">
             <label for="time_register_end">End of Registration</label>
-            <input type="datetime" class="form-control" id="time_register_end"></input>
+            <input type="datetime" class="form-control" name="time_register_end"></input>
           </div>
 
           <div class="form-group">
             <label for="location">Location</label>
-            <input type="text" class="form-control" id="location"></input>
+            <input type="text" class="form-control" name="location"></input>
           </div>
 
           <div class="form-group">
             <label for="price">Price</label>
-            <input type="text" class="form-control" id="price"></input>
+            <input type="text" class="form-control" name="price"></input>
           </div>
 
           <div>
@@ -120,7 +124,7 @@
             </label>
           </div>
 
-          <button data-toggle="collapse" data-target="#english-collapse">show english fields</button>
+          <button class="btn btn-info" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
 
           <div id="english-collapse" class="collapse">
             <div class=form-group>
@@ -141,6 +145,7 @@
         </div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitNewEvent()">Submit</button>
 			</div>
 		</div>
 	</div>
@@ -155,6 +160,11 @@
   overflow: auto;
 }
 
+#new-event-modal .checkbox-inline{
+  margin-bottom: 10px;
+
+}
+
 .users-sidebar {
   background: #fff;
 }
@@ -162,7 +172,7 @@
 
 <script type="text/javascript">
 var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
-var tableTitles = ['Title', 'Date', 'on website', 'spots'];
+//var tableTitles = ['Title', 'Date', 'on website', 'spots'];
 
 amivcore.events.GET({data:{'max_results':'50'}}, function(ret){
   console.log(ret);
@@ -171,9 +181,9 @@ amivcore.events.GET({data:{'max_results':'50'}}, function(ret){
     return;
   }
 
-  tableTitles.forEach(function(i){
+  /*tableTitles.forEach(function(i){
     $('.events-table thead tr').append('<th>'+ i +'</th>');
-  });
+  });*/
 
   for(var n in ret['_items']){
     var tmp = '';
@@ -202,6 +212,12 @@ amivcore.events.GET({data:{'max_results':'50'}}, function(ret){
 $('#detail-modal').on("hidden.bs.modal", function (e) {
     $(e.target).removeData("bs.modal").find(".modal-content tbody").empty();
 });
+
+function submitNewEvent(){
+  console.log("submitting new event");
+
+  amivcore.events.POST({data:{"allow_email_signup":true, 'title_de':'fuck this shit'}})
+}
 
 $(document).ready(function(){
 //  $('#time_start').datetimepicker({
