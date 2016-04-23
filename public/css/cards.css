@@ -12,8 +12,9 @@
 #cardtitle.card span.card-title {
     color: #E8452B;
     font-size: 24px;
-    font-weight: 300;
+    font-weight: bold;
     text-transform: uppercase;
+    
 }
 
 .card .card-image {
@@ -26,6 +27,7 @@
   position: relative;
   z-index: -1;
   width: 100%;
+  min-height: 180px;
 }
 .card .card-image span.card-title {
   position: absolute;
@@ -37,7 +39,7 @@
   width: 100%;
   background: rgba(100%, 100%, 100%, 0.5);
   text-transform: uppercase;
-  font-weight: 300;
+  font-weight: bold;
 }
 .card .card-content {
   padding: 16px;

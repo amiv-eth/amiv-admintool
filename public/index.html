@@ -48,7 +48,7 @@
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse nav-collapse collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="#">Home</a>
@@ -62,12 +62,6 @@
                     <li>
                         <a href="#">Jobbörse</a>
                     </li>
-                    <form class="navbar-form navbar-left" role="search">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search">
-                        </div>
-                        <button type="submit" class="btn btn-default">Search</button>
-                    </form>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -78,6 +72,18 @@
     <div class="container-fluid">
         <div class="grid">
             <div class="grid-sizer"></div>
+            <div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+	           	<div class="card">
+				 		<p>
+				 			<a data-chrome="noheader" class="twitter-timeline" href="https://twitter.com/AMIV_ETHZ/amiv" data-widget-id="389682176024784896">
+					 			Tweets from @AMIV_ETHZ
+					 		</a>
+						</p>
+						<script type="text/javascript">
+				 			!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+						</script> 
+        		</div>
+            </div>
         </div>
     </div>
 
@@ -91,8 +97,7 @@
 
         function addElement(item) {
             $('.grid')
-                .append('<div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">' + item + '</div>')
-                .masonry('reloadItems').masonry();
+                .append('<div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">' + item + '</div>');
         }
         
         $(document).ready(function() {
@@ -101,76 +106,48 @@
                 itemSelector: '.grid-item',
                 columnWidth: '.grid-sizer',
                 percentPosition: true
-            });
+            }).on('DOMSubtreeModified', function(){
+	            $(this).masonry('reloadItems').masonry();
+            })
             getEvents(function(ret) {
                 ret['_items'].forEach(function(item) {
+	                /*Is it Websitecontent?*/
+	                if (item.show_website == false){
+		                return;
+	                }
                     console.log(item.title_de);
-                    if ( item.img_banner == null){
-						item.img_banner = item.img_infoscreen;
+                    
+                    /*Picture Checker*/
+                    if (item.img_banner == null){
+						item.img_banner = "https://s-media-cache-ak0.pinimg.com/736x/9c/24/fd/9c24fdb71c67e31efef540efb141f96d.jpg";
                     }
+                    /* Datum anpassen*/
 					var datenum = new Date(item.time_start);
-					
+					var
+					var regend = new Date(item.time_start);
+
 					/*Minuten immer Zweistellig*/
 					var minutes = datenum.getMinutes();
 					if (minutes < 10){
 						minutes = "0" + minutes;
 					}
-					var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+					var month = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 					
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">Anmeldung</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
+					/*Anmeldung*/
+					var register = "";
+					if (item.spot < 0){
+						register = "";
+					}
+					if (amivcore.authenticated() && item.spot >= 0){
+						if(item.time_start < Tod)
+					}
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
         });
     </script>
-    
-<!--
-    <script>
-	    $(function() {
-			var container = document.createElement('div');
-			container.id = "card";
 
-			$('grid').append(container);
-			
-			/*Date*/
-			$(".month").append("October");
-			$(".day").append("42");
-			$(".starttime").append("18:00 - 20:00");
-			
-			/*Visible Content*/
-			$(".card-title").html("Jarcakebakery @ FoodLab"); //Title and Location
-			$(".card-content").append("<p>This is the best event like ever! You can bake some jarcakes and eat the afterwards all by yourself.</p>"); //content
-			$(".card-action").append(); //Links
-			$(".img-responsive").attr("src", "http://cdn0.wideopencountry.com/wp-content/uploads/2015/07/JamCheesecakesInAJarTall-793x526.png"); //image
-			
-			$('#card').append(html);
-		});
-	</script>
--->
-    
-<!--
-    <div class="col-xs-12 col-md-4 col-lg-3">
-		<div class="card card-1">
-			<div class="card-image">
-				<img class="img-responsive">
-				<date>
-				 	<div class="month"></div>
-				 	<div class="day"></div>
-				 	<div class="starttime"></div>
-				 	<date-overlay></date-overlay>
-				</date>
-				<span class="card-title"></span>
-			</div>
-            
-			<div class="card-content"></div>
-                
-			<div class="card-action">
-				<a href="#" target="new_blank">Zum Event</a>
-		 		<a href="#" target="new_blank">Anmeldung</a>
-				<a href="#" target="new_blank">Im Kalender speichern</a>
-            </div>
-        </div>
-    </div>
--->
+<script src="js/main.js"></script>
 </body>
 
 </html>
