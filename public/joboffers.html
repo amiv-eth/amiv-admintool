@@ -74,11 +74,6 @@
             <div class="grid-sizer"></div>
             <div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 	           	<div class="card">
-				 		<p>
-				 			<a data-chrome="noheader" class="twitter-timeline" href="https://twitter.com/AMIV_ETHZ/amiv" data-widget-id="389682176024784896">
-					 			Tweets from @AMIV_ETHZ
-					 		</a>
-						</p>
 						<script type="text/javascript">
 				 			!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 						</script> 
@@ -92,7 +87,7 @@
             callback = callback || function(ret) {
                 console.log(ret);
             }
-            $.getJSON('https://amiv-apidev.vsos.ethz.ch/events/', callback);
+            $.getJSON('https://amiv-apidev.vsos.ethz.ch/joboffers/', callback);
         }
 
         function addElement(item) {
@@ -105,47 +100,36 @@
             $('.grid').masonry({
                 itemSelector: '.grid-item',
                 columnWidth: '.grid-sizer',
-                percentPosition: true
+                percentPosition: true,
+                originLeft: false
             }).on('DOMSubtreeModified', function(){
 	            $(this).masonry('reloadItems').masonry();
             })
             getEvents(function(ret) {
                 ret['_items'].forEach(function(item) {
-	                /*Is it Websitecontent?*/
-	                if (item.show_website == false){
-		                return;
-	                }
-                    console.log(item.title_de);
-                    
-                    /*Picture Checker*/
-                    if (item.img_banner == null){
-						item.img_banner = "https://s-media-cache-ak0.pinimg.com/736x/9c/24/fd/9c24fdb71c67e31efef540efb141f96d.jpg";
+	            	console.log(item.title_de);
+	            	
+	            	/*Logo Checker*/
+                    if (item.logo == null){
+						item.logo = "https://s-media-cache-ak0.pinimg.com/736x/9c/24/fd/9c24fdb71c67e31efef540efb141f96d.jpg";
                     }
                     /* Datum anpassen*/
-					var datenum = new Date(item.time_start);
-					var regstart = new Date(item.time_register_start);
-					var regend = new Date(item.time_register_end);
-					var heute = new Date(Date.now());
+                   	if (item.time_end != null){
+						var regend = new Date(item.time_end);
+						var heute = new Date(Date.now());
 					
-					/*Minuten immer Zweistellig*/
-					var minutes = datenum.getMinutes();
-					if (minutes < 10){
-						minutes = "0" + minutes;
-					}
-					var month = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-					
-					/*Anmeldung*/
-					var register = "";
-					if (/* amivcore.authenticated() &&  */item.spot >= 0 && regstart > heute && regend < heute){
-						register = "Anmelden";
-
-					}
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
+						/*Anmeldung*/
+						var register = "";
+						if (regend < heute){
+							return;
+						}
+                   }
+                   
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.logo+'"><span class="card-title">'+item.title_de+' bei '+item.company+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">Anmelden</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
         });
     </script>
-
 <script src="js/main.js"></script>
 </body>
 
