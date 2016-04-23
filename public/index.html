@@ -123,9 +123,10 @@
                     }
                     /* Datum anpassen*/
 					var datenum = new Date(item.time_start);
-					var
-					var regend = new Date(item.time_start);
-
+					var regstart = new Date(item.time_register_start);
+					var regend = new Date(item.time_register_end);
+					var heute = new Date(Date.now());
+					
 					/*Minuten immer Zweistellig*/
 					var minutes = datenum.getMinutes();
 					if (minutes < 10){
@@ -135,11 +136,8 @@
 					
 					/*Anmeldung*/
 					var register = "";
-					if (item.spot < 0){
-						register = "";
-					}
-					if (amivcore.authenticated() && item.spot >= 0){
-						if(item.time_start < Tod)
+					if (/* amivcore.authenticated() &&  */item.spot >= 0 && regstart > heute && regend < heute){
+						register = "Anmelden";
 					}
                     addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
