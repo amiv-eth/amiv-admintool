@@ -1,26 +1,19 @@
-# Frontend
-
-## Software
-
-### Admintool:
+# Admintool
+### Software:
 * ```ubuntu /14.04.1```
 * ```nginx /1.4.6```
 
-### Website:
-* undef.
-
-# Admintool
 ### Dependecies:
 * ```jQuery /2.2.2```
 * ```bootstrap /3.3.6```
 * ```amivaccess /1.0```
 
-# Structure
+### File Structure:
 * admin (Admintool)
 	* lib (Libraries)
 		* bootstrap
 		* jquery
-		* amiv (amivaccess)
+		* amiv (amivcore)
 		* cust (custom files)
 			* main.js (our js file)
 			* main.css (our css file)
@@ -33,42 +26,112 @@
 		* main.tool
 		* users.tool
 		* ...
-* public (Website)	
-		
-	
+* public (Website)
 
-### Library ```tools```:
-The JS library ```tools``` is the backbone of the single tools. It enables the tool itself to take actions, such as store data, spawn alert boxes, load new tools and more.
+## Library ```tools```:
+The JS library ```tools``` is the backbone of the single tools. It enables the tool itself to take actions, such as store data, customize the menu, spawn alert boxes, load new tools and more.
 
-#### log(msg, type, timeout)
-######Displays an alert box to the user.
+### log(msg, type, timeout)
+###### Displays an alert box to the user.
 * ```msg /text,HTML``` The message or html to be displayed in the alert box
 * ```type /('s', 'i', 'w', 'e')``` Specifies the type of message. Displays different colors for each type.
 	* s: success
 	* i: information
 	* w: warning
 	* e: error
-* ```timeout (optional)/int``` Number of milliseconds that the message will be displayed. If not specified the default time is 5s, or 5000ms.
+* ```timeout /int (optional)``` Number of milliseconds that the message will be displayed. If not specified the default time is 5s, or 5000ms.
+
 ##### Example:
 * ``` tools.log('User updated!', 's'); ``` Creates a green alert box with the message specified that will disappear after 5000ms.
 * ``` tools.log('Error!', 'e', 10000); ``` Creates a gred alert box with the message specified that will disappear after 10s.
 
-#### tools.getTool(tool)
-###### Loads the specified tool. If no tool is specified the tool in the navigaton bar (hashtag) will be choesn.
-* ```tool (optional)/text``` Specifies the tool.
+### modal(data)
+###### Spwans a BS modal.
+* ```data /js object``` Object containning the infos
+	* ```head /text, HTML (optional)``` Sets the modal title.
+	* ```body /text, HTML (optional)``` Sets the modal body.
+	* ```button /text, HTML (optional)``` Confirm button text.
+	* ```success /function (optional)``` Function called on confirm button press.
+	* ```cancel /function (optional)``` Function called on cancel or modal is closed.
+
+##### Example:
+```javascript
+tools.modal(); 
+//Creates an empty modal.
+
+tools.modal({
+	head: 'Download Flash Player!!',
+	body: 'Your browser needs this super important plugin',
+	button: 'DOWNLOAD!',
+	success: function(){
+		some.nasty.virus();
+	},
+	cancel: function(){
+		console.log('No Virus for you -.-');
+	}
+});
+// Makes a modal to download stuff
+```
+### getTool(tool)
+###### Loads the specified tool. If no tool is specified the tool in the navigaton bar (hashtag) will be chosen.
+* ```tool /text (optional)``` Specifies the tool.
+
 ##### Example:
 * ``` tools.getTool('home'); ``` Will get the /res/tools/```home```.tool and loads it into the site.
 
-#### toggleSideMenu()
-###### Toggles the sidebar
-##### Example:
-* ```tools.toggleSideMenu();``` Toggles the sidebar
+### ui
+###### The ```ui``` element allows you to access ui components (menu) and take actions (login, logout, toggleSideMenu).
 
-#### mem.local & mem.session
-######The mem element can store data for the tools, used for multiple cases. There are 2 tyoes of storage: ```local``` hast no expiration and ```session``` is stored until you close the window or tab. Every tool has separated storage, so you don't need to worry about conflicting with other tools. The subfunctions are the same, a so only ```session``` wil be demonstraded here. local works identically.
+#### toggleSideMenu()
+##### Example:
+* ```tools.ui.toggleSideMenu();``` Toggles the sidebar.
+
+#### menu(object)
+###### Allows a tool to access the top menu and have custom links and callbacks.
+* ```object /js object``` Menu structured element from which the menu is generated.
+	* ```link /link (optional)``` HTTP link or hash. If left empty the link is disabled.
+	* ```callback /function (optional)``` The function that is called if the link is pressed.
+
+##### Example:
+```javascript
+tools.ui.menu({
+	'Foo':{}
+});
+// Creates a single link element named 'Foo' without a href or callback
+
+tools.ui.menu({
+	'Foo':{
+		link:'google.com'
+	}
+});
+// Creates a link named 'Foo' without a callback, but is linked to google.com
+
+tools.ui.menu({
+	'Foo':{
+		callback: function (){
+			console.log('I was pressed!!');
+		}
+	}
+});
+// Creates a link 'Foo' and calles the function once the link is called
+
+tools.ui.menu({
+	'Foo':{
+		link: '#trololo',
+		callback: function (){
+			console.log('I was pressed!!');
+		}
+	}
+});
+// Creates a link 'Foo' and calles the function once the link is called and the user gets redirected to #trololo.
+```
+
+
+### mem.local & mem.session
+###### The mem element can store data for the tools, used for multiple cases. There are 2 tyoes of storage: ```local``` hast no expiration and ```session``` is stored until you close the window or tab. Every tool has separated storage, so you don't need to worry about conflicting with other tools. The subfunctions are the same, a so only ```session``` wil be demonstraded here. local works identically.
 
 #### set(name, value)
-######Sets and stores a value. If the value already exists it will be overwritten!
+###### Sets and stores a value. If the value already exists it will be overwritten!
 * ```name /text``` Name of the 'variable'.
 *  ```value /any``` The data to be stored. Can be any valid JS data, object, etc.
 

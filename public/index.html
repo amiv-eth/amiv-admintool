@@ -44,7 +44,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">
-                    <img src="file:///Volumes/Macintosh%20HD/Users/oli/Documents/ETH/amivwebsitefrontend/public/res/AMIV_Logo_150_50.svg" alt="AMIV" height="80%">
+                    <img src="res/AMIV_Logo_150_50.svg" alt="AMIV" height="80%">
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -58,9 +58,6 @@
                     </li>
                     <li>
                         <a href="#">Studium</a>
-                    </li>
-                    <li>
-                        <a href="#">Events</a>
                     </li>
                     <li>
                         <a href="#">Jobbörse</a>
@@ -97,6 +94,7 @@
                 .append('<div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">' + item + '</div>')
                 .masonry('reloadItems').masonry();
         }
+        
         $(document).ready(function() {
             $('.grid-item, .grid-sizer').addClass('col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2');
             $('.grid').masonry({
@@ -107,37 +105,72 @@
             getEvents(function(ret) {
                 ret['_items'].forEach(function(item) {
                     console.log(item.title_de);
-                    addElement('<p>' + JSON.stringify(item) + '</p>');
+                    if ( item.img_banner == null){
+						item.img_banner = item.img_infoscreen;
+                    }
+					var datenum = new Date(item.time_start);
+					
+					/*Minuten immer Zweistellig*/
+					var minutes = datenum.getMinutes();
+					if (minutes < 10){
+						minutes = "0" + minutes;
+					}
+					var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+					
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">Anmeldung</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
         });
     </script>
     
+<!--
+    <script>
+	    $(function() {
+			var container = document.createElement('div');
+			container.id = "card";
+
+			$('grid').append(container);
+			
+			/*Date*/
+			$(".month").append("October");
+			$(".day").append("42");
+			$(".starttime").append("18:00 - 20:00");
+			
+			/*Visible Content*/
+			$(".card-title").html("Jarcakebakery @ FoodLab"); //Title and Location
+			$(".card-content").append("<p>This is the best event like ever! You can bake some jarcakes and eat the afterwards all by yourself.</p>"); //content
+			$(".card-action").append(); //Links
+			$(".img-responsive").attr("src", "http://cdn0.wideopencountry.com/wp-content/uploads/2015/07/JamCheesecakesInAJarTall-793x526.png"); //image
+			
+			$('#card').append(html);
+		});
+	</script>
+-->
+    
+<!--
     <div class="col-xs-12 col-md-4 col-lg-3">
-				 	<div class="card">
-				 		<div class="card-image">
-				 			<img class="img-responsive" src="http://cdn0.wideopencountry.com/wp-content/uploads/2015/07/JamCheesecakesInAJarTall-793x526.png">
-				 			<date>
-				 			<div class="month">October</div>
-				 			<div class="day">29</div>
-				 			<div class="starttime">18:00</div>
-				 			<date-overlay></date-overlay>
-				 			</date>
-				 			<span class="card-title">Jarcakebakery @ FoodLab</span>
-				 			
-				 		</div>
+		<div class="card card-1">
+			<div class="card-image">
+				<img class="img-responsive">
+				<date>
+				 	<div class="month"></div>
+				 	<div class="day"></div>
+				 	<div class="starttime"></div>
+				 	<date-overlay></date-overlay>
+				</date>
+				<span class="card-title"></span>
+			</div>
+            
+			<div class="card-content"></div>
                 
-				 		<div class="card-content">
-				 			<p>This is the best event like ever! You can bake some jarcakes and eat the afterwards all by yourself.  </p>
-				 		</div>
-                
-				 		<div class="card-action">
-				 			<a href="#" target="new_blank">Zum Event</a>
-				 			<a href="#" target="new_blank">Anmeldung</a>
-				 			<a href="#" target="new_blank">Im Kalender speichern</a>
-                		</div>
-            		</div>
-        		</div>
+			<div class="card-action">
+				<a href="#" target="new_blank">Zum Event</a>
+		 		<a href="#" target="new_blank">Anmeldung</a>
+				<a href="#" target="new_blank">Im Kalender speichern</a>
+            </div>
+        </div>
+    </div>
+-->
 </body>
 
 </html>
