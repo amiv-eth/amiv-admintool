@@ -22,18 +22,27 @@ var tools = {
     },
 
     // Modal function
-    modalStatus: 0,
+    modalFunc: {
+        init: 0,
+    },
     modal: function(attr) {
         attr = attr || {};
+        if (attr.success !== undefined && typeof(attr.success) == 'function')
+            tools.modalFunc.success = attr.success;
+        if (attr.cancel !== undefined && typeof(attr.cancel) == 'function')
+            tools.modalFunc.cancel = attr.cancel;
+        if (!tools.modalFunc.init) {
+            $('.modalCont .modal-footer .btn-primary').click(function() {
+                $('.modalCont').off('hide.bs.modal').modal('hide');
+                tools.modalFunc.success();
+            });
+            $('.modalCont').on('hide.bs.modal', tools.modalFunc.cancel);
+            tools.modalFunc.init = 1;
+        }
         $('.modalCont .modal-title').html(attr.head);
         $('.modalCont .modal-body').html(attr.body);
-        $('.modalCont .modal-footer .btn-primary').html(attr.button).click(function() {
-            $('.modalCont').off('hide.bs.modal').modal('hide');
-            if (typeof(attr.success) == 'function')
-                attr.success();
-        });
-        if (typeof(attr.cancel) == 'function')
-            $('.modalCont').modal('show').on('hide.bs.modal', attr.cancel);
+        $('.modalCont .modal-footer .btn-primary').html(attr.button);
+        $('.modalCont').modal('show');
     },
 
     // Ajax loading gunction and getting the tools

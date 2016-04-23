@@ -139,7 +139,7 @@ body {
 	MAIN NAVBAR
 */
 
-.navbar-main .cust-menu>li {
+.navbar-main .container-fluid>ul>li {
     float: left;
 }
 
