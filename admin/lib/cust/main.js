@@ -100,13 +100,13 @@ var tools = {
         menu: function(attr) {
             var custMenu = $('.cust-menu');
             custMenu.html('');
-            tools.ui.menuId++;
             for (var cur in attr) {
+                tools.ui.menuId++;
                 if (attr[cur].link == '' || attr[cur].link === undefined)
                     attr[cur].link = 'javascript:void(0);';
                 custMenu.append('<li><a href="' + attr[cur].link + '" id="cust-menu-link-' + tools.ui.menuId + '">' + cur + '</a></li>');
                 if (typeof(attr[cur].callback) == 'function')
-                    $('#cust-menu-link-' + tools.ui.menuId).click(attr[cur].callback);
+                    $('#cust-menu-link-' + tools.ui.menuId).on('click', attr[cur].callback);
             }
 
         }
