@@ -27,7 +27,7 @@
 			},
 			set: function(num) {
 				num = parseInt(num);
-				if (num > 0 && num < users.page.max+1)
+				if (num > 0 && num < users.page.max + 1)
 					tools.mem.session.set('curPage', num);
 				$('.users-cur-page-cont').html(users.page.cur());
 				users.get();
@@ -122,13 +122,38 @@
 					users.get();
 				});
 			}
+		},
+
+		//Make new user
+		add: function() {
+			var tmp = '<table class="table table-hover users-user-add-table"><tbody>',
+				reqFields = amivcore.getRequiredFields('users', 'POST');
+			for (var reqField in reqFields)
+				tmp += '<tr><td>' + reqField + '</td><td contenteditable></td></tr>'
+			tmp += '</tbody></table>';
+			tools.modal({
+				head: 'New User',
+				body: tmp,
+				button: 'Add',
+				success: function() {
+					var newUserData = {};
+					$('.users-user-add-table tr').each(function() {
+						newUserData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+					});
+					amivcore.users.POST({
+						data: newUserData
+					}, function(ret) {
+						console.log(ret);
+					});
+				}
+			})
 		}
 	};
 
 	// Setup Menu
 	tools.ui.menu({
 		'<span class="glyphicon glyphicon-user" aria-hidden="true"></span>': {
-			callback: function() {}
+			callback: users.add
 		},
 		'<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>': {
 			callback: users.page.dec
