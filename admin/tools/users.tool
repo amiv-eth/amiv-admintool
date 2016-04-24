@@ -20,6 +20,8 @@
 	var users = {
 		showInTable: ['firstname', 'lastname', 'email', 'membership'],
 		curUserData: null,
+
+		// Page
 		page: {
 			max: Number.MAX_VALUE,
 			cur: function() {
@@ -39,11 +41,32 @@
 				users.page.set(users.page.cur() - 1);
 			}
 		},
+
+		//Sorting
+		sort: {
+			cur: function() {
+				return tools.mem.session.get('curSort');
+			},
+			set: function(sort) {
+				tools.mem.session.set('curSort', sort);
+				users.get();
+			},
+			inv: function() {
+				var tmp = users.sort.cur();
+				if (tmp.charAt(0) == '-')
+					users.sort.set(tmp.slice(1));
+				else
+					users.sort.set('-' + tmp);
+			}
+		},
+
+		// Get users
 		get: function() {
 			amivcore.users.GET({
 				data: {
 					'max_results': '50',
 					page: users.page.cur(),
+					sort: users.sort.cur(),
 				}
 			}, function(ret) {
 
@@ -57,7 +80,7 @@
 				$('.users-page-max-cont').html(users.page.max);
 
 				// Clear table from previous contentent
-				$('.users-table thead, .users-table tbody').html('');
+				$('.users-table thead tr, .users-table tbody').html('');
 
 				users.showInTable.forEach(function(i) {
 					$('.users-table thead tr').append('<th>' + i + '</th>');
@@ -192,6 +215,31 @@
 		},
 		'<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {
 			callback: users.page.inc
+		},
+		'<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>': {
+			callback: function() {
+				var tmp = '<select class="form-control users-sort-select">';
+				var cur = users.sort.cur();
+				['id', 'firstname', 'lastname'].forEach(function(i) {
+					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
+					tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
+				})
+				tmp += '</select>'
+				tools.modal({
+					head: 'Sort',
+					body: tmp,
+					button: {
+						'Sort': {
+							type: 'success',
+							close: true,
+							callback: function() {
+								users.sort.set($('.users-sort-select').val());
+							}
+						}
+					}
+
+				});
+			}
 		},
 		'<span class="glyphicon glyphicon-search" aria-hidden="true"></span>': {
 			callback: function() {}
