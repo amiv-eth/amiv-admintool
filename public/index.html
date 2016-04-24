@@ -44,7 +44,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">
-                    <img src="res/AMIV_Logo_150_50.svg" alt="AMIV" height="80%">
+                    <img src="res/AMIV_Logo_150_50.svg" alt="AMIV">
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -72,6 +72,15 @@
     <div class="container-fluid">
         <div class="grid">
             <div class="grid-sizer"></div>
+            
+<!--             Google Calendar -->
+            <div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+	             <div class="responsive-iframe-container big-container card">
+		             <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;mode=AGENDA&amp;height=600&amp;wkst=2&amp;bgcolor=%23ffffff&amp;src=amiv.an.der.eth%40gmail.com&amp;color=%231B887A&amp;src=o8mobocsom5ea8b0d00eidr6a4%40group.calendar.google.com&amp;color=%23691426&amp;src=n18j3pnpl65bp58fjfikvlkbn4%40group.calendar.google.com&amp;color=%238C500B&amp;src=5qbl733r12mejhaosqnqlohccg%40group.calendar.google.com&amp;color=%23ef4ef6&amp;src=5ef1jg56fiaoqbeqago5mbrpd4%40group.calendar.google.com&amp;color=%230F4B38&amp;src=rflnq53lsgj64evaiif691p280%40group.calendar.google.com&amp;color=%2329527A&amp;src=4a7g6cfm9shgpfvmce13aagovs%40group.calendar.google.com&amp;color=%2323164E&amp;src=mdk91hfvr18q8rrlh3sedlhgvo%40group.calendar.google.com&amp;color=%23711616&amp;src=1i7ubr4f35q6hrkond7o4dmtq0%40group.calendar.google.com&amp;color=%23125A12&amp;src=p38tc4mipcao4312oegcmvgkto%40group.calendar.google.com&amp;color=%23711616&amp;ctz=Europe%2FZurich" style="border-width:0" width="800" height="600" frameborder="0"></iframe>
+				 </div>
+			</div>
+			
+<!-- 			Twitter widget -->
             <div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
 	           	<div class="card">
 				 		<p>
@@ -84,69 +93,10 @@
 						</script> 
         		</div>
             </div>
+<!--             Facebook widget -->
         </div>
     </div>
-
-    <script>
-        function getEvents(callback) {
-            callback = callback || function(ret) {
-                console.log(ret);
-            }
-            $.getJSON('https://amiv-apidev.vsos.ethz.ch/events/', callback);
-        }
-
-        function addElement(item) {
-            $('.grid')
-                .append('<div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">' + item + '</div>');
-        }
-        
-        $(document).ready(function() {
-            $('.grid-item, .grid-sizer').addClass('col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2');
-            $('.grid').masonry({
-                itemSelector: '.grid-item',
-                columnWidth: '.grid-sizer',
-                percentPosition: true
-            }).on('DOMSubtreeModified', function(){
-	            $(this).masonry('reloadItems').masonry();
-            })
-            getEvents(function(ret) {
-                ret['_items'].forEach(function(item) {
-	                /*Is it Websitecontent?*/
-	                if (item.show_website == false){
-		                return;
-	                }
-                    console.log(item.title_de);
-                    
-                    /*Picture Checker*/
-                    if (item.img_banner == null){
-						item.img_banner = "https://s-media-cache-ak0.pinimg.com/736x/9c/24/fd/9c24fdb71c67e31efef540efb141f96d.jpg";
-                    }
-                    /* Datum anpassen*/
-					var datenum = new Date(item.time_start);
-					var regstart = new Date(item.time_register_start);
-					var regend = new Date(item.time_register_end);
-					var heute = new Date(Date.now());
-					
-					/*Minuten immer Zweistellig*/
-					var minutes = datenum.getMinutes();
-					if (minutes < 10){
-						minutes = "0" + minutes;
-					}
-					var month = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-					
-					/*Anmeldung*/
-					var register = "";
-					if (/* amivcore.authenticated() &&  */item.spot >= 0 && regstart > heute && regend < heute){
-						register = "Anmelden";
-
-					}
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Zum Event</a><a href="#" target="new_blank">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
-                });
-            });
-        });
-    </script>
-
-<script src="js/main.js"></script>
+   <script src="js/main.js"></script>
 </body>
 
 </html>
