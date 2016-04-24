@@ -55,4 +55,22 @@ function getEvents(callback) {
                     addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Info</a><a href="#" target="new_blank">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
-        });      
+        }); 
+//   Login
+ $('#loginSubmit').on('click', function(){
+	    amivcore.login($('#loginUsername').val(), $('#loginPassword').val(), function(ret) {
+        if (ret == true){
+			$('.welcomening').append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">+amivcore.user+<span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">Logout</a></li><li role="separator" class="divider"></li><li><a href="https://intern.amiv.ethz.ch/wiki/">AMIV-Tools</a></li></ul></li>'); 
+			
+			$('.loglogbutton').hide();       
+        } else {
+	     		$('.welcomening').append('<p class="navbar-text navbar-right message" style="color:red;margin-right:10px;">LOGIN FAILED</p>');
+	     		setTimeout(function() {
+					$('.message').remove();
+				}, 2000);
+        }         
+    });  
+ });
+
+ 
+ 
