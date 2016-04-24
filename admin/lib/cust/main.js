@@ -25,23 +25,30 @@ var tools = {
     modalFunc: {
         init: 0,
     },
+    modalClose: function() {
+        $('.modalCont').modal('hide');
+    },
     modal: function(attr) {
         attr = attr || {};
-        if (attr.success !== undefined && typeof(attr.success) == 'function')
-            tools.modalFunc.success = attr.success;
         if (attr.cancel !== undefined && typeof(attr.cancel) == 'function')
             tools.modalFunc.cancel = attr.cancel;
         if (!tools.modalFunc.init) {
-            $('.modalCont .modal-footer .btn-primary').click(function() {
-                $('.modalCont').off('hide.bs.modal').modal('hide');
-                tools.modalFunc.success();
-            });
             $('.modalCont').on('hide.bs.modal', tools.modalFunc.cancel);
             tools.modalFunc.init = 1;
         }
         $('.modalCont .modal-title').html(attr.head);
         $('.modalCont .modal-body').html(attr.body);
-        $('.modalCont .modal-footer .btn-primary').html(attr.button);
+        $('.modalCont .modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>');
+        var modalBtnId = 0;
+        for (var curBtn in attr.button) {
+            if (attr.button[curBtn].type === undefined && attr.button[curBtn].type != '')
+                attr.button[curBtn].type = 'primary';
+            $('.modalCont .modal-footer').append('<button type="button" class="btn btn-primary modal-btn-' + modalBtnId + '">' + curBtn + '</button>');
+            if (attr.button[curBtn].callback !== undefined && typeof(attr.button[curBtn].callback) == 'function')
+                $('.modal-btn-' + modalBtnId).off('click').on('click', attr.button[curBtn].callback);
+            if (attr.button[curBtn].close === true)
+                $('.modal-btn-' + modalBtnId).on('click', tools.modalClose);
+        }
         $('.modalCont').modal('show');
     },
 
@@ -149,6 +156,11 @@ window.onhashchange = tools.getTool;
 // Login function
 function loginFunc() {
     $('.loginPanel input').attr('readonly', 1);
+    amivcore.login($('#loginUsername').val(), $('#loginPassword').val(), function(ret) {
+        if (ret !== true)
+            tools.log('Wrong Credentials', 'w');
+        $('.loginPanel input').removeAttr('readonly');
+    });
     amivcore.login($('#loginUsername').val(), $('#loginPassword').val(), function(ret) {
         if (ret !== true)
             tools.log('Wrong Credentials', 'w');
