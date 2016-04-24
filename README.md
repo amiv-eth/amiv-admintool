@@ -50,8 +50,16 @@ The JS library ```tools``` is the backbone of the single tools. It enables the t
 * ```data /js object``` Object containning the infos
 	* ```head /text, HTML (optional)``` Sets the modal title.
 	* ```body /text, HTML (optional)``` Sets the modal body.
-	* ```button /text, HTML (optional)``` Confirm button text.
-	* ```success /function (optional)``` Function called on confirm button press.
+	* ```button /object (optional)``` Buttons in the footer. (Multiple allowed!! :D)
+		* ```type /string (optional)``` Type of boostrap button
+			* primary
+			* success
+			* info
+			* warning
+			* danger
+			* link
+		* ```close /bool (optional)``` Close modal on click
+		* ```callback /function (optional)``` Callback for the button
 	* ```cancel /function (optional)``` Function called on cancel or modal is closed.
 
 ##### Example:
@@ -62,10 +70,15 @@ tools.modal();
 tools.modal({
 	head: 'Download Flash Player!!',
 	body: 'Your browser needs this super important plugin',
-	button: 'DOWNLOAD!',
-	success: function(){
-		some.nasty.virus();
-	},
+	button: {
+		'DOWNLOAD!':{
+			type: 'success',
+			close: true,
+			callback: function(){
+				some.nasty.virusdownload.now();
+			}
+		},
+	},	
 	cancel: function(){
 		console.log('No Virus for you -.-');
 	}

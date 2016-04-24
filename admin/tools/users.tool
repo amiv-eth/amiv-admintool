@@ -89,8 +89,13 @@
 				tools.modal({
 					head: ret.firstname + ' ' + ret.lastname,
 					body: tmp,
-					button: 'OK',
-					success: users.inspectUser
+					button: {
+						'Update': {
+							type: 'success',
+							close: true,
+							callback: users.inspectUser,
+						}
+					}
 				});
 
 			});;
@@ -134,22 +139,29 @@
 			tools.modal({
 				head: 'New User',
 				body: tmp,
-				button: 'Add',
-				success: function() {
-					var newUserData = {};
-					$('.users-user-add-table tr').each(function() {
-						newUserData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
-					});
-					amivcore.users.POST({
-						data: newUserData
-					}, function(ret) {
-						if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
-							tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
-						console.log(ret);
-						users.get();
-					});
+				button: {
+					'Add': {
+						type: 'success',
+						close: true,
+						callback: function() {
+							var newUserData = {};
+							$('.users-user-add-table tr').each(function() {
+								newUserData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+							});
+							amivcore.users.POST({
+								data: newUserData
+							}, function(ret) {
+								if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+									tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+								else {
+									tools.log('User Added', 's');
+									users.get();
+								}
+							});
+						}
+					}
 				}
-			})
+			});
 		}
 	};
 
@@ -168,17 +180,14 @@
 					body: '<div class="form-group"><input type="number" value="' + users.page.cur() + '" class="form-control users-go-page"></div>',
 					button: {
 						'Go': {
-							type: 'primary',
+							type: 'success',
 							close: true,
 							callback: function() {
 								users.page.set($('.users-go-page').val());
 							},
-						},
-					},
-					success: function() {
-						users.page.set($('.users-go-page').val());
+						}
 					}
-				})
+				});
 			}
 		},
 		'<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {

@@ -41,13 +41,14 @@ var tools = {
         $('.modalCont .modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>');
         var modalBtnId = 0;
         for (var curBtn in attr.button) {
-            if (attr.button[curBtn].type === undefined && attr.button[curBtn].type != '')
+            if (attr.button[curBtn].type === undefined || attr.button[curBtn].type == '')
                 attr.button[curBtn].type = 'primary';
-            $('.modalCont .modal-footer').append('<button type="button" class="btn btn-primary modal-btn-' + modalBtnId + '">' + curBtn + '</button>');
+            $('.modalCont .modal-footer').append('<button type="button" class="btn btn-' + attr.button[curBtn].type + ' modal-btn-' + modalBtnId + '">' + curBtn + '</button>');
             if (attr.button[curBtn].callback !== undefined && typeof(attr.button[curBtn].callback) == 'function')
                 $('.modal-btn-' + modalBtnId).off('click').on('click', attr.button[curBtn].callback);
             if (attr.button[curBtn].close === true)
                 $('.modal-btn-' + modalBtnId).on('click', tools.modalClose);
+            modalBtnId++;
         }
         $('.modalCont').modal('show');
     },
