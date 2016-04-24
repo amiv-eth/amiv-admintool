@@ -143,7 +143,10 @@
 					amivcore.users.POST({
 						data: newUserData
 					}, function(ret) {
+						if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+							tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
 						console.log(ret);
+						users.get();
 					});
 				}
 			})
@@ -163,7 +166,15 @@
 				tools.modal({
 					head: 'Go To Page:',
 					body: '<div class="form-group"><input type="number" value="' + users.page.cur() + '" class="form-control users-go-page"></div>',
-					button: 'GO',
+					button: {
+						'Go': {
+							type: 'primary',
+							close: true,
+							callback: function() {
+								users.page.set($('.users-go-page').val());
+							},
+						},
+					},
 					success: function() {
 						users.page.set($('.users-go-page').val());
 					}
