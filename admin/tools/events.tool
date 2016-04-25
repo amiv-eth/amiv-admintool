@@ -285,6 +285,12 @@ $(function () {
   $("#time_register_end").on("dp.change", function (e) {
     $('#time_register_start').data("DateTimePicker").maxDate(e.date);
   });
+  $("#time_start").on("dp.change", function (e) {
+    $('#time_end').data("DateTimePicker").minDate(e.date);
+  });
+  $("#time_end").on("dp.change", function (e) {
+    $('#time_start').data("DateTimePicker").maxDate(e.date);
+  });
 });
 
 $('#signup-required').click(function(){
