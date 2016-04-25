@@ -58,47 +58,47 @@
             <input type="text" class="form-control" id="title_de"></input>
           </div>
 
-            <div class="form-group">
-              <label for="description_de">Description</label>
-              <textarea type="text" class="form-control" rows="3" id="description_de"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="catchphrase_de">Catchphrase</label>
-              <input type="text" class="form-control" id="catchphrase_de"></input>
-            </div>
+          <div class="form-group">
+            <label for="description_de">Description</label>
+            <textarea type="text" class="form-control" rows="3" id="description_de"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="catchphrase_de">Catchphrase</label>
+            <input type="text" class="form-control" id="catchphrase_de"></input>
+          </div>
 
           <!-- <div class="container"> -->
-            <!-- <div class="col-md-3"> -->
-              <div class="form-group">
-                <label for="time_start">Start Time</label>
-                <div class="input-group date" id="time_start">
-                  <input type="text" class="form-control" />
-                  <span class="input-group-addon">
+          <!-- <div class="col-md-3"> -->
+          <div class="form-group">
+            <label for="time_start">Start Time</label>
+            <div class="input-group date" id="time_start">
+              <input type="text" class="form-control" />
+              <span class="input-group-addon">
                     <span class="glyphicon-calendar glyphicon"></span>
-                  </span>
-                </div>
-              </div>
-            <!-- </div> -->
-            <!-- <div class="col-md-3"> -->
-              <div class="form-group">
-                <label for="time_end">End Time</label>
-                <div class="input-group date" id="time_end">
-                  <input type="text" class="form-control" />
-                  <span class="input-group-addon">
+              </span>
+            </div>
+          </div>
+          <!-- </div> -->
+          <!-- <div class="col-md-3"> -->
+          <div class="form-group">
+            <label for="time_end">End Time</label>
+            <div class="input-group date" id="time_end">
+              <input type="text" class="form-control" />
+              <span class="input-group-addon">
                     <span class="glyphicon-calendar glyphicon"></span>
-                  </span>
-                </div>
-              </div>
-            <!-- </div> -->
+              </span>
+            </div>
+          </div>
+          <!-- </div> -->
           <!-- </div> -->
 
-        <label class="checkbox-inline">
-          <input type="checkbox" id="signup-required" value="">No Signup
-        </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="signup-required" value="">No Signup
+          </label>
 
-        <label class="checkbox-inline">
-          <input type="checkbox" id="no-signup-limit" value="">No Signup Limit
-        </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="no-signup-limit" value="">No Signup Limit
+          </label>
 
           <div class="form-group">
             <label for="spots">Spots</label>
@@ -106,28 +106,28 @@
           </div>
 
           <!-- <div class="container"> -->
-            <!-- <div class="col-md-3"> -->
-              <div class="form-group">
-                <label for="time_register_start">Start of Registration</label>
-                <div class="input-group date" id="time_register_start">
-                  <input type="text" class="form-control" />
-                  <span class="input-group-addon">
+          <!-- <div class="col-md-3"> -->
+          <div class="form-group">
+            <label for="time_register_start">Start of Registration</label>
+            <div class="input-group date" id="time_register_start">
+              <input type="text" class="form-control" />
+              <span class="input-group-addon">
                     <span class="glyphicon-calendar glyphicon"></span>
-                  </span>
-                </div>
-              </div>
-            <!-- </div> -->
-            <!-- <div class="col-md-3"> -->
-              <div class="form-group">
-                <label for="time_register_end">End of Registration</label>
-                <div class="input-group date" id="time_register_end">
-                  <input type="text" class="form-control" />
-                  <span class="input-group-addon">
+              </span>
+            </div>
+          </div>
+          <!-- </div> -->
+          <!-- <div class="col-md-3"> -->
+          <div class="form-group">
+            <label for="time_register_end">End of Registration</label>
+            <div class="input-group date" id="time_register_end">
+              <input type="text" class="form-control" />
+              <span class="input-group-addon">
                     <span class="glyphicon-calendar glyphicon"></span>
-                  </span>
-                </div>
-              </div>
-            <!-- </div> -->
+              </span>
+            </div>
+          </div>
+          <!-- </div> -->
           <!-- </div> -->
 
           <label class="checkbox-inline">
@@ -160,7 +160,7 @@
             </label>
           </div>
 
-          <button type="button" class"btn" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
+          <button type="button" class "btn" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
 
           <div id="english-collapse" class="collapse">
             <div class="form-group">
@@ -188,25 +188,30 @@
 </div>
 
 <style>
-.events-table-wrapper {
-  position: relative;
-}
-.events-table-wrapper>div {
-  overflow: auto;
-}
+  .events-table-wrapper {
+    position: relative;
+  }
 
-#new-event-modal {
-  overflow: auto;
-}
+  .events-table-wrapper>div {
+    overflow: auto;
+  }
 
-#new-event-modal .checkbox-inline{
-  margin-bottom: 10px;
-}
+  #new-event-modal {
+    overflow: auto;
+  }
 
-.users-sidebar {
-  background: #fff;
-}
+  #new-event-modal .checkbox-inline {
+    margin-bottom: 10px;
+  }
 
+  .users-sidebar {
+    background: #fff;
+  }
+
+  .tooltip-inner {
+    white-space: nowrap;
+    max-width: none;
+  }
 </style>
 
 <script type="text/javascript">
@@ -214,78 +219,141 @@
     showInTable: ['title_de', 'time_start', 'show_website', 'spots'],
     curEventData: null,
 
-    get: function(ret) {
-      console.log(ret);
-      if (!ret || ret['_items'].length == 0) {
-        tools.log('No Data', 'w');
-        return;
-      }
+    get: function() {
+      console.log("refreshing...");
+      amivcore.events.GET({
+          data: {
+            'max_results': '50'
+          }
+        },
+        function(ret) {
+          console.log(ret);
+          if (!ret || ret['_items'].length == 0) {
+            tools.log('No Data', 'w');
+            return;
+          }
+          $('#events-table tbody').html('');
+          for (var n in ret['_items']) {
+            var tmp = '';
+            events.showInTable.forEach(function(i) {
+              tmp += '<td>' + ret['_items'][n][i] + '</td>';
+            });
+            $('#events-table tbody').append('<tr name="' + ret['_items'][n]['id'] + '"">' + tmp + '</tr>');
+          }
 
-      for (var n in ret['_items']) {
-        var tmp = '';
-        events.showInTable.forEach(function(i) {
-          tmp += '<td>' + ret['_items'][n][i] + '</td>';
+
+
+          //show modal on click of the table
+          $('#events-table tbody tr').click(events.showDetails);
+          //   var id = $(this).attr('name')
+          //   var clickedEvent = $.grep(ret['_items'], function(e) {
+          //     return e.id == id;
+          //   })[0];
+          //   console.log(clickedEvent);
+          //   $('#detail-modal .modal-title').text(clickedEvent['title_de']);
+          //   $('#detail-modal').modal('show');
+          //
+          //   for (var field in clickedEvent) {
+          //     var temp = '<td>' + field + '</td><td contenteditable>' + clickedEvent[field] + '</td>';
+          //     $('#event-details-table tbody').append('<tr>' + temp + '</tr>');
+          //   }
         });
-        $('#events-table tbody').append('<tr name="' + ret['_items'][n]['id'] + '"">' + tmp + '</tr>');
-      }
-
-
-
-      //show modal on click of the table
-      $('#events-table tbody tr').click(events.showDetails);
-      //   var id = $(this).attr('name')
-      //   var clickedEvent = $.grep(ret['_items'], function(e) {
-      //     return e.id == id;
-      //   })[0];
-      //   console.log(clickedEvent);
-      //   $('#detail-modal .modal-title').text(clickedEvent['title_de']);
-      //   $('#detail-modal').modal('show');
-      //
-      //   for (var field in clickedEvent) {
-      //     var temp = '<td>' + field + '</td><td contenteditable>' + clickedEvent[field] + '</td>';
-      //     $('#event-details-table tbody').append('<tr>' + temp + '</tr>');
-      //   }
     },
 
 
 
-    showDetails: function(){
+    showDetails: function() {
       amivcore.events.GET({
         id: $(this).attr('name')
       }, function(ret) {
         curEventData = ret;
-        var tmp = '<table class="table table-hover" data-etag="' + ret['_etag'] + '"><tbody>';
+        var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
         for (var cur in ret)
-        if (cur.charAt(0) != '_')
-        tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
+          if (cur.charAt(0) != '_')
+            tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
         tmp += '</tbody></table>';
 
         tools.modal({
           head: ret.title_de,
           body: tmp,
           button: {
+            'Delete': {
+              type: 'danger',
+              close: false,
+              callback: events.deleteEvent
+            },
             'Update': {
               type: 'success',
               close: true,
-              //callback: users.inspectUser,
+              callback: events.inspectEvent
             }
           }
         });
       });
     },
 
-    submitNewEvent: function(){
+    deleteEvent: function() {
+      tools.modal({
+        head: 'Delete' + curEventData.title_de,
+        body: 'Are you really sure you want to permanently delete this event:\n' + curEventData.title_de,
+        button: {
+          'YES': {
+            type: 'warning',
+            close: true,
+            callback: function() {
+              //TODO: delete Event
+            }
+          }
+        },
+        cancel: function() {
+          console.log("event not deleted");
+          tools.log('Event not Deleted', 'i');
+        }
+      })
+    },
+
+    inspectEvent: function() {
+			var newEventData = {};
+			$('.events-edit-table tr').each(function() {
+				newEventData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+			});
+			var changed = false,
+				curEventDataChanged = {};
+			for (var i in newEventData) {
+				if (newEventData[i] != String(curEventData[i])) {
+					changed = true;
+					curEventDataChanged[i] = newEventData[i];
+				}
+			}
+			if (changed) {
+				amivcore.events.PATCH({
+					id: curEventData.id,
+					header: {
+						'If-Match': $('.events-edit-table').attr('data-etag')
+					},
+					data: curEventDataChanged
+				}, function(ret) {
+          console.log(ret);
+					tools.log('Event Updated', 's');
+					events.get();
+				});
+			}
+		},
+
+    submitNewEvent: function() {
       console.log("submitting new event");
-      var newEvent = { data: {}};
+      var newEvent = {
+        data: {}
+      };
       newEvent["data"]["title_de"] = setNullIfEmpty($("#title_de").val());
       newEvent["data"]["description_de"] = setNullIfEmpty($("#description_de").val());
       newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
 
-      if (!($("#time_start").data("DateTimePicker").date() == null)){
+      if (!($("#time_start").data("DateTimePicker").date() == null)) {
         //for now, because the api rejects .toISOString format
         newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
       }
-      if (!($("#time_end").data("DateTimePicker").date() == null)){
+      if (!($("#time_end").data("DateTimePicker").date() == null)) {
         //for now, because the api rejects .toISOString format
         newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
       }
@@ -293,33 +361,29 @@
       if (!$("#signup-required").is(":checked")) {
         if ($("#no-signup-limit").is(":checked")) {
           newEvent["data"]["spots"] = 0;
-        }
-        else {
-          if ($("#spots").val() === ""){
+        } else {
+          if ($("#spots").val() === "") {
             tools.log("Please specify a number of Spots", "e");
             return;
           }
           newEvent["data"]["spots"] = parseInt($("#spots").val());
 
         }
-        if (!($("#time_register_start").data("DateTimePicker").date() == null)){
+        if (!($("#time_register_start").data("DateTimePicker").date() == null)) {
           //for now, because the api rejects .toISOString format
           newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-        }
-        else {
+        } else {
           tools.log('field "Start of Registration" required', 'e');
           return;
         }
-        if (!($("#time_register_end").data("DateTimePicker").date() == null)){
+        if (!($("#time_register_end").data("DateTimePicker").date() == null)) {
           //for now, because the api rejects .toISOString format
           newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-        }
-        else {
+        } else {
           tools.log('field "End of Registration" required', 'e');
           return;
         }
-      }
-      else {
+      } else {
         newEvent["data"]["spots"] = -1;
       }
 
@@ -342,80 +406,89 @@
 
       console.log(newEvent);
       console.log(JSON.stringify(newEvent));
-      var response = amivcore.events.POST(newEvent);
+      var response = amivcore.events.POST(newEvent, function(ret) {
+        if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+          tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+        else {
+          tools.log('Event Added', 's');
+          events.get();
+        }
+      });
       console.log(response);
     }
   }
 
-//var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
+  //var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
 
-amivcore.events.GET({data: {'max_results': '50'}}, events.get);
-
-//setting up the date time picker
-$(function () {
-  $('#time_start').datetimepicker({
-    locale: "de"
-  });
-  $('#time_end').datetimepicker({
-    locale: "de",
-    useCurrent: false //Important! See issue #1075
-  });
-  $('#time_register_start').datetimepicker({
-    locale: "de"
-  });
-  $('#time_register_end').datetimepicker({
-    locale: "de",
-    useCurrent: false //Important! See issue #1075
-  });
-  $("#time_register_start").on("dp.change", function (e) {
-    $('#time_register_end').data("DateTimePicker").minDate(e.date);
-  });
-  $("#time_register_end").on("dp.change", function (e) {
-    $('#time_register_start').data("DateTimePicker").maxDate(e.date);
-  });
-  $("#time_start").on("dp.change", function (e) {
-    $('#time_end').data("DateTimePicker").minDate(e.date);
-  });
-  $("#time_end").on("dp.change", function (e) {
-    $('#time_start').data("DateTimePicker").maxDate(e.date);
-  });
-});
-
-$('#signup-required').click(function(){
-   $('#no-signup-limit').attr('disabled',this.checked);
-   $('#spots').attr('disabled',this.checked);
-   $('#time_register_end>input').attr('disabled',this.checked);
-   $('#time_register_start>input').attr('disabled',this.checked);
-});
-
-$('#no-signup-limit').click(function(){
-   $('#spots').attr('disabled',this.checked);
-});
-
-
-
-
-$('#detail-modal').on("hidden.bs.modal", function(e) {
-  $(e.target).removeData("bs.modal").find(".modal-content tbody").empty();
-});
-
-tools.ui.menu({
-  'New Event':{
-    callback: function (){
-      $('#new-event-modal').modal('show');
+  amivcore.events.GET({
+    data: {
+      'max_results': '50'
     }
+  }, events.get);
+
+  //setting up the date time picker
+  $(function() {
+    $('#time_start').datetimepicker({
+      locale: "de"
+    });
+    $('#time_end').datetimepicker({
+      locale: "de",
+      useCurrent: false //Important! See issue #1075
+    });
+    $('#time_register_start').datetimepicker({
+      locale: "de"
+    });
+    $('#time_register_end').datetimepicker({
+      locale: "de",
+      useCurrent: false //Important! See issue #1075
+    });
+    $("#time_register_start").on("dp.change", function(e) {
+      $('#time_register_end').data("DateTimePicker").minDate(e.date);
+    });
+    $("#time_register_end").on("dp.change", function(e) {
+      $('#time_register_start').data("DateTimePicker").maxDate(e.date);
+    });
+    $("#time_start").on("dp.change", function(e) {
+      $('#time_end').data("DateTimePicker").minDate(e.date);
+    });
+    $("#time_end").on("dp.change", function(e) {
+      $('#time_start').data("DateTimePicker").maxDate(e.date);
+    });
+  });
+
+  $('#signup-required').click(function() {
+    $('#no-signup-limit').attr('disabled', this.checked);
+    $('#spots').attr('disabled', this.checked);
+    $('#time_register_end>input').attr('disabled', this.checked);
+    $('#time_register_start>input').attr('disabled', this.checked);
+  });
+
+  $('#no-signup-limit').click(function() {
+    $('#spots').attr('disabled', this.checked);
+  });
+
+
+  tools.ui.menu({
+    '<span class="glyphicon glyphicon-plus"  data-toggle="tooltip" aria-hidden="true" title="Create new Event" data-placement="bottom"></span>': {
+      callback: function() {
+        $('#new-event-modal').modal('show');
+      }
+    },
+    '<span class="glyphicon glyphicon-refresh"  data-toggle="tooltip" aria-hidden="true" title="Refresh" data-placement="bottom"></span>': {
+      callback: events.get
+    }
+  });
+
+
+
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+
+  function setNullIfEmpty(formData) {
+    if (formData === "") {
+      return null;
+    }
+    return formData;
   }
-});
-
-
-
-
-
-function setNullIfEmpty(formData){
-  if (formData === ""){
-    return null;
-  }
-  return formData;
-}
-
 </script>
