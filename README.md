@@ -46,7 +46,7 @@ The JS library ```tools``` is the backbone of the single tools. It enables the t
 * ``` tools.log('Error!', 'e', 10000); ``` Creates a gred alert box with the message specified that will disappear after 10s.
 
 ### modal(data)
-###### Spwans a BS modal.
+###### Spwans a BS modal. To close a modal without a button just call ```tools.modalClose()```
 * ```data /js object``` Object containning the infos
 	* ```head /text, HTML (optional)``` Sets the modal title.
 	* ```body /text, HTML (optional)``` Sets the modal body.
@@ -58,7 +58,7 @@ The JS library ```tools``` is the backbone of the single tools. It enables the t
 			* warning
 			* danger
 			* link
-		* ```close /bool (optional)``` Close modal on click
+		* ```close /bool (optional)``` Close modal on click 
 		* ```callback /function (optional)``` Callback for the button
 	* ```cancel /function (optional)``` Function called on cancel or modal is closed.
 
