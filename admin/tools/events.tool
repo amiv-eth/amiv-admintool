@@ -1,8 +1,3 @@
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.14.30/js/bootstrap-datetimepicker.min.js"></script> -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.14.30/css/bootstrap-datetimepicker.css"> -->
-
-
 <div class="events-table-wrapper">
   <div class="tools-full-height">
     <table class="table table-hover events-table" id="events-table">
@@ -21,7 +16,7 @@
 </div>
 
 <!-- modal for details of events-->
-<div class="modal fade" id="detail-modal" role="dialog">
+<!-- <div class="modal fade" id="detail-modal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -45,7 +40,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- modal for creating new events-->
 
@@ -186,7 +181,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="submitNewEvent()">Submit</button>
+        <button type="button" class="btn btn-primary" onclick="events.submitNewEvent">Submit</button>
       </div>
     </div>
   </div>
@@ -208,14 +203,6 @@
   margin-bottom: 10px;
 }
 
-#new-event-modal .form-left {
-  margin-right: 5px;
-}
-
-#new-event-modal .form-right {
-  margin-left: 5px;
-}
-
 .users-sidebar {
   background: #fff;
 }
@@ -223,47 +210,148 @@
 </style>
 
 <script type="text/javascript">
+  var events = {
+    showInTable: ['title_de', 'time_start', 'show_website', 'spots'],
+    curEventData: null,
 
-var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
+    get: function(ret) {
+      console.log(ret);
+      if (!ret || ret['_items'].length == 0) {
+        tools.log('No Data', 'w');
+        return;
+      }
 
-amivcore.events.GET({
-  data: {
-    'max_results': '50'
-  }
-}, function(ret) {
-  console.log(ret);
-  if (!ret || ret['_items'].length == 0) {
-    tools.log('No Data', 'w');
-    return;
-  }
-
-  for (var n in ret['_items']) {
-    var tmp = '';
-    showInTable.forEach(function(i) {
-      tmp += '<td>' + ret['_items'][n][i] + '</td>';
-    });
-    $('#events-table tbody').append('<tr name="' + ret['_items'][n]['id'] + '"">' + tmp + '</tr>');
-  }
+      for (var n in ret['_items']) {
+        var tmp = '';
+        events.showInTable.forEach(function(i) {
+          tmp += '<td>' + ret['_items'][n][i] + '</td>';
+        });
+        $('#events-table tbody').append('<tr name="' + ret['_items'][n]['id'] + '"">' + tmp + '</tr>');
+      }
 
 
 
-  //show modal on click of the table
-  $('#events-table tbody tr').click(function(event) {
-    var id = $(this).attr('name')
-    var clickedEvent = $.grep(ret['_items'], function(e) {
-      return e.id == id;
-    })[0];
-    console.log(clickedEvent);
-    $('#detail-modal .modal-title').text(clickedEvent['title_de']);
-    $('#detail-modal').modal('show');
+      //show modal on click of the table
+      $('#events-table tbody tr').click(events.showDetails);
+      //   var id = $(this).attr('name')
+      //   var clickedEvent = $.grep(ret['_items'], function(e) {
+      //     return e.id == id;
+      //   })[0];
+      //   console.log(clickedEvent);
+      //   $('#detail-modal .modal-title').text(clickedEvent['title_de']);
+      //   $('#detail-modal').modal('show');
+      //
+      //   for (var field in clickedEvent) {
+      //     var temp = '<td>' + field + '</td><td contenteditable>' + clickedEvent[field] + '</td>';
+      //     $('#event-details-table tbody').append('<tr>' + temp + '</tr>');
+      //   }
+    },
 
-    for (var field in clickedEvent) {
-      var temp = '<td>' + field + '</td><td>' + clickedEvent[field] + '</td>';
-      $('#event-details-table tbody').append('<tr>' + temp + '</tr>');
+
+
+    showDetails: function(){
+      amivcore.events.GET({
+        id: $(this).attr('name')
+      }, function(ret) {
+        curEventData = ret;
+        var tmp = '<table class="table table-hover" data-etag="' + ret['_etag'] + '"><tbody>';
+        for (var cur in ret)
+        if (cur.charAt(0) != '_')
+        tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
+        tmp += '</tbody></table>';
+
+        tools.modal({
+          head: ret.title_de,
+          body: tmp,
+          button: {
+            'Update': {
+              type: 'success',
+              close: true,
+              //callback: users.inspectUser,
+            }
+          }
+        });
+      });
+    },
+
+    submitNewEvent: function(){
+      console.log("submitting new event");
+      var newEvent = { data: {}};
+      newEvent["data"]["title_de"] = setNullIfEmpty($("#title_de").val());
+      newEvent["data"]["description_de"] = setNullIfEmpty($("#description_de").val());
+      newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
+
+      if (!($("#time_start").data("DateTimePicker").date() == null)){
+        //for now, because the api rejects .toISOString format
+        newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+      }
+      if (!($("#time_end").data("DateTimePicker").date() == null)){
+        //for now, because the api rejects .toISOString format
+        newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+      }
+
+      if (!$("#signup-required").is(":checked")) {
+        if ($("#no-signup-limit").is(":checked")) {
+          newEvent["data"]["spots"] = 0;
+        }
+        else {
+          if ($("#spots").val() === ""){
+            tools.log("Please specify a number of Spots", "e");
+            return;
+          }
+          newEvent["data"]["spots"] = parseInt($("#spots").val());
+
+        }
+        if (!($("#time_register_start").data("DateTimePicker").date() == null)){
+          //for now, because the api rejects .toISOString format
+          newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+        }
+        else {
+          tools.log('field "Start of Registration" required', 'e');
+          return;
+        }
+        if (!($("#time_register_end").data("DateTimePicker").date() == null)){
+          //for now, because the api rejects .toISOString format
+          newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+        }
+        else {
+          tools.log('field "End of Registration" required', 'e');
+          return;
+        }
+      }
+      else {
+        newEvent["data"]["spots"] = -1;
+      }
+
+      newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
+
+      newEvent["data"]["location"] = setNullIfEmpty($("#location").val());
+
+      if (!($("#price").val() === "")) {
+        newEvent["data"]["price"] = Math.floor((parseFloat($("#price").val()) * 100));
+      }
+
+      newEvent["data"]["show_website"] = $("#show_website").is(':checked');
+      newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
+      newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
+
+
+      newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
+      newEvent["data"]["description_en"] = setNullIfEmpty($("#description_en").val());
+      newEvent["data"]["catchphrase_en"] = setNullIfEmpty($("#catchphrase_en").val());
+
+      console.log(newEvent);
+      console.log(JSON.stringify(newEvent));
+      var response = amivcore.events.POST(newEvent);
+      console.log(response);
     }
-  });
+  }
 
+//var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
 
+amivcore.events.GET({data: {'max_results': '50'}}, events.get);
+
+//setting up the date time picker
 $(function () {
   $('#time_start').datetimepicker({
     locale: "de"
@@ -306,7 +394,6 @@ $('#no-signup-limit').click(function(){
 
 
 
-});
 
 $('#detail-modal').on("hidden.bs.modal", function(e) {
   $(e.target).removeData("bs.modal").find(".modal-content tbody").empty();
@@ -322,77 +409,7 @@ tools.ui.menu({
 
 
 
-function submitNewEvent(){
-  console.log("submitting new event");
-  var newEvent = { data: {}};
-  newEvent["data"]["title_de"] = setNullIfEmpty($("#title_de").val());
-  newEvent["data"]["description_de"] = setNullIfEmpty($("#description_de").val());
-  newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
 
-  if (!($("#time_start").data("DateTimePicker").date() == null)){
-    //for now, because the api rejects .toISOString format
-    newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-    }
-  if (!($("#time_end").data("DateTimePicker").date() == null)){
-    //for now, because the api rejects .toISOString format
-    newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-  }
-
-  if (!$("#signup-required").is(":checked")) {
-    if ($("#no-signup-limit").is(":checked")) {
-      newEvent["data"]["spots"] = 0;
-    }
-    else {
-      if ($("#spots").val() === ""){
-        tools.log("Please specify a number of Spots", "e");
-        return;
-      }
-      newEvent["data"]["spots"] = parseInt($("#spots").val());
-
-    }
-    if (!($("#time_register_start").data("DateTimePicker").date() == null)){
-      //for now, because the api rejects .toISOString format
-      newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-    }
-    else {
-      tools.log('field "Start of Registration" required', 'e');
-      return;
-    }
-    if (!($("#time_register_end").data("DateTimePicker").date() == null)){
-      //for now, because the api rejects .toISOString format
-      newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
-    }
-    else {
-      tools.log('field "End of Registration" required', 'e');
-      return;
-    }
-  }
-  else {
-    newEvent["data"]["spots"] = -1;
-  }
-
-  newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
-
-  newEvent["data"]["location"] = setNullIfEmpty($("#location").val());
-
-  if (!($("#price").val() === "")) {
-    newEvent["data"]["price"] = Math.floor((parseFloat($("#price").val()) * 100));
-  }
-
-  newEvent["data"]["show_website"] = $("#show_website").is(':checked');
-  newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
-  newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
-
-
-  newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
-  newEvent["data"]["description_en"] = setNullIfEmpty($("#description_en").val());
-  newEvent["data"]["catchphrase_en"] = setNullIfEmpty($("#catchphrase_en").val());
-
-  console.log(newEvent);
-  console.log(JSON.stringify(newEvent));
-  var response = amivcore.events.POST(newEvent);
-  console.log(response);
-}
 
 function setNullIfEmpty(formData){
   if (formData === ""){
