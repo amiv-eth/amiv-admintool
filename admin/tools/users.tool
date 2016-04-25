@@ -60,6 +60,21 @@
 			}
 		},
 
+		//Searching
+		search: {
+			cur: function() {
+				return tools.mem.session.get('search');
+			},
+			set: function(dom, val) {
+				tools.mem.session.set('search', dom + '==' + val);
+				users.page.set(1);
+			},
+			clr: function() {
+				tools.mem.session.set('search', '');
+				users.page.set(1);
+			},
+		},
+
 		// Get users
 		get: function() {
 			amivcore.users.GET({
@@ -67,6 +82,7 @@
 					'max_results': '50',
 					page: users.page.cur(),
 					sort: users.sort.cur(),
+					where: users.search.cur(),
 				}
 			}, function(ret) {
 
@@ -154,7 +170,7 @@
 
 		//Make new user
 		add: function() {
-			var tmp = '<table class="table table-hover users-user-add-table"><tbody>',
+			var tmp = '<table class="table table-hover table-bordered users-user-add-table"><tbody>',
 				reqFields = amivcore.getRequiredFields('users', 'POST');
 			for (var reqField in reqFields)
 				tmp += '<tr><td>' + reqField + '</td><td contenteditable></td></tr>'
@@ -218,13 +234,13 @@
 		},
 		'<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>': {
 			callback: function() {
-				var tmp = '<select class="form-control users-sort-select">';
+				var tmp = '<div class="form-group"><select class="form-control users-sort-select">';
 				var cur = users.sort.cur();
 				['id', 'firstname', 'lastname'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
 					tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
-				})
-				tmp += '</select>'
+				});
+				tmp += '</select></div>';
 				tools.modal({
 					head: 'Sort',
 					body: tmp,
@@ -242,7 +258,32 @@
 			}
 		},
 		'<span class="glyphicon glyphicon-search" aria-hidden="true"></span>': {
-			callback: function() {}
+			callback: function() {
+				var tmp = '<div class="form-group"><select class="form-control users-search-select">';
+				var cur = users.search.cur();
+				['id', 'firstname', 'lastname'].forEach(function(i) {
+					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
+				});
+				tmp += '</select><br><input type="text" value="' + users.search.cur().split('==')[1] + '" class="form-control users-search-val"></div>';
+				tools.modal({
+					head: 'Search',
+					body: tmp,
+					button: {
+						'Clear': {
+							type: 'warning',
+							close: true,
+							callback: users.search.clr,
+						},
+						'Search': {
+							type: 'success',
+							close: true,
+							callback: function() {
+								users.search.set($('.users-search-select').val(), $('.users-search-val').val());
+							}
+						},
+					}
+				})
+			}
 		}
 	});
 
