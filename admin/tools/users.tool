@@ -261,10 +261,14 @@
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control users-search-select">';
 				var cur = users.search.cur();
+				if(cur === null || cur == '')
+					cur = '';
+				else
+					cur = cur.split('==')[1];
 				['id', 'firstname', 'lastname'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
 				});
-				tmp += '</select><br><input type="text" value="' + users.search.cur().split('==')[1] + '" class="form-control users-search-val"></div>';
+				tmp += '</select><br><input type="text" value="' + cur + '" class="form-control users-search-val"></div>';
 				tools.modal({
 					head: 'Search',
 					body: tmp,
