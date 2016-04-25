@@ -151,6 +151,11 @@ var tools = {
 	Initialization of page
 */
 
+//Turning off cache for ajax on dev stage
+$.ajaxSetup({
+    cache: false
+});
+
 //Binding tool change whenever the hash is changed
 window.onhashchange = tools.getTool;
 
