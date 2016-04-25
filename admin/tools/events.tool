@@ -280,7 +280,15 @@
             'Delete': {
               type: 'danger',
               close: false,
-              callback: events.deleteEvent
+              callback: function() {
+                if (confirm("Delete " + ret.title_de + "?") == true) {
+                  //TODO: delete event
+                  tools.log('Event deleted', 'w');
+                }
+                else {
+                  tools.log('Event not Deleted', 'i');
+                }
+              } //events.deleteEvent
             },
             'Update': {
               type: 'success',
