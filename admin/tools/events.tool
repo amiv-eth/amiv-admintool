@@ -373,6 +373,7 @@
       if (changed) {
         //workaround to get booleans and ints working
         for (var i in curEventDataChanged) {
+          if (curEventDataChanged[i] === 'null' || curEventDataChanged[i] === '') curEventDataChanged[i] = null;
           if (curEventDataChanged[i] === 'true') curEventDataChanged[i] = true;
           if (curEventDataChanged[i] === 'false') curEventDataChanged[i] = false;
           if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
