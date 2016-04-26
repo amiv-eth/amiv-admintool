@@ -42,7 +42,7 @@
   </div>
 </div> -->
 
-<!-- modal for creating new events-->
+<!-- modal for creating new events, easier to do it this way than js-->
 
 <div class="modal fade" id="new-event-modal" role="dialog">
   <div class="modal-dialog">
@@ -181,7 +181,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="events.submitNewEvent">Submit</button>
+        <button type="button" class="btn btn-primary" onclick="events.submitNewEvent()">Submit</button>
       </div>
     </div>
   </div>
@@ -219,52 +219,100 @@
     showInTable: ['title_de', 'time_start', 'show_website', 'spots'],
     curEventData: null,
 
+    // Page
+    page: {
+      max: Number.MAX_VALUE,
+      cur: function() {
+        return parseInt(tools.mem.session.get('curPage'));
+      },
+      set: function(num) {
+        num = parseInt(num);
+        if (num > 0 && num < events.page.max + 1)
+          tools.mem.session.set('curPage', num);
+        $('.events-cur-page-cont').html(events.page.cur());
+        events.get();
+      },
+      inc: function() {
+        events.page.set(events.page.cur() + 1);
+      },
+      dec: function() {
+        events.page.set(events.page.cur() - 1);
+      }
+    },
+
+    //Sorting
+    sort: {
+      cur: function() {
+        return tools.mem.session.get('curSort');
+      },
+      set: function(sort) {
+        tools.mem.session.set('curSort', sort);
+        events.get();
+      },
+      inv: function() {
+        var tmp = events.sort.cur();
+        if (tmp.charAt(0) == '-')
+          events.sort.set(tmp.slice(1));
+        else
+          events.sort.set('-' + tmp);
+      }
+    },
+
+    //Searching
+    search: {
+      cur: function() {
+        return tools.mem.session.get('search');
+      },
+      set: function(dom, val) {
+        tools.mem.session.set('search', dom + '==' + val);
+        events.page.set(1);
+      },
+      clr: function() {
+        tools.mem.session.set('search', '');
+        events.page.set(1);
+      },
+    },
+
     get: function() {
-      console.log("refreshing...");
+      console.log('getting events...');
       amivcore.events.GET({
-          data: {
-            'max_results': '50'
-          }
-        },
-        function(ret) {
-          console.log(ret);
-          if (!ret || ret['_items'].length == 0) {
-            tools.log('No Data', 'w');
-            return;
-          }
-          $('#events-table tbody').html('');
-          for (var n in ret['_items']) {
-            var tmp = '';
-            events.showInTable.forEach(function(i) {
-              tmp += '<td>' + ret['_items'][n][i] + '</td>';
-            });
-            $('#events-table tbody').append('<tr name="' + ret['_items'][n]['id'] + '"">' + tmp + '</tr>');
-          }
+        data: {
+          'max_results': '50',
+          page: events.page.cur(),
+          sort: events.sort.cur(),
+          where: events.search.cur(),
+        }
+      }, function(ret) {
 
+        if (ret === undefined || ret['_items'].length == 0) {
+          tools.log('No Data', 'w');
+          return;
+        }
 
+        events.meta = ret['_meta'];
+        events.page.max = Math.ceil(events.meta.total / events.meta.max_results);
+        $('.events-page-max-cont').html(events.page.max);
 
-          //show modal on click of the table
-          $('#events-table tbody tr').click(events.showDetails);
-          //   var id = $(this).attr('name')
-          //   var clickedEvent = $.grep(ret['_items'], function(e) {
-          //     return e.id == id;
-          //   })[0];
-          //   console.log(clickedEvent);
-          //   $('#detail-modal .modal-title').text(clickedEvent['title_de']);
-          //   $('#detail-modal').modal('show');
-          //
-          //   for (var field in clickedEvent) {
-          //     var temp = '<td>' + field + '</td><td contenteditable>' + clickedEvent[field] + '</td>';
-          //     $('#event-details-table tbody').append('<tr>' + temp + '</tr>');
-          //   }
-        });
+        // Clear table from previous contentent
+        $('.events-table tbody').html('');
+
+        for (var n in ret['_items']) {
+          var tmp = '';
+          events.showInTable.forEach(function(i) {
+            tmp += '<td>' + ret['_items'][n][i] + '</td>';
+          });
+          $('.events-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
+        }
+        $('.events-table tbody tr').click(events.showDetails);
+      });
+
     },
 
 
 
     showDetails: function() {
       amivcore.events.GET({
-        id: $(this).attr('name')
+        id: $(this).attr('data-id')
       }, function(ret) {
         curEventData = ret;
         var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
@@ -282,17 +330,25 @@
               close: false,
               callback: function() {
                 if (confirm("Delete " + ret.title_de + "?") == true) {
-                  //TODO: delete event
+                  amivcore.events.DELETE({
+                    id: curEventData.id,
+                    header: {
+                      'If-Match': $('.events-edit-table').attr('data-etag')
+                    }
+                  }, function(response) {
+                    console.log(response);
+                  });
+                  events.get();
                   tools.log('Event deleted', 'w');
-                }
-                else {
+                  tools.modalClose();
+                } else {
                   tools.log('Event not Deleted', 'i');
                 }
-              } //events.deleteEvent
+              }
             },
             'Update': {
               type: 'success',
-              close: true,
+              close: false,
               callback: events.inspectEvent
             }
           }
@@ -300,53 +356,45 @@
       });
     },
 
-    deleteEvent: function() {
-      tools.modal({
-        head: 'Delete' + curEventData.title_de,
-        body: 'Are you really sure you want to permanently delete this event:\n' + curEventData.title_de,
-        button: {
-          'YES': {
-            type: 'warning',
-            close: true,
-            callback: function() {
-              //TODO: delete Event
-            }
-          }
-        },
-        cancel: function() {
-          console.log("event not deleted");
-          tools.log('Event not Deleted', 'i');
-        }
-      })
-    },
-
     inspectEvent: function() {
-			var newEventData = {};
-			$('.events-edit-table tr').each(function() {
-				newEventData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
-			});
-			var changed = false,
-				curEventDataChanged = {};
-			for (var i in newEventData) {
-				if (newEventData[i] != String(curEventData[i])) {
-					changed = true;
-					curEventDataChanged[i] = newEventData[i];
-				}
-			}
-			if (changed) {
-				amivcore.events.PATCH({
-					id: curEventData.id,
-					header: {
-						'If-Match': $('.events-edit-table').attr('data-etag')
-					},
-					data: curEventDataChanged
-				}, function(ret) {
-          console.log(ret);
-					tools.log('Event Updated', 's');
-					events.get();
-				});
-			}
-		},
+      var newEventData = {};
+      $('.events-edit-table tr').each(function() {
+        newEventData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+      });
+      var changed = false,
+        curEventDataChanged = {};
+      for (var i in newEventData) {
+        if (newEventData[i] != String(curEventData[i])) {
+          changed = true;
+          curEventDataChanged[i] = newEventData[i];
+        }
+      }
+      console.log(curEventDataChanged);
+      if (changed) {
+        //workaround to get booleans and ints working
+        for (var i in curEventDataChanged) {
+          if (curEventDataChanged[i] === 'true') curEventDataChanged[i] = true;
+          if (curEventDataChanged[i] === 'false') curEventDataChanged[i] = false;
+          if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
+        }
+        amivcore.events.PATCH({
+          id: curEventData.id,
+          header: {
+            'If-Match': $('.events-edit-table').attr('data-etag')
+          },
+          data: curEventDataChanged
+        }, function(ret) {
+          if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+            tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+          else {
+            // console.log(ret);
+            tools.log('Event Updated', 's');
+            events.get();
+            tools.modalClose();
+          }
+        });
+      }
+    },
 
     submitNewEvent: function() {
       console.log("submitting new event");
@@ -419,6 +467,8 @@
           tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
         else {
           tools.log('Event Added', 's');
+          $('#new-event-modal').modal('hide');
+          $("#new-event").trigger('reset');
           events.get();
         }
       });
@@ -426,13 +476,6 @@
     }
   }
 
-  //var showInTable = ['title_de', 'time_start', 'show_website', 'spots'];
-
-  amivcore.events.GET({
-    data: {
-      'max_results': '50'
-    }
-  }, events.get);
 
   //setting up the date time picker
   $(function() {
@@ -482,12 +525,96 @@
         $('#new-event-modal').modal('show');
       }
     },
-    '<span class="glyphicon glyphicon-refresh"  data-toggle="tooltip" aria-hidden="true" title="Refresh" data-placement="bottom"></span>': {
+    '<span class="glyphicon glyphicon-refresh" aria-hidden="true"  data-toggle="tooltip" title="Refresh" data-placement="bottom"></span>': {
       callback: events.get
+    },
+    '<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>': {
+      callback: events.page.dec
+    },
+    '<span class="events-cur-page-cont" aria-hidden="true"></span> / <span class="events-page-max-cont" aria-hidden="true"></span>': {
+      callback: function() {
+        tools.modal({
+          head: 'Go To Page:',
+          body: '<div class="form-group"><input type="number" value="' + events.page.cur() + '" class="form-control events-go-page"></div>',
+          button: {
+            'Go': {
+              type: 'success',
+              close: true,
+              callback: function() {
+                events.page.set($('.events-go-page').val());
+              },
+            }
+          }
+        });
+      }
+    },
+    '<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {
+      callback: events.page.inc
+    },
+    '<span class="glyphicon glyphicon-sort" aria-hidden="true" data-toggle="tooltip" title="Sort" data-placement="bottom"></span>': {
+      callback: function() {
+        var tmp = '<div class="form-group"><select class="form-control events-sort-select">';
+        var cur = events.sort.cur();
+        ['id', 'title_de', 'description_de', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(function(i) {
+          tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
+          tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
+        });
+        tmp += '</select></div>';
+        tools.modal({
+          head: 'Sort',
+          body: tmp,
+          button: {
+            'Sort': {
+              type: 'success',
+              close: true,
+              callback: function() {
+                events.sort.set($('.events-sort-select').val());
+              }
+            }
+          }
+
+        });
+      }
+    },
+    '<span class="glyphicon glyphicon-search" aria-hidden="true" data-toggle="tooltip" title="Search" data-placement="bottom"></span>': {
+      callback: function() {
+        var tmp = '<div class="form-group"><select class="form-control events-search-select">';
+        var cur = events.search.cur();
+        if (cur === null || cur == '')
+          cur = '';
+        else
+          cur = cur.split('==')[1];
+        ['id', 'title_de', 'description_de', 'title_en', 'description_en', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(
+          function(i) {
+            tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
+          });
+        tmp += '</select><br><input type="text" value="' + cur + '" class="form-control events-search-val"></div>';
+        tools.modal({
+          head: 'Search',
+          body: tmp,
+          button: {
+            'Clear': {
+              type: 'warning',
+              close: true,
+              callback: events.search.clr,
+            },
+            'Search': {
+              type: 'success',
+              close: true,
+              callback: function() {
+                events.search.set($('.events-search-select').val(), $('.events-search-val').val());
+              }
+            },
+          }
+        })
+      }
     }
   });
 
-
+  if (events.page.cur() === null || isNaN(events.page.cur()))
+    events.page.set(1);
+  else
+    events.page.set(events.page.cur());
 
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
