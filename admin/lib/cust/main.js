@@ -4,6 +4,7 @@
 var tools = {
 
     //Log Function & Utility Vars
+    alertElems: [],
     alertNum: 0,
     alertType: {
         's': 'alert-success',
@@ -14,9 +15,11 @@ var tools = {
     log: function(msg, type, timeout) {
         timeout = timeout || 5000;
         tools.alertNum++;
-        $('.alertCont').append('<div id="alertBox' + tools.alertNum + '" class="alert ' + tools.alertType[type] + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + msg + '</div>');
+        $('.alertCont').append('<div id="alertBox-' + tools.alertNum + '" class="alert ' + tools.alertType[type] + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + msg + '</div>');
+        tools.alertElems.push(tools.alertNum);
         setTimeout(function() {
-            $('#alertBox' + tools.alertNum).alert('close');
+            $('#alertBox-' + tools.alertElems[0]).alert('close');
+            tools.alertElems.shift();
         }, timeout);
         console.log(msg);
     },
