@@ -10,22 +10,22 @@
 
 ### File Structure:
 * admin (Admintool)
-	* lib (Libraries)
-		* bootstrap
-		* jquery
-		* amiv (amivcore)
-		* cust (custom files)
-			* main.js (our js file)
-			* main.css (our css file)
-	* res (Resources)
-		* bg (big pictures and backgrounds)
-		* favicon
-		* fonts
-		* logo
-	* tools (tools)
-		* main.tool
-		* users.tool
-		* ...
+  * lib (Libraries)
+    * bootstrap
+    * jquery
+    * amiv (amivcore)
+    * cust (custom files)
+      * main.js (our js file)
+      * main.css (our css file)
+  * res (Resources)
+    * bg (big pictures and backgrounds)
+    * favicon
+    * fonts
+    * logo
+  * tools (tools)
+    * main.tool
+    * users.tool
+    * ...
 * public (Website)
 
 ## Library ```tools```:
@@ -35,10 +35,10 @@ The JS library ```tools``` is the backbone of the single tools. It enables the t
 ###### Displays an alert box to the user.
 * ```msg /text,HTML``` The message or html to be displayed in the alert box
 * ```type /('s', 'i', 'w', 'e')``` Specifies the type of message. Displays different colors for each type.
-	* s: success
-	* i: information
-	* w: warning
-	* e: error
+  * s: success
+  * i: information
+  * w: warning
+  * e: error
 * ```timeout /int (optional)``` Number of milliseconds that the message will be displayed. If not specified the default time is 5s, or 5000ms.
 
 ##### Example:
@@ -46,21 +46,21 @@ The JS library ```tools``` is the backbone of the single tools. It enables the t
 * ``` tools.log('Error!', 'e', 10000); ``` Creates a gred alert box with the message specified that will disappear after 10s.
 
 ### modal(data)
-###### Spwans a BS modal. To close a modal without a button just call ```tools.modalClose()```
+###### Spawns a BS modal. To close a modal without a button just call ```tools.modalClose()```
 * ```data /js object``` Object containning the infos
-	* ```head /text, HTML (optional)``` Sets the modal title.
-	* ```body /text, HTML (optional)``` Sets the modal body.
-	* ```button /object (optional)``` Buttons in the footer. (Multiple allowed!! :D)
-		* ```type /string (optional)``` Type of boostrap button
-			* primary
-			* success
-			* info
-			* warning
-			* danger
-			* link
-		* ```close /bool (optional)``` Close modal on click 
-		* ```callback /function (optional)``` Callback for the button
-	* ```cancel /function (optional)``` Function called on cancel or modal is closed.
+  * ```head /text, HTML (optional)``` Sets the modal title.
+  * ```body /text, HTML (optional)``` Sets the modal body.
+  * ```button /object (optional)``` Buttons in the footer. (Multiple allowed!! :D)
+    * ```type /string (optional)``` Type of boostrap button
+      * primary
+      * success
+      * info
+      * warning
+      * danger
+      * link
+    * ```close /bool (optional)``` Close modal on click 
+    * ```callback /function (optional)``` Callback for the button
+  * ```cancel /function (optional)``` Function called on cancel or modal is closed.
 
 ##### Example:
 ```javascript
@@ -102,8 +102,8 @@ tools.modal({
 #### menu(object)
 ###### Allows a tool to access the top menu and have custom links and callbacks.
 * ```object /js object``` Menu structured element from which the menu is generated.
-	* ```link /link (optional)``` HTTP link or hash. If left empty the link is disabled.
-	* ```callback /function (optional)``` The function that is called if the link is pressed.
+  * ```link /link (optional)``` HTTP link or hash. If left empty the link is disabled.
+  * ```callback /function (optional)``` The function that is called if the link is pressed.
 
 ##### Example:
 ```javascript
@@ -146,7 +146,7 @@ tools.ui.menu({
 #### set(name, value)
 ###### Sets and stores a value. If the value already exists it will be overwritten!
 * ```name /text``` Name of the 'variable'.
-*  ```value /any``` The data to be stored. Can be any valid JS data, object, etc.
+* ```value /any``` The data to be stored. Can be any valid JS data, object, etc.
 
 ##### Example:
 * ```tools.mem.session.set('currentUser', 'Sir Anon');``` Stores 'Sir Anon' in 'currentUser'.
