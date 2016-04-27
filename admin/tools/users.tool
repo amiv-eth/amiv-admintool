@@ -18,7 +18,7 @@
 </style>
 <script type="text/javascript">
 	var users = {
-		showInTable: ['firstname', 'lastname', 'email', 'membership'],
+		showInTable: ['firstname', 'lastname', 'nethz', 'legi', 'membership'],
 		curUserData: null,
 
 		// Page
@@ -206,13 +206,13 @@
 
 	// Setup Menu
 	tools.ui.menu({
-		'<span class="glyphicon glyphicon-user" aria-hidden="true"></span>': {
+		'<span class="glyphicon glyphicon-user" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Create User"></span>': {
 			callback: users.add
 		},
-		'<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>': {
+		'<span class="glyphicon glyphicon-arrow-left" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Previous Page"></span>': {
 			callback: users.page.dec
 		},
-		'<span class="users-cur-page-cont" aria-hidden="true"></span> / <span class="users-page-max-cont" aria-hidden="true"></span>': {
+		'<span data-toggle="tooltip" data-placement="bottom" title="Set Page"><span class="users-cur-page-cont" aria-hidden="true"></span> / <span class="users-page-max-cont" aria-hidden="true"></span></span>': {
 			callback: function() {
 				tools.modal({
 					head: 'Go To Page:',
@@ -229,14 +229,14 @@
 				});
 			}
 		},
-		'<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {
+		'<span class="glyphicon glyphicon-arrow-right" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Next Page"></span>': {
 			callback: users.page.inc
 		},
-		'<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>': {
+		'<span class="glyphicon glyphicon-sort" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Sort"></span>': {
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control users-sort-select">';
 				var cur = users.sort.cur();
-				['id', 'firstname', 'lastname'].forEach(function(i) {
+				['id', 'firstname', 'lastname', 'membership', 'nethz'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
 					tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
 				});
@@ -257,11 +257,11 @@
 				});
 			}
 		},
-		'<span class="glyphicon glyphicon-search" aria-hidden="true"></span>': {
+		'<span class="glyphicon glyphicon-search" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Search"></span>': {
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control users-search-select">';
 				var cur = users.search.cur();
-				if(cur === null || cur == '')
+				if (cur === null || cur == '')
 					cur = '';
 				else
 					cur = cur.split('==')[1];
@@ -290,6 +290,9 @@
 			}
 		}
 	});
+
+	//Set Toolpit
+	$('[data-toggle="tooltip"]').tooltip()
 
 	// Set Initail Page and get first users
 	if (users.page.cur() === null || isNaN(users.page.cur()))
