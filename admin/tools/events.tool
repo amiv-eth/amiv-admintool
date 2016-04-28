@@ -36,7 +36,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      cd  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -160,6 +160,11 @@
             </label>
           </div>
 
+          <div class="form-group">
+            <label for="description_de">Additional Fields (JSON schema)</label>
+            <textarea type="text" class="form-control" rows="3" id="additional_fields"></textarea>
+          </div>
+
           <button type="button" class "btn" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
 
           <div id="english-collapse" class="collapse">
@@ -274,6 +279,7 @@
     },
 
     get: function() {
+      $('#wheel-logo').css('transform', 'rotate(360deg)');
       console.log('getting events...');
       amivcore.events.GET({
         data: {
@@ -288,7 +294,6 @@
           tools.log('No Data', 'w');
           return;
         }
-
         events.meta = ret['_meta'];
         events.page.max = Math.ceil(events.meta.total / events.meta.max_results);
         $('.events-page-max-cont').html(events.page.max);
@@ -304,6 +309,7 @@
           $('.events-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
         }
         $('.events-table tbody tr').click(events.showDetails);
+        $('#wheel-logo').css('transform', 'rotate(0deg)');
       });
 
     },
@@ -315,10 +321,12 @@
         id: $(this).attr('data-id')
       }, function(ret) {
         curEventData = ret;
+        console.log(curEventData);
         var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
-        for (var cur in ret)
-          if (cur.charAt(0) != '_')
+        for (var cur in ret) {
+          if (cur.charAt(0) != '_' && cur != 'signups')
             tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
+        }
         tmp += '</tbody></table>';
 
         tools.modal({
@@ -346,6 +354,13 @@
                 }
               }
             },
+            'Signups': {
+              type: 'info',
+              close: false,
+              callback: function() {
+                events.showSignups(curEventData);
+              }
+            },
             'Update': {
               type: 'success',
               close: false,
@@ -353,6 +368,25 @@
             }
           }
         });
+      });
+    },
+
+    showSignups: function(curEventData) {
+      var tmp = '<table class="table table-hover events-edit-table" data-etag="' + curEventData['_etag'] + '"><tbody>';
+      for (var user in curEventData['signups']) {
+        tmp += '<tr><td>' + user + '</td><td contenteditable>' + curEventData['signups'][cur] + '</td></tr>';
+      }
+      tmp += '</tbody></table>';
+      tools.modal({
+        head: curEventData.title_de,
+        body: tmp,
+        button: {
+          'Update': {
+            type: 'success',
+            close: false
+              //callback
+          }
+        }
       });
     },
 
@@ -373,11 +407,13 @@
       if (changed) {
         //workaround to get booleans and ints working
         for (var i in curEventDataChanged) {
+          if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
           if (curEventDataChanged[i] === 'null' || curEventDataChanged[i] === '') curEventDataChanged[i] = null;
           if (curEventDataChanged[i] === 'true') curEventDataChanged[i] = true;
           if (curEventDataChanged[i] === 'false') curEventDataChanged[i] = false;
-          if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
+
         }
+        console.log(curEventDataChanged);
         amivcore.events.PATCH({
           id: curEventData.id,
           header: {
@@ -455,7 +491,7 @@
       newEvent["data"]["show_website"] = $("#show_website").is(':checked');
       newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
       newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
-
+      newEvent["data"]["additional_fields"] = setNullIfEmpty($("additional_fields".val()));
 
       newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
       newEvent["data"]["description_en"] = setNullIfEmpty($("#description_en").val());
@@ -485,14 +521,14 @@
     });
     $('#time_end').datetimepicker({
       locale: "de",
-      useCurrent: false //Important! See issue #1075
+      useCurrent: true //Important! See issue #1075
     });
     $('#time_register_start').datetimepicker({
       locale: "de"
     });
     $('#time_register_end').datetimepicker({
       locale: "de",
-      useCurrent: false //Important! See issue #1075
+      useCurrent: true //Important! See issue #1075
     });
     $("#time_register_start").on("dp.change", function(e) {
       $('#time_register_end').data("DateTimePicker").minDate(e.date);
