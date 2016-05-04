@@ -15,33 +15,6 @@
   </div>
 </div>
 
-<!-- modal for details of events-->
-<!-- <div class="modal fade" id="detail-modal" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 id="event-modal-title" class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <table class="table table-hover" id="event-details-table">
-          <thead>
-            <tr>
-              <th>field</th>
-              <th>value</th>
-            </tr>
-          </thead>
-          <tbody name="table-body">
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-      cd  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
 <!-- modal for creating new events, easier to do it this way than js-->
 
 <div class="modal fade" id="new-event-modal" role="dialog">
@@ -521,25 +494,25 @@
     });
     $('#time_end').datetimepicker({
       locale: "de",
-      useCurrent: true //Important! See issue #1075
+      useCurrent: false //Important! See issue #1075
     });
     $('#time_register_start').datetimepicker({
       locale: "de"
     });
     $('#time_register_end').datetimepicker({
       locale: "de",
-      useCurrent: true //Important! See issue #1075
+      useCurrent: false //Important! See issue #1075
     });
     $("#time_register_start").on("dp.change", function(e) {
       $('#time_register_end').data("DateTimePicker").minDate(e.date);
     });
     $("#time_register_end").on("dp.change", function(e) {
-      $('#time_register_start').data("DateTimePicker").maxDate(e.date);
-    });
-    $("#time_start").on("dp.change", function(e) {
-      $('#time_end').data("DateTimePicker").minDate(e.date);
-    });
-    $("#time_end").on("dp.change", function(e) {
+        $('#time_register_start').data("DateTimePicker").maxDate(e.date);
+      });
+      $("#time_start").on("dp.change", function(e) {
+        $('#time_end').data("DateTimePicker").minDate(e.date);
+      });
+      $("#time_end").on("dp.change", function(e) {
       $('#time_start').data("DateTimePicker").maxDate(e.date);
     });
   });
