@@ -59,18 +59,36 @@ function getEvents(callback) {
 						if(amivcore.authenticated()){
 							register = "Anmelden";
 							$('.eventdets').append('<div class="card-content">'+item.description_de+'</div>');
+							$(this).masonry('reloadItems').masonry();
 						}
 					}
 					
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date class="datum"><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank">Info</a><a href="#" id="anmeldeSub" target="new_blank" data-toggle="modal" data-target="#anmeldeModal">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date class="datum"><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content" id="eDescription'+item.id+'">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank" id="moreInfo" title="'+item.id+'">Info</a><a href="#" id="anmeldeSub" target="new_blank" data-toggle="modal" data-target="#anmeldeModal">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
-        }); 
+        });
+        
+//	Card Info Enfolding
+ $('#moreInfo').on('click', function(){        
+	 id_event=self.title;
+	 console.log(id_event);
+	 amivcore.events.GET({
+        id: $(this).attr('id_event')
+      }, function(ret) {
+        curEventData = ret;
+        console.log(id_event);
+        $('<div class="card-content"><p>trololo</p></div>').insertAfter('#eDescription'+'id_event');
+      });
+ }); 
+ 
+ //   Eventanmeldung
+ $('#anmeldeSub').on('click');       
+         
 //   Login
  $('#loginSubmit').on('click', function(){
 	    amivcore.login($('#loginUsername').val(), $('#loginPassword').val(), function(ret) {
         if (ret == true){
-			$('.welcomening').append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">+amivcore.user()+<span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">Logout</a></li><li role="separator" class="divider"></li><li><a href="https://intern.amiv.ethz.ch/wiki/">AMIV-Tools</a></li></ul></li>'); 
+			$('.welcomening').append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">+amivcore.user({})+<span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">Logout</a></li><li role="separator" class="divider"></li><li><a href="https://intern.amiv.ethz.ch/wiki/">AMIV-Tools</a></li></ul></li>'); 
 			
 			$('.loglogbutton').hide();       
         } else {
@@ -83,5 +101,4 @@ function getEvents(callback) {
  });
 
  
- //   Eventanmeldung
- $('#anmeldeSub').on('click');
+
