@@ -80,7 +80,7 @@ function loadJSEvents(){
         id: id_event,
       }, function(ret) {
         curEventData = ret;
-        console.log(tralalala);
+        console.log('tralalala' + id_event);
         $('<div class="card-content"><p>trololo</p></div>').insertAfter('#eDescription' + id_event);
       });
  }); 
