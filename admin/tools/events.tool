@@ -30,7 +30,6 @@
             <label for="title_de">Title</label>
             <input type="text" class="form-control" id="title_de"></input>
           </div>
-
           <div class="form-group">
             <label for="description_de">Description</label>
             <textarea type="text" class="form-control" rows="3" id="description_de"></textarea>
