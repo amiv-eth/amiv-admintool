@@ -18,7 +18,8 @@
 </style>
 <script type="text/javascript">
 	var groups = {
-		showInTable: ['firstname', 'lastname', 'nethz', 'legi', 'membership'],
+		tableTitles: ['Name', 'Zoidberg', 'self enrollment', '# Of Subscribers'],
+		showInTable: ['name', 'has_zoidberg_share', 'allow_self_enrollment'],
 		curgroupData: null,
 
 		// Page
@@ -77,20 +78,22 @@
 
 		// Get groups
 		get: function() {
+			$('#wheel-logo').css('transform', 'rotate(360deg)');
 			amivcore.groups.GET({
 				data: {
 					'max_results': '50',
-					//page: groups.page.cur(),
-					//sort: groups.sort.cur(),
-					//where: groups.search.cur(),
+					page: groups.page.cur(),
+					sort: groups.sort.cur(),
+					where: groups.search.cur(),
 				}
 			}, function(ret) {
+				console.log(ret);
 
 				if (ret === undefined || ret['_items'].length == 0) {
 					tools.log('No Data', 'w');
+					$('#wheel-logo').css('transform', 'rotate(0deg)');
 					return;
 				}
-
 				groups.meta = ret['_meta'];
 				groups.page.max = Math.ceil(groups.meta.total / groups.meta.max_results);
 				$('.groups-page-max-cont').html(groups.page.max);
@@ -98,7 +101,7 @@
 				// Clear table from previous contentent
 				$('.groups-table thead tr, .groups-table tbody').html('');
 
-				groups.showInTable.forEach(function(i) {
+				groups.tableTitles.forEach(function(i) {
 					$('.groups-table thead tr').append('<th>' + i + '</th>');
 				});
 
@@ -107,8 +110,10 @@
 					groups.showInTable.forEach(function(i) {
 						tmp += '<td>' + ret['_items'][n][i] + '</td>';
 					});
+					tmp += '<td>' + ret['_items'][n]['user_subscribers'].length + '</td>';
 					$('.groups-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
 				}
+				$('#wheel-logo').css('transform', 'rotate(0deg)');
 				$('.groups-table tbody tr').click(groups.showDetails);
 			});
 		},
@@ -236,7 +241,7 @@
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control groups-sort-select">';
 				var cur = groups.sort.cur();
-				['id', 'firstname', 'lastname', 'membership', 'nethz'].forEach(function(i) {
+				['id', 'name', 'has_zoidberg_share', 'allow_self_enrollment'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
 					tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
 				});
@@ -265,7 +270,7 @@
 					cur = '';
 				else
 					cur = cur.split('==')[1];
-				['id', 'firstname', 'lastname'].forEach(function(i) {
+				['id', 'name', 'has_zoidberg_share', 'allow_self_enrollment'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
 				});
 				tmp += '</select><br><input type="text" value="' + cur + '" class="form-control groups-search-val"></div>';
