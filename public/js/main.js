@@ -66,7 +66,7 @@ $(document).ready(function() {
 
             addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="' + item.img_banner + '">'+
             
-            (item.time_start === null)? '' : ('<date class="datum"><div class="month">' + month[datenum.getMonth()] + '</div><div class="day">' + datenum.getDate() + '</div><div class="starttime">' + datenum.getHours() + ':' + minutes + '</div><date-overlay></date-overlay></date>') +
+            (item.time_start ? ('<date class="datum"><div class="month">' + month[datenum.getMonth()] + '</div><div class="day">' + datenum.getDate() + '</div><div class="starttime">' + datenum.getHours() + ':' + minutes + '</div><date-overlay></date-overlay></date>') : '') +
             
             '<span class="card-title">' + item.title_de + ' @ ' + item.location + '</span></div><div class="card-content" id="eDescription' + item.id + '">' + item.description_de + '</div><div class="card-action"><a href="javascript:void(0);" class="moreInfo" title="' + item.id + '">Info</a><a href="#" id="anmeldeSub" target="new_blank" data-toggle="modal" data-target="#anmeldeModal">' + register + '</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
         });
