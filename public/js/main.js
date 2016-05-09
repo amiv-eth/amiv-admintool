@@ -81,8 +81,16 @@ function loadJSEvents() {
         }, function(ret) {
             curEventData = ret;
             console.log('tralalala' + id_event);
-            $('<div class="card-content"><p>trololo</p></div>').insertAfter('#eDescription' + id_event);
-        });
+            if (curEventData.price !== null) {
+	            $('<div class="card-content"><p>Preis: '+curEventData.price+'</p></div>').insertAfter('#eDescription' + id_event);
+            }
+			if (curEventData.spots > 0) {
+	            $('<div class="card-content"><p>Anzahl Plätze:'+curEventData.spots+'</p></div>').insertAfter('#eDescription' + id_event);
+            } 
+            if (curEventData.time_start !== null) {
+	            $('<div class="card-content"><p>Startzeit:'+curEventData.time_start+'</p></div>').insertAfter('#eDescription' + id_event);
+            }      
+           });
     });
 
     //   Eventanmeldung
