@@ -8,6 +8,7 @@ function getEvents(callback) {
         function addElement(item) {
             $('.grid')
                 .append('<div class="grid-item col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">' + item + '</div>');
+            loadJSEvents();
         }
         
         $(document).ready(function() {
@@ -63,17 +64,20 @@ function getEvents(callback) {
 						}
 					}
 					
-                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date class="datum"><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content" id="eDescription'+item.id+'">'+item.description_de+'</div><div class="card-action"><a href="#" target="new_blank" id="moreInfo" title="'+item.id+'">Info</a><a href="#" id="anmeldeSub" target="new_blank" data-toggle="modal" data-target="#anmeldeModal">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
+                    addElement('<div class="card"><div class="card-image"><img class="img-responsive" src="'+item.img_banner+'"><date class="datum"><div class="month">'+month[datenum.getMonth()]+'</div><div class="day">'+datenum.getDate()+'</div><div class="starttime">'+datenum.getHours()+':'+minutes+'</div><date-overlay></date-overlay></date><span class="card-title">'+item.title_de+' @ '+item.location+'</span></div><div class="card-content" id="eDescription'+item.id+'">'+item.description_de+'</div><div class="card-action"><a href="javascript:void(0);" class="moreInfo" title="'+item.id+'">Info</a><a href="#" id="anmeldeSub" target="new_blank" data-toggle="modal" data-target="#anmeldeModal">'+register+'</a><a href="#" target="new_blank">Im Kalender speichern</a></div></div>');
                 });
             });
         });
-        
-//	Card Info Enfolding
- $('#moreInfo').on('click', function(){        
-	 id_event=self.title;
+
+function loadJSEvents(){
+	
+	$('.moreInfo, #anmeldeSub').off('click');
+ //	Card Info Enfolding
+ $('.moreInfo').on('click', function(){        
+	 id_event=$(this).attr('title');
 	 console.log(id_event);
 	 amivcore.events.GET({
-        id: $(this).attr('id_event')
+        id: id_event,
       }, function(ret) {
         curEventData = ret;
         console.log(id_event);
@@ -83,6 +87,8 @@ function getEvents(callback) {
  
  //   Eventanmeldung
  $('#anmeldeSub').on('click');       
+	
+}
          
 //   Login
  $('#loginSubmit').on('click', function(){
