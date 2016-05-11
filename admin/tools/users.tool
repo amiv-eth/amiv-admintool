@@ -8,14 +8,6 @@
 		</tbody>
 	</table>
 </div>
-
-<style>
-	.users-table-wrapper {
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-	}
-</style>
 <script type="text/javascript">
 	var users = {
 		showInTable: ['firstname', 'lastname', 'nethz', 'legi', 'membership'],
@@ -119,7 +111,7 @@
 				id: $(this).attr('data-id')
 			}, function(ret) {
 				curUserData = ret;
-				var tmp = '<table class="table table-hover users-user-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
+				var tmp = '<table class="table table-hover users-user-edit-table" data-etag="' + ret['_etag'] + '" data-id="' + ret.id + '"><tbody>';
 				for (var cur in ret)
 					if (cur.charAt(0) != '_')
 						tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
@@ -129,6 +121,26 @@
 					head: ret.firstname + ' ' + ret.lastname,
 					body: tmp,
 					button: {
+						'Delete': {
+							type: 'danger',
+							callback: function() {
+								if (confirm('Fo\' shizzle my nizzle? U fo\' real?'))
+									amivcore.users.DELETE({
+										id: $('.users-user-edit-table').first().attr('data-id'),
+										header: {
+											'If-Match': $('.users-user-edit-table').attr('data-etag')
+										},
+									}, function(ret) {
+										if (ret === undefined) {
+											tools.log('User successfully deleted', 's');
+											users.get();
+											tools.modalClose();
+										} else {
+											tools.log('Error', 'e');
+										}
+									});
+							}
+						},
 						'Update': {
 							type: 'success',
 							close: true,
@@ -137,7 +149,7 @@
 					}
 				});
 
-			});;
+			});
 		},
 
 		// Check wether changes were maid and saves it in that case
@@ -170,22 +182,22 @@
 
 		//Make new user
 		add: function() {
-			var tmp = '<table class="table table-hover table-bordered users-user-add-table"><tbody>',
-				reqFields = amivcore.getRequiredFields('users', 'POST');
-			for (var reqField in reqFields)
-				tmp += '<tr><td>' + reqField + '</td><td contenteditable></td></tr>'
-			tmp += '</tbody></table>';
+			var tmp = '<div class="row users-user-add-form"><div class="form-group col-xs-6"><label for="users-fn">Firstname:</label><input type="text" class="form-control" name="firstname" id="users-fn"></div>' +
+				'<div class="form-group col-xs-6"><label for="users-ln">Lastname:</label><input type="text" class="form-control" id="users-ln" name="lastname"></div>' +
+				'<div class="form-group"><label for="users-email">E-Mail:</label><input type="email" class="form-control" id="users-email" name="email"></div>' +
+				'<div class="form-group col-xs-6"><label for="users-membership">Membership:</label><select class="form-control" id="users-membership" name="membership"><option>regular</option><option>honorary</option><option>extraordinary</option></select></div>' +
+				'<div class="form-group col-xs-6"><label for="users-gender">Gender:</label><select class="form-control" id="users-gender" name="gender"><option>male</option><option>female</option></select></div>' +
+				'</div>';
 			tools.modal({
-				head: 'New User',
+				head: 'Spawn new AMIV slave',
 				body: tmp,
 				button: {
 					'Add': {
 						type: 'success',
-						close: true,
 						callback: function() {
 							var newUserData = {};
-							$('.users-user-add-table tr').each(function() {
-								newUserData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+							$('.users-user-add-form input, .users-user-add-form select').each(function() {
+								newUserData[$(this).attr('name')] = $(this).val();
 							});
 							amivcore.users.POST({
 								data: newUserData
@@ -193,6 +205,7 @@
 								if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
 									tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
 								else {
+									tools.modalClose();
 									tools.log('User Added', 's');
 									users.get();
 								}
@@ -206,7 +219,7 @@
 
 	// Setup Menu
 	tools.ui.menu({
-		'<span class="glyphicon glyphicon-user" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Create User"></span>': {
+		'<span class="glyphicon glyphicon-plus" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Create User"></span>': {
 			callback: users.add
 		},
 		'<span class="glyphicon glyphicon-arrow-left" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Previous Page"></span>': {
