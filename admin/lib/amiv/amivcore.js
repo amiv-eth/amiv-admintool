@@ -46,6 +46,24 @@
                         return null;
                     }
                 }
+            },
+            adapter: {
+                'none': function(ret) {
+                    return ret;
+                },
+                'string': function(strg) {
+                    return String(strg);
+                },
+                'integer': function(int) {
+                    return parseInt(int);
+                },
+                'boolean': function(bool) {
+                    return (String(bool).trim().toLowerCase() == 'true' || bool === true || bool === 1)
+                },
+                'datetime': function(dt) {
+                    var tmp = new Date(dt);
+                    return new Date(dt).toJSON();
+                }
             }
         }
 
@@ -86,8 +104,14 @@
             return function(attr, callback) {
                 attr = attr || {};
                 var curLib = {}
-                for (var curAttr in attr['data'])
-                    curLib[curAttr] = attr['data'][curAttr];
+                for (var curAttr in attr['data']) {
+                    var curAttrType = lib.getParamType(domain, curAttr);
+                    if (core.adapter.hasOwnProperty(curAttrType))
+                        curLib[curAttr] = core.adapter[lib.getParamType(domain, curAttr)](attr['data'][curAttr]);
+                    else
+                        curLib[curAttr] = attr['data'][curAttr];
+                }
+                //curLib[curAttr] = attr['data'][curAttr];
 
                 var hdr = {};
                 for (var curHdr in attr['header'])
@@ -149,25 +173,47 @@
             }
         });
 
-        function checkAuth() {
+        function checkAuth(exec_once) {
+            exec_once = exec_once || false;
             if (get('cur_token') != null) {
                 lib.sessions.GET({
                     data: {
                         where: 'token==["' + get('cur_token') + '"]'
                     }
                 }, function(res) {
-                    if (res !== undefined && res.hasOwnProperty('_items') && res['_items'].length > 0)
+                    if (res !== undefined && res.hasOwnProperty('_items') && res['_items'].length > 0) {
                         core.lib.authenticated = true;
-                    else
-                        core.lib.authenticated = false;
+                        core.lib.auth_fails = 0;
+                    } else {
+                        core.lib.auth_allowed_fails++;
+                        if (core.lib.auth_fails > core.lib.auth_allowed_fails)
+                            core.lib.authenticated = false;
+                    }
                     core.lib.ready = true;
-                    setTimeout(checkAuth, core.lib.auth_interval);
+                    if (!exec_once)
+                        setTimeout(checkAuth, core.lib.auth_interval);
                 });
             } else {
                 core.lib.authenticated = false;
                 core.lib.ready = true;
-                setTimeout(checkAuth, core.lib.auth_interval);
+                if (!exec_once)
+                    setTimeout(checkAuth, core.lib.auth_interval);
             }
+        }
+
+        // Get parameter type
+        lib.getParamType = function(dom, param) {
+            var tmp = 'none';
+            try {
+                if (Array.isArray(lib[dom].methods.POST['/' + dom].params))
+                    lib[dom].methods.POST['/' + dom].params.forEach(function(cur) {
+                        if (cur.name == param) {
+                            tmp = cur.type;
+                        }
+                    });
+
+            } catch (e) {}
+            return tmp;
         }
 
         // Get the etag
