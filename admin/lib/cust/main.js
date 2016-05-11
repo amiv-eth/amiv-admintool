@@ -80,7 +80,6 @@ var tools = {
                 }
             }).done(function(data) {
                 $('#main-content').html(data);
-                tools.ui.resizeTool();
                 $('#main-content').fadeIn(250, function() {
                     $('#wheel-logo').css('transform', 'rotate(0deg)');
                 });
@@ -105,7 +104,7 @@ var tools = {
             });
         },
         resizeTool: function() {
-            $('tools-full-height').height($(window).height() - $('.navbar-main').height());
+            $('.wrapper-content').height($(window).height() - $('.navbar-main').height());
         },
         menuId: 0,
         menu: function(attr) {
@@ -162,6 +161,10 @@ $.ajaxSetup({
 //Binding tool change whenever the hash is changed
 window.onhashchange = tools.getTool;
 
+//Resizing Body when menu changes size and calling it on ready
+window.onresize = tools.ui.resizeTool;
+
+
 // Login function
 function loginFunc() {
     $('.loginPanel input').attr('readonly', 1);
@@ -177,16 +180,22 @@ function loginFunc() {
     });
 }
 
-// Binding the buttons
-$('.toggleSidebarBtn').click(tools.ui.toggleSideMenu);
-$('.loginAction').click(loginFunc);
-$('.logoutAction').click(amivcore.logout);
-$('.loginPanel').keypress(function(e) {
-    if (e.which == 13) {
-        e.preventDefault();
-        loginFunc();
-    }
-})
+// When document loaded
+$(document).ready(function() {
+    // Resizing main wrapper-main
+    tools.ui.resizeTool();
+    
+    // Binding the buttons
+    $('.toggleSidebarBtn').click(tools.ui.toggleSideMenu);
+    $('.loginAction').click(loginFunc);
+    $('.logoutAction').click(amivcore.logout);
+    $('.loginPanel').keypress(function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            loginFunc();
+        }
+    });
+});
 
 amivcore.on('ready', function() {
     tools.getTool();
