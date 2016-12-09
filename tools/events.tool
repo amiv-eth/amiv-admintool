@@ -479,7 +479,7 @@
             newEvent["data"]["show_website"] = $("#show_website").is(':checked');
             newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
             newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
-            newEvent["data"]["additional_fields"] = setNullIfEmpty($("additional_fields".val()));
+            newEvent["data"]["additional_fields"] = setNullIfEmpty($("#additional_fields").val());
 
             newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
             newEvent["data"]["description_en"] = setNullIfEmpty($("#description_en").val());
