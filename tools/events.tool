@@ -113,7 +113,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="price">Price</label>
+                        <label for="price">Price [CHF]</label>
                         <input type="number" class="form-control" min="0" id="price"></input>
                     </div>
 
@@ -438,11 +438,11 @@
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
                 //for now, because the api rejects .toISOString format
-                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
             }
             if (!($("#time_end").data("DateTimePicker").date() == null)) {
                 //for now, because the api rejects .toISOString format
-                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
             }
 
             if (!$("#signup-required").is(":checked")) {
@@ -458,20 +458,20 @@
                 }
                 if (!($("#time_register_start").data("DateTimePicker").date() == null)) {
                     //for now, because the api rejects .toISOString format
-                    newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+                    newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
                 } else {
                     tools.log('field "Start of Registration" required', 'e');
                     return;
                 }
                 if (!($("#time_register_end").data("DateTimePicker").date() == null)) {
                     //for now, because the api rejects .toISOString format
-                    newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("YYYY-MM-DDThh:mm:ss") + "Z";
+                    newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
                 } else {
                     tools.log('field "End of Registration" required', 'e');
                     return;
                 }
             } else {
-                newEvent["data"]["spots"] = -1;
+                newEvent["data"]["spots"] = null;
             }
 
             newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
