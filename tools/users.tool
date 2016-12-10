@@ -99,7 +99,7 @@
 					users.showInTable.forEach(function(i) {
 						tmp += '<td>' + ret['_items'][n][i] + '</td>';
 					});
-					$('.users-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
+					$('.users-table tbody').append('<tr data-id="' + ret['_items'][n]['_id'] + '">' + tmp + '</tr>');
 				}
 				$('.users-table tbody tr').click(users.showDetails);
 			});
@@ -249,7 +249,7 @@
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control users-sort-select">';
 				var cur = users.sort.cur();
-				['id', 'firstname', 'lastname', 'membership', 'nethz'].forEach(function(i) {
+				['_id', 'firstname', 'lastname', 'membership', 'nethz'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
 					tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
 				});
@@ -278,7 +278,7 @@
 					cur = '';
 				else
 					cur = cur.split('==')[1];
-				['id', 'firstname', 'lastname'].forEach(function(i) {
+				['_id', 'firstname', 'lastname'].forEach(function(i) {
 					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
 				});
 				tmp += '</select><br><input type="text" value="' + cur + '" class="form-control users-search-val"></div>';

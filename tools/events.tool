@@ -18,11 +18,11 @@
 
 <!-- modal for creating new events, easier to do it this way than js-->
 
-<div class="modal fade" id="event-modal" role="dialog">
+<div class="modal fade" id="event-modal" role="dialog" data-etag="">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" >&times;</button>
                 <h4 class="modal-title" id="event-modal-title"></h4>
             </div>
             <div class="modal-body">
@@ -56,6 +56,28 @@
                     <div class="form-group">
                         <label for="time_end">End Time</label>
                         <div class="input-group date" id="time_end">
+                            <input type="text" class="form-control" />
+                            <span class="input-group-addon">
+                    <span class="glyphicon-calendar glyphicon"></span>
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="time_start">Start Advertising</label>
+                        <div class="input-group date" id="time_advertising_start">
+                            <input type="text" class="form-control" />
+                            <span class="input-group-addon">
+                    <span class="glyphicon-calendar glyphicon"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                    <!-- <div class="col-md-3"> -->
+                    <div class="form-group">
+                        <label for="time_end">End Advertising</label>
+                        <div class="input-group date" id="time_advertising_end">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
                     <span class="glyphicon-calendar glyphicon"></span>
@@ -134,6 +156,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="price">Priority [1-10]</label>
+                        <input type="number" class="form-control" min="0" id="priority" value=5></input>
+                    </div>
+
+                    <div class="form-group">
                         <label for="description_de">Additional Fields (JSON schema)</label>
                         <textarea type="text" class="form-control" rows="3" id="additional_fields"></textarea>
                     </div>
@@ -193,6 +220,7 @@
 
 <script type="text/javascript">
     var events = {
+        somethingChanged: false,
         showInTable: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
         curEventData: null,
 
@@ -280,7 +308,7 @@
                     events.showInTable.forEach(function(i) {
                         tmp += '<td>' + ret['_items'][n][i] + '</td>';
                     });
-                    $('.events-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
+                    $('.events-table tbody').append('<tr data-id="' + ret['_items'][n]['_id'] + '">' + tmp + '</tr>');
                 }
                 $('.events-table tbody tr').click(events.showDetails);
                 $('#wheel-logo').css('transform', 'rotate(0deg)');
@@ -297,12 +325,41 @@
         //show details of an event in a modal
         //TODO: fill the more beautiful event-modal
         showDetails: function() {
+            somethingChanged = false;
+            console.log($(this).attr('data-id'));
             amivcore.events.GET({
                 id: $(this).attr('data-id')
             }, function(ret) {
                 curEventData = ret;
                 console.log(curEventData);
-                $("#event-modal-title").val("edit event");
+                $("#event-modal-title").text("Edit Event");
+                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.inspectEvent()">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent(' + etag +')">Delete</button>');
+                var etag = ret['_etag'];
+
+                $('#event-modal').attr('data-etag', etag);
+
+                //fill fields of the form with content that has the same ID
+                $('#event-modal-form').find('input, textarea').val(function (index, value) {
+                    return ret[this.id];
+                });
+
+                //array of elements that are represented by checkboxes
+                var booleanEventData = ['signup-required', 'no-signup-limit', 'allow_email_signup', 'show_website', 'show_infoscreen', 'show_announce'];
+
+                for (i = 0; i < booleanEventData.length; i++){
+                    $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
+                }
+
+                //set the datepickers
+                $('#event-modal').modal('show');
+
+                var dateEventData = ['time_start', 'time_end', 'time_register_start', 'time_register_end', 'time_advertising_start', 'time_advertising_end'];
+                for (i = 0; i < dateEventData.length; i++){
+                    if (ret[dateEventData[i]] != null){
+                        $('#' + dateEventData[i]).data("DateTimePicker").date(new Date(ret[dateEventData[i]]));
+                    }
+                }
+                
             //     var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
             //     for (var cur in ret) {
             //         if (cur.charAt(0) != '_' && cur != 'signups')
@@ -352,6 +409,26 @@
             });
         },
 
+
+        deleteEvent: function(etag) { 
+            console.log('delete triggered');
+            if (confirm("Delete " + curEventData.title_de + "?") == true) {
+                amivcore.events.DELETE({
+                    id: curEventData.id,
+                    header: {
+                        // 'If-Match': $('#event-modal').attr('data-etag')
+                        'If-Match': etag
+                    }
+                }, function(response) {
+                    console.log(response);
+                });
+                    events.get();
+                        tools.log('Event deleted', 'w');
+                        tools.modalClose();
+            } else {
+                tools.log('Event not Deleted', 'i');
+                                }
+        },
         /*showDetails: function() {
             amivcore.events.GET({
                 id: $(this).attr('data-id')
@@ -437,12 +514,18 @@
             newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
-                //for now, because the api rejects .toISOString format
-                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
+                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date();
             }
             if (!($("#time_end").data("DateTimePicker").date() == null)) {
-                //for now, because the api rejects .toISOString format
-                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
+                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date();
+            }
+
+
+            if (!($("#time_advertising_start").data("DateTimePicker").date() == null)) {
+                newEvent["data"]["time_advertising_start"] = $("#time_advertising_start").data("DateTimePicker").date();
+            }
+            if (!($("#time_end").data("DateTimePicker").date() == null)) {
+                newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date();
             }
 
             if (!$("#signup-required").is(":checked")) {
@@ -457,15 +540,13 @@
 
                 }
                 if (!($("#time_register_start").data("DateTimePicker").date() == null)) {
-                    //for now, because the api rejects .toISOString format
-                    newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
+                    newEvent["data"]["time_register_start"] = $("#time_register_start").data("DateTimePicker").date();
                 } else {
                     tools.log('field "Start of Registration" required', 'e');
                     return;
                 }
                 if (!($("#time_register_end").data("DateTimePicker").date() == null)) {
-                    //for now, because the api rejects .toISOString format
-                    newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date().format("%Y-%m-%dT%H:%M:%SZ");
+                    newEvent["data"]["time_register_end"] = $("#time_register_end").data("DateTimePicker").date();
                 } else {
                     tools.log('field "End of Registration" required', 'e');
                     return;
@@ -485,6 +566,7 @@
             newEvent["data"]["show_website"] = $("#show_website").is(':checked');
             newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
             newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
+            newEvent["data"]["priority"] = (parseInt($("#priority").val()));
             newEvent["data"]["additional_fields"] = setNullIfEmpty($("#additional_fields").val());
 
             newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
@@ -511,24 +593,47 @@
     //setting up the date time picker
     $(function() {
         $('#time_start').datetimepicker({
-            locale: "de"
+            locale: "de",
+            sideBySide: true
         });
+
         $('#time_end').datetimepicker({
             locale: "de",
-            useCurrent: false //Important! See issue #1075aa
+            useCurrent: false, //Important! See issue #1075aa
+            sideBySide: true
         });
+
+        $('#time_advertising_start').datetimepicker({
+            locale: "de",
+            sideBySide: true
+        });
+
+        $('#time_advertising_end').datetimepicker({
+            locale: "de",
+            useCurrent: false, //Important! See issue #1075aa
+            sideBySide: true
+        });
+
         $('#time_register_start').datetimepicker({
-            locale: "de"
+            locale: "de",
+            sideBySide: true
         });
         $('#time_register_end').datetimepicker({
             locale: "de",
-            useCurrent: false //Important! See issue #107534
+            useCurrent: false, //Important! See issue #107534
+            sideBySide: true
         });
         $("#time_register_start").on("dp.change", function(e) {
             $('#time_register_end').data("DateTimePicker").minDate(e.date);
         });
         $("#time_register_end").on("dp.change", function(e) {
             $('#time_register_start').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#time_advertising_start").on("dp.change", function(e) {
+            $('#time_advertising_end').data("DateTimePicker").minDate(e.date);
+        });
+        $("#time_advertising_end").on("dp.change", function(e) {
+            $('#time_advertising_start').data("DateTimePicker").maxDate(e.date);
         });
         $("#time_start").on("dp.change", function(e) {
             $('#time_end').data("DateTimePicker").minDate(e.date);
@@ -584,7 +689,7 @@
             callback: function() {
                 var tmp = '<div class="form-group"><select class="form-control events-sort-select">';
                 var cur = events.sort.cur();
-                ['id', 'title_de', 'description_de', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(function(i) {
+                ['_id', 'title_de', 'description_de', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(function(i) {
                     tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
                     tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
                 });
@@ -613,7 +718,7 @@
                     cur = '';
                 else
                     cur = cur.split('==')[1];
-                ['id', 'title_de', 'description_de', 'title_en', 'description_en', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location']
+                ['_id', 'title_de', 'description_de', 'title_en', 'description_en', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location']
                 .forEach(
                     function(i) {
                         tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
@@ -648,6 +753,10 @@
 
     $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip();
+        $('#event-modal-form').on('keyup change', 'input, select, textarea, span ', function(){
+            console.log('changed shit');
+            events.somethingChanged = true;
+        });
     });
 
     function setNullIfEmpty(formData) {

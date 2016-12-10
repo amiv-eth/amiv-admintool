@@ -78,7 +78,7 @@
                     where: groups.search.cur(),
                 }
             }, function(ret) {
-
+                console.log(ret);
                 if (ret === undefined || ret['_items'].length == 0) {
                     tools.log('No Data', 'w');
                     return;
@@ -100,7 +100,7 @@
                     groups.showInTable.forEach(function(i) {
                         tmp += '<td>' + ret['_items'][n][i] + '</td>';
                     });
-                    $('.groups-table tbody').append('<tr data-id="' + ret['_items'][n]['id'] + '">' + tmp + '</tr>');
+                    $('.groups-table tbody').append('<tr data-id="' + ret['_items'][n]['_id'] + '">' + tmp + '</tr>');
                 }
                 $('.groups-table tbody tr').click(groups.showDetails);
             });
@@ -114,7 +114,7 @@
                 console.log(ret);
                 curUserData = ret;
 
-                var tmp = '<div class="groups-edit-cont" data-etag="' + ret['_etag'] + '" data-id="' + ret['id'] + '">';
+                var tmp = '<div class="groups-edit-cont" data-etag="' + ret['_etag'] + '" data-id="' + ret['_id'] + '">';
                 for (var cur in ret)
                     if (cur.charAt(0) != '_')
                         if (cur == 'user_subscribers') {
@@ -236,7 +236,7 @@
                                 $('.groups-user-add-form input').each(function() {
                                     newUserData[$(this).attr('name')] = $(this).val();
                                 });
-                                newUserData['moderator_id'] = ret['_items'][0].id;
+                                newUserData['moderator_id'] = ret['_items'][0]['_id'];
                                 console.log(newUserData);
                                 amivcore.groups.POST({
                                     data: newUserData
