@@ -18,15 +18,15 @@
 
 <!-- modal for creating new events, easier to do it this way than js-->
 
-<div class="modal fade" id="new-event-modal" role="dialog">
+<div class="modal fade" id="event-modal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Create new Event</h4>
+                <h4 class="modal-title" id="event-modal-title"></h4>
             </div>
             <div class="modal-body">
-                <form id="new-event">
+                <form id="event-modal-form">
                     <div class="form-group">
                         <label for="title_de">Title</label>
                         <input type="text" class="form-control" id="title_de"></input>
@@ -157,9 +157,8 @@
                     <!-- <input type="submit"> -->
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="events.submitNewEvent()">Submit</button>
+            <div class="modal-footer" id="event-modal-footer">
+                <!-- footer content here -->
             </div>
         </div>
     </div>
@@ -174,11 +173,11 @@
         overflow: auto;
     }
 
-    #new-event-modal {
+    #event-modal {
         overflow: auto;
     }
 
-    #new-event-modal .checkbox-inline {
+    #event-modal .checkbox-inline {
         margin-bottom: 10px;
     }
 
@@ -289,60 +288,67 @@
 
         },
 
+        createEvent: function() {
+            $("#event-modal-title").text("Create Event");
+            $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitNewEvent()">Submit</button>');
+            $('#event-modal').modal('show');
+        },
 
-
+        //show details of an event in a modal
+        //TODO: fill the more beautiful event-modal
         showDetails: function() {
             amivcore.events.GET({
                 id: $(this).attr('data-id')
             }, function(ret) {
                 curEventData = ret;
                 console.log(curEventData);
-                var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
-                for (var cur in ret) {
-                    if (cur.charAt(0) != '_' && cur != 'signups')
-                        tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
-                }
-                tmp += '</tbody></table>';
-
-                tools.modal({
-                    head: ret.title_de,
-                    body: tmp,
-                    button: {
-                        'Delete': {
-                            type: 'danger',
-                            close: false,
-                            callback: function() {
-                                if (confirm("Delete " + ret.title_de + "?") == true) {
-                                    amivcore.events.DELETE({
-                                        id: curEventData.id,
-                                        header: {
-                                            'If-Match': $('.events-edit-table').attr('data-etag')
-                                        }
-                                    }, function(response) {
-                                        console.log(response);
-                                    });
-                                    events.get();
-                                    tools.log('Event deleted', 'w');
-                                    tools.modalClose();
-                                } else {
-                                    tools.log('Event not Deleted', 'i');
-                                }
-                            }
-                        },
-                        'Signups': {
-                            type: 'info',
-                            close: false,
-                            callback: function() {
-                                events.showSignups(curEventData);
-                            }
-                        },
-                        'Update': {
-                            type: 'success',
-                            close: false,
-                            callback: events.inspectEvent
-                        }
-                    }
-                });
+                $("#event-modal-title").val("edit event");
+            //     var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
+            //     for (var cur in ret) {
+            //         if (cur.charAt(0) != '_' && cur != 'signups')
+            //             tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
+            //     }
+            //     tmp += '</tbody></table>';
+            //
+            //     tools.modal({
+            //         head: ret.title_de,
+            //         body: tmp,
+            //         button: {
+            //             'Delete': {
+            //                 type: 'danger',
+            //                 close: false,
+            //                 callback: function() {
+            //                     if (confirm("Delete " + ret.title_de + "?") == true) {
+            //                         amivcore.events.DELETE({
+            //                             id: curEventData.id,
+            //                             header: {
+            //                                 'If-Match': $('.events-edit-table').attr('data-etag')
+            //                             }
+            //                         }, function(response) {
+            //                             console.log(response);
+            //                         });
+            //                         events.get();
+            //                         tools.log('Event deleted', 'w');
+            //                         tools.modalClose();
+            //                     } else {
+            //                         tools.log('Event not Deleted', 'i');
+            //                     }
+            //                 }
+            //             },
+            //             'Signups': {
+            //                 type: 'info',
+            //                 close: false,
+            //                 callback: function() {
+            //                     events.showSignups(curEventData);
+            //                 }
+            //             },
+            //             'Update': {
+            //                 type: 'success',
+            //                 close: false,
+            //                 callback: events.inspectEvent
+            //             }
+            //         }
+            //     });
             });
         },
 
@@ -355,7 +361,7 @@
                 for (var attr in curEventData) {
                   $('#' + attr).val(curEventData[attr]);
                 }
-                $('#new-event-modal').modal('show');
+                $('#event-modal').modal('show');
             });
         },*/
 
@@ -492,8 +498,8 @@
                     tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                 else {
                     tools.log('Event Added', 's');
-                    $('#new-event-modal').modal('hide');
-                    $("#new-event").trigger('reset');
+                    $('#event-modal').modal('hide');
+                    $("#event-modal-form").trigger('reset');
                     events.get();
                 }
             });
@@ -543,12 +549,10 @@
         $('#spots').attr('disabled', this.checked);
     });
 
-
+// tools in the top bar
     tools.ui.menu({
         '<span class="glyphicon glyphicon-plus"  data-toggle="tooltip" aria-hidden="true" title="Create new Event" data-placement="bottom"></span>': {
-            callback: function() {
-                $('#new-event-modal').modal('show');
-            }
+            callback: events.createEvent
         },
         '<span class="glyphicon glyphicon-refresh" aria-hidden="true"  data-toggle="tooltip" title="Refresh" data-placement="bottom"></span>': {
             callback: events.get
