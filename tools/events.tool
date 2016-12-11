@@ -318,7 +318,7 @@
 
         createEvent: function() {
             $("#event-modal-title").text("Create Event");
-            $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitNewEvent()">Submit</button>');
+            $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(true)">Submit</button>');
             $('#event-modal').modal('show');
         },
 
@@ -334,7 +334,7 @@
                 console.log(curEventData);
                 etag = ret['_etag'];
                 $("#event-modal-title").text("Edit Event");
-                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.inspectEvent()">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent(' +"'" + etag + "'" + ')">Delete</button>');
+                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(false)">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent()">Delete</button>');
 
                 $('#event-modal').attr('data-etag', etag);
 
@@ -359,66 +359,18 @@
                         $('#' + dateEventData[i]).data("DateTimePicker").date(new Date(ret[dateEventData[i]]));
                     }
                 }
-                
-            //     var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
-            //     for (var cur in ret) {
-            //         if (cur.charAt(0) != '_' && cur != 'signups')
-            //             tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
-            //     }
-            //     tmp += '</tbody></table>';
-            //
-            //     tools.modal({
-            //         head: ret.title_de,
-            //         body: tmp,
-            //         button: {
-            //             'Delete': {
-            //                 type: 'danger',
-            //                 close: false,
-            //                 callback: function() {
-            //                     if (confirm("Delete " + ret.title_de + "?") == true) {
-            //                         amivcore.events.DELETE({
-            //                             id: curEventData.id,
-            //                             header: {
-            //                                 'If-Match': $('.events-edit-table').attr('data-etag')
-            //                             }
-            //                         }, function(response) {
-            //                             console.log(response);
-            //                         });
-            //                         events.get();
-            //                         tools.log('Event deleted', 'w');
-            //                         tools.modalClose();
-            //                     } else {
-            //                         tools.log('Event not Deleted', 'i');
-            //                     }
-            //                 }
-            //             },
-            //             'Signups': {
-            //                 type: 'info',
-            //                 close: false,
-            //                 callback: function() {
-            //                     events.showSignups(curEventData);
-            //                 }
-            //             },
-            //             'Update': {
-            //                 type: 'success',
-            //                 close: false,
-            //                 callback: events.inspectEvent
-            //             }
-            //         }
-            //     });
             });
         },
 
 
-        deleteEvent: function(etag) {
-            console.log('delete triggered' + etag);
-            console.log(curEventData);
+        deleteEvent: function() {
+            console.log(curEventData._etag);
             if (confirm("Delete " + curEventData.title_de + "?")) {
                 amivcore.events.DELETE({
                     id: curEventData._id,
                     header: {
                         // 'If-Match': $('#event-modal').attr('data-etag')
-                        'If-Match': etag
+                        'If-Match': curEventData._etag
                     }
                 }, function(response) {
                     console.log(response);
@@ -430,18 +382,7 @@
                 tools.log('Event not Deleted', 'i');
             }
         },
-        /*showDetails: function() {
-            amivcore.events.GET({
-                id: $(this).attr('data-id')
-            }, function(ret) {
-                curEventData = ret;
-                console.log(curEventData);
-                for (var attr in curEventData) {
-                  $('#' + attr).val(curEventData[attr]);
-                }
-                $('#event-modal').modal('show');
-            });
-        },*/
+
 
         showSignups: function(curEventData) {
             var tmp = '<table class="table table-hover events-edit-table" data-etag="' + curEventData['_etag'] + '"><tbody>';
@@ -462,50 +403,7 @@
             });
         },
 
-        inspectEvent: function() {
-            var newEventData = {};
-            $('.events-edit-table tr').each(function() {
-                newEventData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
-            });
-            var changed = false,
-                curEventDataChanged = {};
-            for (var i in newEventData) {
-                if (newEventData[i] != String(curEventData[i])) {
-                    changed = true;
-                    curEventDataChanged[i] = newEventData[i];
-                }
-            }
-            console.log(curEventDataChanged);
-            if (changed) {
-                //workaround to get booleans and ints working
-                for (var i in curEventDataChanged) {
-                    if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
-                    if (curEventDataChanged[i] === 'null' || curEventDataChanged[i] === '') curEventDataChanged[i] = null;
-                    if (curEventDataChanged[i] === 'true') curEventDataChanged[i] = true;
-                    if (curEventDataChanged[i] === 'false') curEventDataChanged[i] = false;
-
-                }
-                console.log(curEventDataChanged);
-                amivcore.events.PATCH({
-                    id: curEventData._id,
-                    header: {
-                        'If-Match': $('.events-edit-table').attr('data-etag')
-                    },
-                    data: curEventDataChanged
-                }, function(ret) {
-                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
-                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
-                    else {
-                        // console.log(ret);
-                        tools.log('Event Updated', 's');
-                        events.get();
-                        tools.modalClose();
-                    }
-                });
-            }
-        },
-
-        submitNewEvent: function() {
+        submitEvent: function(isNew) {
             console.log("submitting new event");
             var newEvent = {
                 data: {}
@@ -528,6 +426,8 @@
             if (!($("#time_end").data("DateTimePicker").date() == null)) {
                 newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date();
             }
+
+
 
             if (!$("#signup-required").is(":checked")) {
                 if ($("#no-signup-limit").is(":checked")) {
@@ -552,11 +452,12 @@
                     tools.log('field "End of Registration" required', 'e');
                     return;
                 }
+                newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
             } else {
                 newEvent["data"]["spots"] = null;
             }
 
-            newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
+           
 
             newEvent["data"]["location"] = setNullIfEmpty($("#location").val());
 
@@ -576,16 +477,34 @@
 
             console.log(newEvent);
             console.log(JSON.stringify(newEvent));
-            var response = amivcore.events.POST(newEvent, function(ret) {
-                if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
-                    tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
-                else {
-                    tools.log('Event Added', 's');
-                    $('#event-modal').modal('hide');
-                    $("#event-modal-form").trigger('reset');
-                    events.get();
-                }
-            });
+            if(isNew) {
+                var response = amivcore.events.POST(newEvent, function(ret) {
+                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+                    else {
+                        tools.log('Event Added', 's');
+                        $('#event-modal').modal('hide');
+                        $("#event-modal-form").trigger('reset');
+                        events.get();
+                    }
+                });
+            } 
+            else {
+                newEvent['header'] = {};
+                newEvent['header']['If-Match'] = curEventData._etag;
+                newEvent['id'] = curEventData._id;
+                console.log(newEvent);
+                var response = amivcore.events.PATCH(newEvent, function(ret) {
+                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+                    else {
+                        tools.log('Event Edited', 's');
+                        $('#event-modal').modal('hide');
+                        $("#event-modal-form").trigger('reset');
+                        events.get();
+                    }
+                });
+            }  
             console.log(response);
         }
     }
