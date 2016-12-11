@@ -111,7 +111,7 @@
 				id: $(this).attr('data-id')
 			}, function(ret) {
 				curUserData = ret;
-				var tmp = '<table class="table table-hover users-user-edit-table" data-etag="' + ret['_etag'] + '" data-id="' + ret.id + '"><tbody>';
+				var tmp = '<table class="table table-hover users-user-edit-table" data-etag="' + ret['_etag'] + '" data-id="' + ret._id + '"><tbody>';
 				for (var cur in ret)
 					if (cur.charAt(0) != '_')
 						tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
@@ -168,7 +168,7 @@
 			}
 			if (changed) {
 				amivcore.users.PATCH({
-					id: curUserData.id,
+					id: curUserData._id,
 					header: {
 						'If-Match': $('.users-user-edit-table').attr('data-etag')
 					},

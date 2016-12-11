@@ -18,7 +18,8 @@
 
 <!-- modal for creating new events, easier to do it this way than js-->
 
-<div class="modal fade" id="event-modal" role="dialog" data-etag="">
+<div class="modal fade" id="event-modal" role="dialog" data-etag="" data-backdrop="static" 
+   data-keyboard="false" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -165,6 +166,28 @@
                         <textarea type="text" class="form-control" rows="3" id="additional_fields"></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label for="img_infoscreen">Infoscreen Image</label>
+                        <input type="file" id="img_infoscreen" name="myFile"/>
+                        <img src="" id="actual_img_infoscreen">
+                    </div>
+                    <div class="form-group">
+                        <label for="img_banner">Banner Image</label>
+                        <input type="file" id="img_banner"/>
+                        <img src="" id="actual_img_banner">
+                    </div>
+                    <div class="form-group">
+                        <label for="img_poster">Poster Image</label>
+                        <input type="file" id="img_poster"/>
+                        <img src="" id="actual_img_poster">
+                    </div>
+                    <div class="form-group">
+                        <label for="img_thumbnail">Thumbnail</label>
+                        <input type="file" id="img_thumbnail"/>
+                        <img src="" id="actual_img_thumbnail">
+                    </div>
+
+
                     <button type="button" class "btn" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
 
                     <div id="english-collapse" class="collapse">
@@ -180,6 +203,9 @@
                             <label for="catchphrase_en">Catchphrase english</label>
                             <input type="text" class="form-control" id="catchphrase_en"></input>
                         </div>
+                    </div>
+
+                    <div id="additional_info">
                     </div>
                     <!-- <input type="submit"> -->
                 </form>
@@ -220,6 +246,7 @@
 
 <script type="text/javascript">
     var events = {
+        API_url: 'http://192.168.1.100',
         somethingChanged: false,
         showInTable: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
         curEventData: null,
@@ -317,8 +344,9 @@
         },
 
         createEvent: function() {
+            
             $("#event-modal-title").text("Create Event");
-            $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitNewEvent()">Submit</button>');
+            $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(true)">Submit</button>');
             $('#event-modal').modal('show');
         },
 
@@ -334,90 +362,60 @@
                 console.log(curEventData);
                 etag = ret['_etag'];
                 $("#event-modal-title").text("Edit Event");
-                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.inspectEvent()">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent(' +"'" + etag + "'" + ')">Delete</button>');
+                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(false)">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent()">Delete</button>');
 
-                $('#event-modal').attr('data-etag', etag);
+                imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+
+                for (i = 0; i < imageData.length; i++){
+                    if (ret[imageData[i]]){
+                        console.log(events.API_url + ret[imageData[i]]['file']);
+                        $('#actual_' + imageData[i]).attr('src', events.API_url + ret[imageData[i]]['file']);
+                    }
+                }
 
                 //fill fields of the form with content that has the same ID
                 $('#event-modal-form').find('input, textarea').val(function (index, value) {
-                    return ret[this.id];
+                    if (this.type != 'file')
+                        return ret[this.id];
                 });
 
                 //array of elements that are represented by checkboxes
-                var booleanEventData = ['signup-required', 'no-signup-limit', 'allow_email_signup', 'show_website', 'show_infoscreen', 'show_announce'];
-
-                for (i = 0; i < booleanEventData.length; i++){
-                    $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
-                }
-
-                //set the datepickers
-                $('#event-modal').modal('show');
+                var booleanEventData = ['no-signup-limit', 'allow_email_signup', 'show_website', 'show_infoscreen', 'show_announce'];
 
                 var dateEventData = ['time_start', 'time_end', 'time_register_start', 'time_register_end', 'time_advertising_start', 'time_advertising_end'];
+
+                //set the datepickers
                 for (i = 0; i < dateEventData.length; i++){
                     if (ret[dateEventData[i]] != null){
                         $('#' + dateEventData[i]).data("DateTimePicker").date(new Date(ret[dateEventData[i]]));
                     }
                 }
+
+                for (i = 0; i < booleanEventData.length; i++){
+                    $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
+                }
+
+                //edge cases (signup required is inverted)
+                // if (spots == null){
+                    $('#signup-required').prop('checked', !ret['signup-required']);
+                // }
+
                 
-            //     var tmp = '<table class="table table-hover events-edit-table" data-etag="' + ret['_etag'] + '"><tbody>';
-            //     for (var cur in ret) {
-            //         if (cur.charAt(0) != '_' && cur != 'signups')
-            //             tmp += '<tr><td>' + cur + '</td><td contenteditable>' + ret[cur] + '</td></tr>'
-            //     }
-            //     tmp += '</tbody></table>';
-            //
-            //     tools.modal({
-            //         head: ret.title_de,
-            //         body: tmp,
-            //         button: {
-            //             'Delete': {
-            //                 type: 'danger',
-            //                 close: false,
-            //                 callback: function() {
-            //                     if (confirm("Delete " + ret.title_de + "?") == true) {
-            //                         amivcore.events.DELETE({
-            //                             id: curEventData.id,
-            //                             header: {
-            //                                 'If-Match': $('.events-edit-table').attr('data-etag')
-            //                             }
-            //                         }, function(response) {
-            //                             console.log(response);
-            //                         });
-            //                         events.get();
-            //                         tools.log('Event deleted', 'w');
-            //                         tools.modalClose();
-            //                     } else {
-            //                         tools.log('Event not Deleted', 'i');
-            //                     }
-            //                 }
-            //             },
-            //             'Signups': {
-            //                 type: 'info',
-            //                 close: false,
-            //                 callback: function() {
-            //                     events.showSignups(curEventData);
-            //                 }
-            //             },
-            //             'Update': {
-            //                 type: 'success',
-            //                 close: false,
-            //                 callback: events.inspectEvent
-            //             }
-            //         }
-            //     });
+                $('#event-modal').modal('show');
+
+                
             });
         },
 
 
-        deleteEvent: function(etag) {
-            console.log('delete triggered' + etag);
+        deleteEvent: function() {
+            console.log(curEventData._etag);
             if (confirm("Delete " + curEventData.title_de + "?")) {
                 amivcore.events.DELETE({
-                    id: curEventData.id,
+                    id: curEventData._id,
                     header: {
                         // 'If-Match': $('#event-modal').attr('data-etag')
-                        'If-Match': etag
+                        'If-Match': curEventData._etag
                     }
                 }, function(response) {
                     console.log(response);
@@ -429,18 +427,7 @@
                 tools.log('Event not Deleted', 'i');
             }
         },
-        /*showDetails: function() {
-            amivcore.events.GET({
-                id: $(this).attr('data-id')
-            }, function(ret) {
-                curEventData = ret;
-                console.log(curEventData);
-                for (var attr in curEventData) {
-                  $('#' + attr).val(curEventData[attr]);
-                }
-                $('#event-modal').modal('show');
-            });
-        },*/
+
 
         showSignups: function(curEventData) {
             var tmp = '<table class="table table-hover events-edit-table" data-etag="' + curEventData['_etag'] + '"><tbody>';
@@ -461,50 +448,7 @@
             });
         },
 
-        inspectEvent: function() {
-            var newEventData = {};
-            $('.events-edit-table tr').each(function() {
-                newEventData[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
-            });
-            var changed = false,
-                curEventDataChanged = {};
-            for (var i in newEventData) {
-                if (newEventData[i] != String(curEventData[i])) {
-                    changed = true;
-                    curEventDataChanged[i] = newEventData[i];
-                }
-            }
-            console.log(curEventDataChanged);
-            if (changed) {
-                //workaround to get booleans and ints working
-                for (var i in curEventDataChanged) {
-                    if (!isNaN(curEventDataChanged[i])) curEventDataChanged[i] = parseInt(curEventDataChanged[i]);
-                    if (curEventDataChanged[i] === 'null' || curEventDataChanged[i] === '') curEventDataChanged[i] = null;
-                    if (curEventDataChanged[i] === 'true') curEventDataChanged[i] = true;
-                    if (curEventDataChanged[i] === 'false') curEventDataChanged[i] = false;
-
-                }
-                console.log(curEventDataChanged);
-                amivcore.events.PATCH({
-                    id: curEventData.id,
-                    header: {
-                        'If-Match': $('.events-edit-table').attr('data-etag')
-                    },
-                    data: curEventDataChanged
-                }, function(ret) {
-                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
-                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
-                    else {
-                        // console.log(ret);
-                        tools.log('Event Updated', 's');
-                        events.get();
-                        tools.modalClose();
-                    }
-                });
-            }
-        },
-
-        submitNewEvent: function() {
+        submitEvent: function(isNew) {
             console.log("submitting new event");
             var newEvent = {
                 data: {}
@@ -514,19 +458,21 @@
             newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date();
+                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
             if (!($("#time_end").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date();
+                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
 
 
             if (!($("#time_advertising_start").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_advertising_start"] = $("#time_advertising_start").data("DateTimePicker").date();
+                newEvent["data"]["time_advertising_start"] = $("#time_advertising_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
-            if (!($("#time_end").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date();
+            if (!($("#time_advertising_end").data("DateTimePicker").date() == null)) {
+                newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
+
+
 
             if (!$("#signup-required").is(":checked")) {
                 if ($("#no-signup-limit").is(":checked")) {
@@ -551,11 +497,12 @@
                     tools.log('field "End of Registration" required', 'e');
                     return;
                 }
+                newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
             } else {
                 newEvent["data"]["spots"] = null;
             }
 
-            newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
+           
 
             newEvent["data"]["location"] = setNullIfEmpty($("#location").val());
 
@@ -574,18 +521,65 @@
             newEvent["data"]["catchphrase_en"] = setNullIfEmpty($("#catchphrase_en").val());
 
             console.log(newEvent);
+
+            form = new FormData();
+            // for (data in newEvent.data){
+            //     form.append(data, newEvent['data'][data]);
+            // }
+            var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+            for (i = 0; i < imageData.length; i++){
+                if ($('#' + imageData[i])[0].files[0] != undefined)
+                    form.append(imageData[i], $('#' + imageData[i])[0].files[0]);
+            }
+
             console.log(JSON.stringify(newEvent));
-            var response = amivcore.events.POST(newEvent, function(ret) {
-                if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
-                    tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
-                else {
-                    tools.log('Event Added', 's');
-                    $('#event-modal').modal('hide');
-                    $("#event-modal-form").trigger('reset');
-                    events.get();
-                }
-            });
+            if(isNew) {
+                var response = amivcore.events.POST(form, function(ret) {
+                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+                    else {
+                        events.uploadCallback();
+                    }
+                });
+            } 
+            else {
+                newEvent['header'] = {};
+                newEvent['header']['If-Match'] = curEventData._etag;
+                newEvent['id'] = curEventData._id;
+                console.log(newEvent);
+                var response = amivcore.events.PATCH(newEvent, function(ret) {
+                    if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
+                        tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
+                    else {
+                        events.uploadCallback(form);
+                    }
+                });
+            }  
             console.log(response);
+        },
+
+        //images need to be uploaded seperately after POSTing using PATCH
+        uploadCallback: function(form){
+            amivcore.getEtag('events', curEventData._id, function(ret){
+                $.ajax({
+                    url: events.API_url + '/events/' + curEventData._id,
+                    headers: {'Authorization':'root', 'If-Match': ret},
+                    data: form,
+                    type: 'PATCH',
+                    // THIS MUST BE DONE FOR FILE UPLOADING
+                    contentType: false,
+                    processData: false,
+                    // ... Other options like success and etc
+                    success: function(data){
+                        console.log(data);
+                        tools.log('Event Added', 's');
+                        $('#event-modal').modal('hide');
+                        $("#event-modal-form").trigger('reset');
+                        events.get();
+                    }
+                });
+            });
+                
         }
     }
 
@@ -653,6 +647,12 @@
     $('#no-signup-limit').click(function() {
         $('#spots').attr('disabled', this.checked);
     });
+
+    $('#event-modal').on('hidden.bs.modal', function () {
+  // do something…
+        $('#event-modal img').attr('src', '');
+        $("#event-modal-form").trigger('reset');
+    })
 
 // tools in the top bar
     tools.ui.menu({
