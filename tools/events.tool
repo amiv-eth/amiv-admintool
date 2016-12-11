@@ -165,6 +165,24 @@
                         <textarea type="text" class="form-control" rows="3" id="additional_fields"></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label for="img_infoscreen">Infoscreen Image</label>
+                        <input type="file" id="img_infoscreen" name="myFile"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="img_banner">Banner Image</label>
+                        <input type="file" id="img_banner"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="img_poster">Poster Image</label>
+                        <input type="file" id="img_poster"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="img_thumbnail">Thumbnail</label>
+                        <input type="file" id="img_thumbnail"/>
+                    </div>
+
+
                     <button type="button" class "btn" data-toggle="collapse" data-target="#english-collapse">show english fields</button>
 
                     <div id="english-collapse" class="collapse">
@@ -180,6 +198,9 @@
                             <label for="catchphrase_en">Catchphrase english</label>
                             <input type="text" class="form-control" id="catchphrase_en"></input>
                         </div>
+                    </div>
+
+                    <div id="additional_info">
                     </div>
                     <!-- <input type="submit"> -->
                 </form>
@@ -413,18 +434,18 @@
             newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date();
+                newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
             if (!($("#time_end").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date();
+                newEvent["data"]["time_end"] = $("#time_end").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
 
 
             if (!($("#time_advertising_start").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_advertising_start"] = $("#time_advertising_start").data("DateTimePicker").date();
+                newEvent["data"]["time_advertising_start"] = $("#time_advertising_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
-            if (!($("#time_end").data("DateTimePicker").date() == null)) {
-                newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date();
+            if (!($("#time_advertising_end").data("DateTimePicker").date() == null)) {
+                newEvent["data"]["time_advertising_end"] = $("#time_advertising_end").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
             }
 
 
@@ -476,16 +497,24 @@
             newEvent["data"]["catchphrase_en"] = setNullIfEmpty($("#catchphrase_en").val());
 
             console.log(newEvent);
+
+            form = new FormData();
+            // for (data in newEvent.data){
+            //     form.append(data, newEvent['data'][data]);
+            // }
+            var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+            for (i = 0; i < imageData.length; i++){
+                if ($('#' + imageData[i])[0].files[0] != undefined)
+                    form.append(imageData[i], $('#' + imageData[i])[0].files[0]);
+            }
+
             console.log(JSON.stringify(newEvent));
             if(isNew) {
-                var response = amivcore.events.POST(newEvent, function(ret) {
+                var response = amivcore.events.POST(form, function(ret) {
                     if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
                         tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                     else {
-                        tools.log('Event Added', 's');
-                        $('#event-modal').modal('hide');
-                        $("#event-modal-form").trigger('reset');
-                        events.get();
+                        events.uploadCallback();
                     }
                 });
             } 
@@ -498,14 +527,35 @@
                     if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
                         tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                     else {
-                        tools.log('Event Edited', 's');
+                        events.uploadCallback(form);
+                    }
+                });
+            }  
+            console.log(response);
+        },
+
+        //images need to be uploaded seperately after POSTing using PATCH
+        uploadCallback: function(form){
+            amivcore.getEtag('events', curEventData._id, function(ret){
+                $.ajax({
+                    url: 'http://192.168.1.100/events/' + curEventData._id,
+                    headers: {'Authorization':'root', 'If-Match': ret},
+                    data: form,
+                    type: 'PATCH',
+                    // THIS MUST BE DONE FOR FILE UPLOADING
+                    contentType: false,
+                    processData: false,
+                    // ... Other options like success and etc
+                    success: function(data){
+                        console.log(data);
+                        tools.log('Event Added', 's');
                         $('#event-modal').modal('hide');
                         $("#event-modal-form").trigger('reset');
                         events.get();
                     }
                 });
-            }  
-            console.log(response);
+            });
+                
         }
     }
 
