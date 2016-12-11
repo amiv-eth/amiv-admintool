@@ -18,7 +18,8 @@
 
 <!-- modal for creating new events, easier to do it this way than js-->
 
-<div class="modal fade" id="event-modal" role="dialog" data-etag="">
+<div class="modal fade" id="event-modal" role="dialog" data-etag="" data-backdrop="static" 
+   data-keyboard="false" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -168,18 +169,22 @@
                     <div class="form-group">
                         <label for="img_infoscreen">Infoscreen Image</label>
                         <input type="file" id="img_infoscreen" name="myFile"/>
+                        <img src="" id="actual_img_infoscreen">
                     </div>
                     <div class="form-group">
                         <label for="img_banner">Banner Image</label>
                         <input type="file" id="img_banner"/>
+                        <img src="" id="actual_img_banner">
                     </div>
                     <div class="form-group">
                         <label for="img_poster">Poster Image</label>
                         <input type="file" id="img_poster"/>
+                        <img src="" id="actual_img_poster">
                     </div>
                     <div class="form-group">
                         <label for="img_thumbnail">Thumbnail</label>
                         <input type="file" id="img_thumbnail"/>
+                        <img src="" id="actual_img_thumbnail">
                     </div>
 
 
@@ -241,6 +246,7 @@
 
 <script type="text/javascript">
     var events = {
+        API_url: 'http://192.168.1.100',
         somethingChanged: false,
         showInTable: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
         curEventData: null,
@@ -338,6 +344,7 @@
         },
 
         createEvent: function() {
+            
             $("#event-modal-title").text("Create Event");
             $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(true)">Submit</button>');
             $('#event-modal').modal('show');
@@ -357,29 +364,46 @@
                 $("#event-modal-title").text("Edit Event");
                 $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.submitEvent(false)">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent()">Delete</button>');
 
-                $('#event-modal').attr('data-etag', etag);
+                imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+
+                for (i = 0; i < imageData.length; i++){
+                    if (ret[imageData[i]]){
+                        console.log(events.API_url + ret[imageData[i]]['file']);
+                        $('#actual_' + imageData[i]).attr('src', events.API_url + ret[imageData[i]]['file']);
+                    }
+                }
 
                 //fill fields of the form with content that has the same ID
                 $('#event-modal-form').find('input, textarea').val(function (index, value) {
-                    return ret[this.id];
+                    if (this.type != 'file')
+                        return ret[this.id];
                 });
 
                 //array of elements that are represented by checkboxes
-                var booleanEventData = ['signup-required', 'no-signup-limit', 'allow_email_signup', 'show_website', 'show_infoscreen', 'show_announce'];
-
-                for (i = 0; i < booleanEventData.length; i++){
-                    $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
-                }
-
-                //set the datepickers
-                $('#event-modal').modal('show');
+                var booleanEventData = ['no-signup-limit', 'allow_email_signup', 'show_website', 'show_infoscreen', 'show_announce'];
 
                 var dateEventData = ['time_start', 'time_end', 'time_register_start', 'time_register_end', 'time_advertising_start', 'time_advertising_end'];
+
+                //set the datepickers
                 for (i = 0; i < dateEventData.length; i++){
                     if (ret[dateEventData[i]] != null){
                         $('#' + dateEventData[i]).data("DateTimePicker").date(new Date(ret[dateEventData[i]]));
                     }
                 }
+
+                for (i = 0; i < booleanEventData.length; i++){
+                    $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
+                }
+
+                //edge cases (signup required is inverted)
+                // if (spots == null){
+                    $('#signup-required').prop('checked', !ret['signup-required']);
+                // }
+
+                
+                $('#event-modal').modal('show');
+
+                
             });
         },
 
@@ -538,7 +562,7 @@
         uploadCallback: function(form){
             amivcore.getEtag('events', curEventData._id, function(ret){
                 $.ajax({
-                    url: 'http://192.168.1.100/events/' + curEventData._id,
+                    url: events.API_url + '/events/' + curEventData._id,
                     headers: {'Authorization':'root', 'If-Match': ret},
                     data: form,
                     type: 'PATCH',
@@ -623,6 +647,12 @@
     $('#no-signup-limit').click(function() {
         $('#spots').attr('disabled', this.checked);
     });
+
+    $('#event-modal').on('hidden.bs.modal', function () {
+  // do something…
+        $('#event-modal img').attr('src', '');
+        $("#event-modal-form").trigger('reset');
+    })
 
 // tools in the top bar
     tools.ui.menu({
