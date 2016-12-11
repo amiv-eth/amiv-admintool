@@ -400,12 +400,26 @@
                     $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
                 }
 
-                //edge cases (signup required is inverted)
-                // if (spots == null){
-                    $('#signup-required').prop('checked', !ret['signup-required']);
-                // }
 
-                
+                //edge cases (signup required is inverted)
+                $('#signup-required').prop('checked', !ret['signup-required']);
+
+                //add additional (immutable) data to the modal
+                additionalInfo = {
+                    'created': '_created',
+                    'updated': '_updated',
+                    'number of signps': 'signup_count'
+                }
+
+                tempString = '<p>';
+
+                for (field in additionalInfo){
+                    tempString += "<br><b>" + field + ":</b> " + curEventData[additionalInfo[field]];
+                }
+                tempString += '</p>';
+
+                $('#additional_info').html(tempString);
+
                 $('#event-modal').modal('show');
 
                 
