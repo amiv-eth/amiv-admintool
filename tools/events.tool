@@ -332,9 +332,9 @@
             }, function(ret) {
                 curEventData = ret;
                 console.log(curEventData);
+                etag = ret['_etag'];
                 $("#event-modal-title").text("Edit Event");
-                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.inspectEvent()">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent(' + etag +')">Delete</button>');
-                var etag = ret['_etag'];
+                $('#event-modal-footer').html('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" onclick="events.inspectEvent()">update</button><button type="button" class="btn btn-danger" onclick="events.deleteEvent(' +"'" + etag + "'" + ')">Delete</button>');
 
                 $('#event-modal').attr('data-etag', etag);
 
@@ -410,9 +410,9 @@
         },
 
 
-        deleteEvent: function(etag) { 
-            console.log('delete triggered');
-            if (confirm("Delete " + curEventData.title_de + "?") == true) {
+        deleteEvent: function(etag) {
+            console.log('delete triggered' + etag);
+            if (confirm("Delete " + curEventData.title_de + "?")) {
                 amivcore.events.DELETE({
                     id: curEventData.id,
                     header: {
@@ -422,12 +422,12 @@
                 }, function(response) {
                     console.log(response);
                 });
-                    events.get();
-                        tools.log('Event deleted', 'w');
-                        tools.modalClose();
+                events.get();
+                tools.log('Event deleted', 'w');
+                tools.modalClose();
             } else {
                 tools.log('Event not Deleted', 'i');
-                                }
+            }
         },
         /*showDetails: function() {
             amivcore.events.GET({
