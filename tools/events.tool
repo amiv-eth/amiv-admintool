@@ -412,9 +412,10 @@
 
         deleteEvent: function(etag) {
             console.log('delete triggered' + etag);
+            console.log(curEventData);
             if (confirm("Delete " + curEventData.title_de + "?")) {
                 amivcore.events.DELETE({
-                    id: curEventData.id,
+                    id: curEventData._id,
                     header: {
                         // 'If-Match': $('#event-modal').attr('data-etag')
                         'If-Match': etag
@@ -486,7 +487,7 @@
                 }
                 console.log(curEventDataChanged);
                 amivcore.events.PATCH({
-                    id: curEventData.id,
+                    id: curEventData._id,
                     header: {
                         'If-Match': $('.events-edit-table').attr('data-etag')
                     },
