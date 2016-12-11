@@ -169,22 +169,22 @@
                     <div class="form-group">
                         <label for="img_infoscreen">Infoscreen Image</label>
                         <input type="file" id="img_infoscreen" name="myFile"/>
-                        <img src="" id="actual_img_infoscreen">
+                        <img class="event-image" visibility="invisble" src="" id="actual_img_infoscreen">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group"> 
                         <label for="img_banner">Banner Image</label>
                         <input type="file" id="img_banner"/>
-                        <img src="" id="actual_img_banner">
+                        <img class="event-image" visibility="invisble" src="" id="actual_img_banner">
                     </div>
                     <div class="form-group">
                         <label for="img_poster">Poster Image</label>
                         <input type="file" id="img_poster"/>
-                        <img src="" id="actual_img_poster">
+                        <img class="event-image" visibility="invisble" src="" id="actual_img_poster">
                     </div>
                     <div class="form-group">
                         <label for="img_thumbnail">Thumbnail</label>
                         <input type="file" id="img_thumbnail"/>
-                        <img src="" id="actual_img_thumbnail">
+                        <img class="event-image" visibility="invisble" src="" id="actual_img_thumbnail">
                     </div>
 
 
@@ -241,6 +241,11 @@
     .tooltip-inner {
         white-space: nowrap;
         max-width: none;
+    }
+
+    .event-image {
+        margin-top: 10px;
+        width: 100%;
     }
 </style>
 
@@ -534,11 +539,13 @@
 
             console.log(JSON.stringify(newEvent));
             if(isNew) {
-                var response = amivcore.events.POST(form, function(ret) {
+                var response = amivcore.events.POST(newEvent, function(ret) {
                     if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
                         tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                     else {
-                        events.uploadCallback();
+                        console.log(ret);
+                        curEventData = ret;
+                        events.uploadCallback(form);
                     }
                 });
             } 
