@@ -18,12 +18,11 @@
 
 <!-- modal for creating new events, easier to do it this way than js-->
 
-<div class="modal fade" id="event-modal" role="dialog" data-etag="" data-backdrop="static" 
-   data-keyboard="false" >
+<div class="modal fade" id="event-modal" role="dialog" data-etag="" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" >&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id="event-modal-title"></h4>
             </div>
             <div class="modal-body">
@@ -251,7 +250,7 @@
 
 <script type="text/javascript">
     var events = {
-        API_url: 'http://192.168.1.100',
+        API_url: 'https://amiv-apidev.vsos.ethz.ch',
         somethingChanged: false,
         showInTable: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
         curEventData: null,
@@ -584,7 +583,7 @@
             amivcore.getEtag('events', curEventData._id, function(ret){
                 $.ajax({
                     url: events.API_url + '/events/' + curEventData._id,
-                    headers: {'Authorization':'root', 'If-Match': ret},
+                    headers: {'Authorization':'amivroot', 'If-Match': ret},
                     data: form,
                     type: 'PATCH',
                     // THIS MUST BE DONE FOR FILE UPLOADING
