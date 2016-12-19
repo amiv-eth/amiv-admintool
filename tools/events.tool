@@ -244,7 +244,7 @@
 
     .event-image {
         margin-top: 10px;
-        width: 100%;
+        max-width: 100%;
     }
 </style>
 
