@@ -471,9 +471,12 @@
             var newEvent = {
                 data: {}
             };
-            newEvent["data"]["title_de"] = setNullIfEmpty($("#title_de").val());
-            newEvent["data"]["description_de"] = setNullIfEmpty($("#description_de").val());
-            newEvent["data"]["catchphrase_de"] = setNullIfEmpty($("#catchphrase_de").val());
+	    if ($("#title_de") !== "")
+		newEvent["data"]["title_de"] = $("#title_de").val();
+	    if ($("#description_de") !== "")
+		newEvent["data"]["description_de"] = $("#description_de").val();
+	    if ($("#catchphrase_de") !== "")
+		newEvent["data"]["catchphrase_de"] = $("#catchphrase_de").val();
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
                 newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
@@ -517,38 +520,35 @@
                 }
                 newEvent["data"]["allow_email_signup"] = $("#allow_email_signup").is(':checked');
             } else {
-                newEvent["data"]["spots"] = null;
             }
 
            
+	    if ($("#location").val() !== "")
+		newEvent["data"]["location"] = $("#location").val();
 
-            newEvent["data"]["location"] = setNullIfEmpty($("#location").val());
-
-            if (!($("#price").val() === "")) {
+            if (!($("#price").val() === ""))
                 newEvent["data"]["price"] = Math.floor((parseFloat($("#price").val()) * 100));
-            }
 
             newEvent["data"]["show_website"] = $("#show_website").is(':checked');
             newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
             newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
-            newEvent["data"]["priority"] = (parseInt($("#priority").val()));
-            newEvent["data"]["additional_fields"] = setNullIfEmpty($("#additional_fields").val());
+            newEvent["data"]["priority"] = parseInt($("#priority").val());
+	    if ($("#additional_fields").val() !== "")
+		newEvent["data"]["additional_fields"] = $("#additional_fields").val();
 
-            newEvent["data"]["title_en"] = setNullIfEmpty($("#title_en").val());
-            newEvent["data"]["description_en"] = setNullIfEmpty($("#description_en").val());
-            newEvent["data"]["catchphrase_en"] = setNullIfEmpty($("#catchphrase_en").val());
+	    if ($("#title_en").val !== "")
+		newEvent["data"]["title_en"] = $("#title_en").val();
+	    if ($("#description_en").val !== "")
+		newEvent["data"]["description_en"] = $("#description_en").val();
+	    if ($("#catchphrase_en").val !== "")
+		newEvent["data"]["catchphrase_en"] = $("#catchphrase_en").val();
 
-            console.log(newEvent);
-
-            form = new FormData();
-            // for (data in newEvent.data){
-            //     form.append(data, newEvent['data'][data]);
-            // }
-            var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+	    var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
             for (i = 0; i < imageData.length; i++){
                 if ($('#' + imageData[i])[0].files[0] != undefined)
-                    form.append(imageData[i], $('#' + imageData[i])[0].files[0]);
+                    newEvent["data"][imageData[i]] = $('#' + imageData[i])[0].files[0];
             }
+            console.log(newEvent);
 
             console.log(JSON.stringify(newEvent));
             if(isNew) {
@@ -558,7 +558,10 @@
                     else {
                         console.log(ret);
                         curEventData = ret;
-                        events.uploadCallback(form);
+			tools.log('Event Added', 's');
+                        $('#event-modal').modal('hide');
+                        $("#event-modal-form").trigger('reset');
+                        events.get();
                     }
                 });
             } 
@@ -571,35 +574,15 @@
                     if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
                         tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                     else {
-                        events.uploadCallback(form);
-                    }
-                });
-            }  
-            console.log(response);
-        },
-
-        //images need to be uploaded seperately after POSTing using PATCH
-        uploadCallback: function(form){
-            amivcore.getEtag('events', curEventData._id, function(ret){
-                $.ajax({
-                    url: events.API_url + '/events/' + curEventData._id,
-                    headers: {'Authorization':'amivroot', 'If-Match': ret},
-                    data: form,
-                    type: 'PATCH',
-                    // THIS MUST BE DONE FOR FILE UPLOADING
-                    contentType: false,
-                    processData: false,
-                    // ... Other options like success and etc
-                    success: function(data){
-                        console.log(data);
-                        tools.log('Event Added', 's');
+			console.log(ret);
+                        curEventData = ret;
+			tools.log('Event Added', 's');
                         $('#event-modal').modal('hide');
                         $("#event-modal-form").trigger('reset');
                         events.get();
                     }
                 });
-            });
-                
+            }
         }
     }
 
