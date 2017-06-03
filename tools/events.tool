@@ -47,7 +47,7 @@
                         <div class="input-group date" id="time_start">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         <div class="input-group date" id="time_end">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                         <div class="input-group date" id="time_advertising_start">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                         <div class="input-group date" id="time_advertising_end">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                         <div class="input-group date" id="time_register_start">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                         <div class="input-group date" id="time_register_end">
                             <input type="text" class="form-control" />
                             <span class="input-group-addon">
-                    <span class="glyphicon-calendar glyphicon"></span>
+                                <span class="glyphicon-calendar glyphicon"></span>
                             </span>
                         </div>
                     </div>
@@ -164,6 +164,22 @@
                         <label for="description_de">Additional Fields (JSON schema)</label>
                         <textarea type="text" class="form-control" rows="3" id="additional_fields"></textarea>
                     </div>
+
+                    <label for="selection-strategy">Selection strategy</label>
+                    <fieldset class="form-group" id="selection-strategy">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="selection-strategy-radio" id="selection-strategy-radio1" value="fcfs" checked>
+                                first come first serve
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="selection-strategy-radio" id="selection-strategy-radio2" value="manual">
+                                manual
+                            </label>
+                        </div>
+                    </fieldset>
 
                     <div class="form-group">
                         <label for="img_infoscreen">Infoscreen Image</label>
@@ -248,9 +264,9 @@
     }
 </style>
 
-<script type="text/javascript">
+    <script type="text/javascript">
     var events = {
-        API_url: 'https://amiv-apidev.vsos.ethz.ch',
+        API_url: 'https://amiv-api.ethz.ch',
         somethingChanged: false,
         showInTable: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
         curEventData: null,
@@ -399,9 +415,15 @@
                     $("#" + booleanEventData[i]).prop('checked', ret[booleanEventData[i]]);
                 }
 
+                //radios
+                if (ret['selection_strategy'] == "fcfs")
+                    $('#selection-strategy-radio1').prop('checked', true);
+                else if (ret['selection_strategy'] == "manual")
+                    $('#selection-strategy-radio2').prop('checked', true);
 
                 //edge cases (signup required is inverted)
-                $('#signup-required').prop('checked', !ret['signup-required']);
+                if (ret['spots'] == 0)
+                    $('#signup-required').prop('checked', true);
 
                 //add additional (immutable) data to the modal
                 additionalInfo = {
@@ -460,7 +482,7 @@
                     'Update': {
                         type: 'success',
                         close: false
-                            //callback
+                        //callback
                     }
                 }
             });
@@ -471,12 +493,12 @@
             var newEvent = {
                 data: {}
             };
-	    if ($("#title_de") !== "")
-		newEvent["data"]["title_de"] = $("#title_de").val();
-	    if ($("#description_de") !== "")
-		newEvent["data"]["description_de"] = $("#description_de").val();
-	    if ($("#catchphrase_de") !== "")
-		newEvent["data"]["catchphrase_de"] = $("#catchphrase_de").val();
+            if ($("#title_de") !== "")
+                newEvent["data"]["title_de"] = $("#title_de").val();
+            if ($("#description_de") !== "")
+                newEvent["data"]["description_de"] = $("#description_de").val();
+            if ($("#catchphrase_de") !== "")
+                newEvent["data"]["catchphrase_de"] = $("#catchphrase_de").val();
 
             if (!($("#time_start").data("DateTimePicker").date() == null)) {
                 newEvent["data"]["time_start"] = $("#time_start").data("DateTimePicker").date().toISOString().split('.')[0]+"Z";
@@ -522,9 +544,8 @@
             } else {
             }
 
-           
-	    if ($("#location").val() !== "")
-		newEvent["data"]["location"] = $("#location").val();
+            if ($("#location").val() !== "")
+                newEvent["data"]["location"] = $("#location").val();
 
             if (!($("#price").val() === ""))
                 newEvent["data"]["price"] = Math.floor((parseFloat($("#price").val()) * 100));
@@ -533,17 +554,22 @@
             newEvent["data"]["show_infoscreen"] = $("#show_infoscreen").is(':checked');
             newEvent["data"]["show_announce"] = $("#show_announce").is(':checked');
             newEvent["data"]["priority"] = parseInt($("#priority").val());
-	    if ($("#additional_fields").val() !== "")
-		newEvent["data"]["additional_fields"] = $("#additional_fields").val();
+            if ($("#additional_fields").val() !== "")
+                newEvent["data"]["additional_fields"] = $("#additional_fields").val();
 
-	    if ($("#title_en").val !== "")
-		newEvent["data"]["title_en"] = $("#title_en").val();
-	    if ($("#description_en").val !== "")
-		newEvent["data"]["description_en"] = $("#description_en").val();
-	    if ($("#catchphrase_en").val !== "")
-		newEvent["data"]["catchphrase_en"] = $("#catchphrase_en").val();
+            if ($('#selection-strategy-radio1').is(":checked"))
+                newEvent['data']['selection_strategy'] = "fcfs";
+            else if($('#selection-strategy-radio2').is(":checked"))
+                newEvent['data']['selection_strategy'] = "manual";
 
-	    var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
+            if ($("#title_en").val !== "")
+                newEvent["data"]["title_en"] = $("#title_en").val();
+            if ($("#description_en").val !== "")
+                newEvent["data"]["description_en"] = $("#description_en").val();
+            if ($("#catchphrase_en").val !== "")
+                newEvent["data"]["catchphrase_en"] = $("#catchphrase_en").val();
+
+            var imageData = ['img_infoscreen', 'img_thumbnail', 'img_poster', 'img_banner'];
             for (i = 0; i < imageData.length; i++){
                 if ($('#' + imageData[i])[0].files[0] != undefined)
                     newEvent["data"][imageData[i]] = $('#' + imageData[i])[0].files[0];
@@ -558,7 +584,7 @@
                     else {
                         console.log(ret);
                         curEventData = ret;
-			tools.log('Event Added', 's');
+                        tools.log('Event Added', 's');
                         $('#event-modal').modal('hide');
                         $("#event-modal-form").trigger('reset');
                         events.get();
@@ -574,9 +600,9 @@
                     if (!ret.hasOwnProperty('_status') || ret['_status'] != 'OK')
                         tools.log(JSON.stringify(ret.responseJSON['_issues']), 'e');
                     else {
-			console.log(ret);
+                        console.log(ret);
                         curEventData = ret;
-			tools.log('Event Added', 's');
+                        tools.log('Event Added', 's');
                         $('#event-modal').modal('hide');
                         $("#event-modal-form").trigger('reset');
                         events.get();
@@ -587,185 +613,185 @@
     }
 
 
-    //setting up the date time picker
-    $(function() {
-        $('#time_start').datetimepicker({
-            locale: "de",
-            sideBySide: true
-        });
-
-        $('#time_end').datetimepicker({
-            locale: "de",
-            useCurrent: false, //Important! See issue #1075aa
-            sideBySide: true
-        });
-
-        $('#time_advertising_start').datetimepicker({
-            locale: "de",
-            sideBySide: true
-        });
-
-        $('#time_advertising_end').datetimepicker({
-            locale: "de",
-            useCurrent: false, //Important! See issue #1075aa
-            sideBySide: true
-        });
-
-        $('#time_register_start').datetimepicker({
-            locale: "de",
-            sideBySide: true
-        });
-        $('#time_register_end').datetimepicker({
-            locale: "de",
-            useCurrent: false, //Important! See issue #107534
-            sideBySide: true
-        });
-        $("#time_register_start").on("dp.change", function(e) {
-            $('#time_register_end').data("DateTimePicker").minDate(e.date);
-        });
-        $("#time_register_end").on("dp.change", function(e) {
-            $('#time_register_start').data("DateTimePicker").maxDate(e.date);
-        });
-        $("#time_advertising_start").on("dp.change", function(e) {
-            $('#time_advertising_end').data("DateTimePicker").minDate(e.date);
-        });
-        $("#time_advertising_end").on("dp.change", function(e) {
-            $('#time_advertising_start').data("DateTimePicker").maxDate(e.date);
-        });
-        $("#time_start").on("dp.change", function(e) {
-            $('#time_end').data("DateTimePicker").minDate(e.date);
-        });
-        $("#time_end").on("dp.change", function(e) {
-            $('#time_start').data("DateTimePicker").maxDate(e.date);
-        });
+//setting up the date time picker
+$(function() {
+    $('#time_start').datetimepicker({
+        locale: "de",
+        sideBySide: true
     });
 
-    $('#signup-required').click(function() {
-        $('#no-signup-limit').attr('disabled', this.checked);
-        $('#spots').attr('disabled', this.checked);
-        $('#time_register_end>input').attr('disabled', this.checked);
-        $('#time_register_start>input').attr('disabled', this.checked);
+    $('#time_end').datetimepicker({
+        locale: "de",
+        useCurrent: false, //Important! See issue #1075aa
+        sideBySide: true
     });
 
-    $('#no-signup-limit').click(function() {
-        $('#spots').attr('disabled', this.checked);
+    $('#time_advertising_start').datetimepicker({
+        locale: "de",
+        sideBySide: true
     });
 
-    $('#event-modal').on('hidden.bs.modal', function () {
-  // do something…
-        $('#event-modal img').attr('src', '');
-        $("#event-modal-form").trigger('reset');
-    })
+    $('#time_advertising_end').datetimepicker({
+        locale: "de",
+        useCurrent: false, //Important! See issue #1075aa
+        sideBySide: true
+    });
+
+    $('#time_register_start').datetimepicker({
+        locale: "de",
+        sideBySide: true
+    });
+    $('#time_register_end').datetimepicker({
+        locale: "de",
+        useCurrent: false, //Important! See issue #107534
+        sideBySide: true
+    });
+    $("#time_register_start").on("dp.change", function(e) {
+        $('#time_register_end').data("DateTimePicker").minDate(e.date);
+    });
+    $("#time_register_end").on("dp.change", function(e) {
+        $('#time_register_start').data("DateTimePicker").maxDate(e.date);
+    });
+    $("#time_advertising_start").on("dp.change", function(e) {
+        $('#time_advertising_end').data("DateTimePicker").minDate(e.date);
+    });
+    $("#time_advertising_end").on("dp.change", function(e) {
+        $('#time_advertising_start').data("DateTimePicker").maxDate(e.date);
+    });
+    $("#time_start").on("dp.change", function(e) {
+        $('#time_end').data("DateTimePicker").minDate(e.date);
+    });
+    $("#time_end").on("dp.change", function(e) {
+        $('#time_start').data("DateTimePicker").maxDate(e.date);
+    });
+});
+
+$('#signup-required').click(function() {
+    $('#no-signup-limit').attr('disabled', this.checked);
+    $('#spots').attr('disabled', this.checked);
+    $('#time_register_end>input').attr('disabled', this.checked);
+    $('#time_register_start>input').attr('disabled', this.checked);
+});
+
+$('#no-signup-limit').click(function() {
+    $('#spots').attr('disabled', this.checked);
+});
+
+$('#event-modal').on('hidden.bs.modal', function () {
+    // do something…
+    $('#event-modal img').attr('src', '');
+    $("#event-modal-form").trigger('reset');
+})
 
 // tools in the top bar
-    tools.ui.menu({
-        '<span class="glyphicon glyphicon-plus"  data-toggle="tooltip" aria-hidden="true" title="Create new Event" data-placement="bottom"></span>': {
-            callback: events.createEvent
-        },
-        '<span class="glyphicon glyphicon-refresh" aria-hidden="true"  data-toggle="tooltip" title="Refresh" data-placement="bottom"></span>': {
-            callback: events.get
-        },
-        '<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>': {
-            callback: events.page.dec
-        },
-        '<span class="events-cur-page-cont" aria-hidden="true"></span> / <span class="events-page-max-cont" aria-hidden="true"></span>': {
-            callback: function() {
-                tools.modal({
-                    head: 'Go To Page:',
-                    body: '<div class="form-group"><input type="number" value="' + events.page.cur() + '" class="form-control events-go-page"></div>',
-                    button: {
-                        'Go': {
-                            type: 'success',
-                            close: true,
-                            callback: function() {
-                                events.page.set($('.events-go-page').val());
-                            },
+tools.ui.menu({
+    '<span class="glyphicon glyphicon-plus"  data-toggle="tooltip" aria-hidden="true" title="Create new Event" data-placement="bottom"></span>': {
+        callback: events.createEvent
+    },
+    '<span class="glyphicon glyphicon-refresh" aria-hidden="true"  data-toggle="tooltip" title="Refresh" data-placement="bottom"></span>': {
+        callback: events.get
+    },
+    '<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>': {
+        callback: events.page.dec
+    },
+    '<span class="events-cur-page-cont" aria-hidden="true"></span> / <span class="events-page-max-cont" aria-hidden="true"></span>': {
+        callback: function() {
+            tools.modal({
+                head: 'Go To Page:',
+                body: '<div class="form-group"><input type="number" value="' + events.page.cur() + '" class="form-control events-go-page"></div>',
+                button: {
+                    'Go': {
+                        type: 'success',
+                        close: true,
+                        callback: function() {
+                            events.page.set($('.events-go-page').val());
+                        },
+                    }
+                }
+            });
+        }
+    },
+    '<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {
+        callback: events.page.inc
+    },
+    '<span class="glyphicon glyphicon-sort" aria-hidden="true" data-toggle="tooltip" title="Sort" data-placement="bottom"></span>': {
+        callback: function() {
+            var tmp = '<div class="form-group"><select class="form-control events-sort-select">';
+            var cur = events.sort.cur();
+            ['_id', 'title_de', 'description_de', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(function(i) {
+                tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
+                tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
+            });
+            tmp += '</select></div>';
+            tools.modal({
+                head: 'Sort',
+                body: tmp,
+                button: {
+                    'Sort': {
+                        type: 'success',
+                        close: true,
+                        callback: function() {
+                            events.sort.set($('.events-sort-select').val());
                         }
                     }
-                });
-            }
-        },
-        '<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>': {
-            callback: events.page.inc
-        },
-        '<span class="glyphicon glyphicon-sort" aria-hidden="true" data-toggle="tooltip" title="Sort" data-placement="bottom"></span>': {
-            callback: function() {
-                var tmp = '<div class="form-group"><select class="form-control events-sort-select">';
-                var cur = events.sort.cur();
-                ['_id', 'title_de', 'description_de', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location'].forEach(function(i) {
-                    tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>&#8673; ' + i + '</option>';
-                    tmp += '<option value="-' + i + '"' + (('-' + i == cur) ? ' selected' : '') + '>&#8675; ' + i + '</option>';
-                });
-                tmp += '</select></div>';
-                tools.modal({
-                    head: 'Sort',
-                    body: tmp,
-                    button: {
-                        'Sort': {
-                            type: 'success',
-                            close: true,
-                            callback: function() {
-                                events.sort.set($('.events-sort-select').val());
-                            }
-                        }
-                    }
+                }
 
-                });
-            }
-        },
-        '<span class="glyphicon glyphicon-search" aria-hidden="true" data-toggle="tooltip" title="Search" data-placement="bottom"></span>': {
-            callback: function() {
-                var tmp = '<div class="form-group"><select class="form-control events-search-select">';
-                var cur = events.search.cur();
-                if (cur === null || cur == '')
-                    cur = '';
-                else
-                    cur = cur.split('==')[1];
-                ['_id', 'title_de', 'description_de', 'title_en', 'description_en', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location']
+            });
+        }
+    },
+    '<span class="glyphicon glyphicon-search" aria-hidden="true" data-toggle="tooltip" title="Search" data-placement="bottom"></span>': {
+        callback: function() {
+            var tmp = '<div class="form-group"><select class="form-control events-search-select">';
+            var cur = events.search.cur();
+            if (cur === null || cur == '')
+                cur = '';
+            else
+                cur = cur.split('==')[1];
+            ['_id', 'title_de', 'description_de', 'title_en', 'description_en', 'time_start', 'time_register_start', 'time_end', 'time_register_end', 'show_website', 'show_announce', 'show_infoscreen', 'price', '_updated', 'location']
                 .forEach(
                     function(i) {
                         tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
                     });
-                tmp += '</select><br><input type="text" value="' + cur + '" class="form-control events-search-val"></div>';
-                tools.modal({
-                    head: 'Search',
-                    body: tmp,
-                    button: {
-                        'Clear': {
-                            type: 'warning',
-                            close: true,
-                            callback: events.search.clr,
-                        },
-                        'Search': {
-                            type: 'success',
-                            close: true,
-                            callback: function() {
-                                events.search.set($('.events-search-select').val(), $('.events-search-val').val());
-                            }
-                        },
-                    }
-                })
-            }
+            tmp += '</select><br><input type="text" value="' + cur + '" class="form-control events-search-val"></div>';
+            tools.modal({
+                head: 'Search',
+                body: tmp,
+                button: {
+                    'Clear': {
+                        type: 'warning',
+                        close: true,
+                        callback: events.search.clr,
+                    },
+                    'Search': {
+                        type: 'success',
+                        close: true,
+                        callback: function() {
+                            events.search.set($('.events-search-select').val(), $('.events-search-val').val());
+                        }
+                    },
+                }
+            })
         }
-    });
-
-    if (events.page.cur() === null || isNaN(events.page.cur()))
-        events.page.set(1);
-    else
-        events.page.set(events.page.cur());
-
-    $(document).ready(function() {
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#event-modal-form').on('keyup change', 'input, select, textarea, span ', function(){
-            console.log('changed shit');
-            events.somethingChanged = true;
-        });
-    });
-
-    function setNullIfEmpty(formData) {
-        if (formData === "") {
-            return null;
-        }
-        return formData;
     }
+});
+
+if (events.page.cur() === null || isNaN(events.page.cur()))
+    events.page.set(1);
+else
+    events.page.set(events.page.cur());
+
+$(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+    $('#event-modal-form').on('keyup change', 'input, select, textarea, span ', function(){
+        console.log('changed shit');
+        events.somethingChanged = true;
+    });
+});
+
+function setNullIfEmpty(formData) {
+    if (formData === "") {
+        return null;
+    }
+    return formData;
+}
 </script>
