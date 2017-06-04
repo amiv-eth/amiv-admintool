@@ -191,7 +191,7 @@
             }
             if (changed) {
                 amivcore.groups.PATCH({
-                    id: curUserData._   id,
+                    id: curUserData._id,
                     header: {
                         'If-Match': $('.groups-edit-cont').attr('data-etag')
                     },
