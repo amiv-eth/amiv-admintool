@@ -8,6 +8,10 @@
 		</tbody>
 	</table>
 </div>
+<style>
+	.users-search-table-remove-cell {width:30px}
+	.users-search-table-field-cell {width:240px}
+</style>
 <script type="text/javascript">
 	var users = {
 		showInTable: ['firstname', 'lastname', 'nethz', 'legi', 'membership'],
@@ -57,8 +61,8 @@
 			cur: function() {
 				return tools.mem.session.get('search');
 			},
-			set: function(dom, val) {
-				tools.mem.session.set('search', '{\"' + dom + '\": \"' + val + '\"}');
+			set: function(searchParameters) {
+				tools.mem.session.set('search', JSON.stringify(searchParameters));
 				users.page.set(1);
 			},
 			clr: function() {
@@ -270,7 +274,8 @@
 		},
 		'<span class="glyphicon glyphicon-search" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Search"></span>': {
 			callback: function() {
-				var tmp = '<div class="form-group"><select class="form-control users-search-select">';
+				var tmp = '<table class="table table-hover users-search-table"><tbody>';
+				var tmpOptions = '';
 				var cur = users.search.cur();
 				var val = '';
 				if (cur === null || cur == '')
@@ -278,11 +283,14 @@
 				else
 					cur = JSON.parse(users.search.cur());
 				['_id', 'firstname', 'lastname'].forEach(function(i) {
-					tmp += '<option value="' + i + '"' + ((cur[i] !== undefined) ? ' selected' : '') + '>' + i + '</option>';
-					if (cur[i] !== undefined)
-						val = cur[i];
+					if (cur[i] !== undefined) {
+						tmp += '<tr><td class="users-search-table-field-cell">' + i + '</td><td contenteditable="true" placeholder="Place text here...">' + cur[i] + '</td><td class="users-search-table-remove-cell"><button type="button" class="close users-search-remove-btn" aria-label="Close" data-field="' + i + '"><span aria-hidden="true">&times;</span></button></td></tr>';
+					}
+					tmpOptions += '<option class="users-search-field-' + i + ' ' + ((cur[i] !== undefined) ? ' hidden' : '') + '" value="' + i + '">' + i + '</option>';
 				});
-				tmp += '</select><br><input type="text" value="' + val + '" class="form-control users-search-val"></div>';
+				tmp += '</tbody></table>';
+				tmp += '<select class="form-control users-search-select" placeholder="Select a field...">' + tmpOptions + '</select>';
+				tmp += '<button type="button" class="btn btn-default users-search-add-btn">Add field</button>';
 				tools.modal({
 					head: 'Search',
 					body: tmp,
@@ -296,11 +304,34 @@
 							type: 'success',
 							close: true,
 							callback: function() {
-								users.search.set($('.users-search-select').val(), $('.users-search-val').val());
+								var newSearchParameters = {};
+								$('.users-search-table tr').each(function() {
+									newSearchParameters[$(this).children('td:nth-child(1)').html()] = $(this).children('td:nth-child(2)').html();
+								});
+								users.search.set(newSearchParameters);
 							}
 						},
 					}
-				})
+				});
+				var initRemoveBtn = function() {
+					$('.users-search-remove-btn').off('click');
+					$('.users-search-remove-btn').click(function() {
+						var field = $(this).data('field');
+						$('.users-search-field-' + field).removeClass('hidden');
+						$(this).parents('tr').remove();
+					});
+				};
+				initRemoveBtn();
+				$('.users-search-add-btn').click(function() {
+					var field = $('.users-search-select').val();
+					$('.users-search-select').val(undefined);
+					tmp = '<tr><td class="users-search-table-field-cell">' + field + '</td><td contenteditable="true" placeholder="Place text here..."></td><td class="users-search-table-remove-cell"><button type="button" class="close users-search-remove-btn" aria-label="Close" data-field="' + field + '"><span aria-hidden="true">&times;</span></button></td></tr>';
+					$('.users-search-table').append(tmp);
+					$('.users-search-field-' + field).addClass('hidden');
+					initRemoveBtn();
+				});
+				
+				
 			}
 		}
 	});
