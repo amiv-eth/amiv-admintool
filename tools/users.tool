@@ -58,7 +58,7 @@
 				return tools.mem.session.get('search');
 			},
 			set: function(dom, val) {
-				tools.mem.session.set('search', dom + '==' + val);
+				tools.mem.session.set('search', '{\"' + dom + '\": \"' + val + '\"}');
 				users.page.set(1);
 			},
 			clr: function() {
@@ -70,12 +70,10 @@
 		// Get users
 		get: function() {
 			amivcore.users.GET({
-				data: {
-					'max_results': '50',
-					page: users.page.cur(),
-					sort: users.sort.cur(),
-					where: users.search.cur(),
-				}
+				'max_results': '50',
+				page: users.page.cur(),
+				sort: users.sort.cur(),
+				where: users.search.cur(),
 			}, function(ret) {
 
 				if (ret === undefined || ret['_items'].length == 0) {
@@ -274,14 +272,17 @@
 			callback: function() {
 				var tmp = '<div class="form-group"><select class="form-control users-search-select">';
 				var cur = users.search.cur();
+				var val = '';
 				if (cur === null || cur == '')
-					cur = '';
+					cur = JSON.parse('{}');
 				else
-					cur = cur.split('==')[1];
+					cur = JSON.parse(users.search.cur());
 				['_id', 'firstname', 'lastname'].forEach(function(i) {
-					tmp += '<option value="' + i + '"' + ((i == cur) ? ' selected' : '') + '>' + i + '</option>';
+					tmp += '<option value="' + i + '"' + ((cur[i] !== undefined) ? ' selected' : '') + '>' + i + '</option>';
+					if (cur[i] !== undefined)
+						val = cur[i];
 				});
-				tmp += '</select><br><input type="text" value="' + cur + '" class="form-control users-search-val"></div>';
+				tmp += '</select><br><input type="text" value="' + val + '" class="form-control users-search-val"></div>';
 				tools.modal({
 					head: 'Search',
 					body: tmp,
