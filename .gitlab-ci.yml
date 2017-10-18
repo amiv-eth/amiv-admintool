@@ -1,0 +1,22 @@
+stages:
+  - deploy
+
+dev_deploy:
+  stage: deploy
+  image: alpine:latest
+  when: manual
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$DEPLOY_PRIVATE_KEY")
+    - apt-get install rsync
+  script:
+    - ssh -p22 amivadmin@amiv-zoidberg.ethz.ch "docker build -t admintools ./amiv-containers/admintools/"
+    - ssh -p22 amivadmin@amiv-zoidberg.ethz.ch "cd ./amiv-containers/ && docker-compose up -d"
+  only:
+    - master
+  environment:
+    name: development
+    url: https://amiv-admin.amiv.ethz.ch
