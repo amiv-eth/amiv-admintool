@@ -1,6 +1,7 @@
 import { LoginScreen } from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable } from './userTool';
+import Sidebar from './sidebar';
 
 const m = require('mithril');
 
@@ -9,24 +10,42 @@ document.body.appendChild(main);
 const root = main;
 
 
+class Layout {
+  view(vnode) {
+    return m('div.wrapper-main.smooth', [
+      m(Sidebar),
+      m('div.navbar.navbar-defailt.navbar-main'),
+      m('div.wrapper-content', vnode.children),
+    ]);
+  }
+}
+
+function layoutWith(view) {
+  return {
+    view() {
+      return m(Layout, m(view));
+    },
+  };
+}
+
 m.route(root, '/users', {
-  '/users': UserTable,
-  '/users/:id': UserModal,
-  '/events': {
+  '/users': layoutWith(UserTable),
+  '/users/:id': layoutWith(UserModal),
+  '/events': layoutWith({
     view() {
       return m(TableView, {
         resource: 'events',
         keys: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
       });
     },
-  },
-  '/groups': {
+  }),
+  '/groups': layoutWith({
     view() {
       return m(TableView, {
         resource: 'groups',
         keys: ['name'],
       });
     },
-  },
+  }),
   '/login': LoginScreen,
 });
