@@ -1,6 +1,6 @@
 import { ItemView } from './views/itemView';
 import { EditView, inputGroup, selectGroup } from './views/editView';
-import Table from './views/tableView';
+import TableView from './views/tableView';
 
 const m = require('mithril');
 
@@ -15,6 +15,7 @@ const keyDescriptors = {
   department: 'Department',
   email: 'Email',
 };
+const tableKeys = ['firstname', 'lastname', 'nethz', 'legi', 'membership'];
 
 class UserView extends ItemView {
   constructor() {
@@ -46,7 +47,7 @@ class UserView extends ItemView {
         m('td', this.data[key] ? this.data[key] : ''),
       ]))),
       m('h2', 'Memberships'), m('br'),
-      m(Table, {
+      m(TableView, {
         resource: 'groupmemberships',
         keys: ['group.name', 'expiry'],
         querystring: m.buildQueryString({
@@ -55,7 +56,7 @@ class UserView extends ItemView {
         }),
       }),
       m('h2', 'Signups'), m('br'),
-      m(Table, {
+      m(TableView, {
         resource: 'eventsignups',
         keys: ['event.title_de'],
         querystring: m.buildQueryString({
@@ -114,7 +115,7 @@ class UserEdit extends EditView {
   }
 }
 
-export default class UserModal {
+export class UserModal {
   constructor() {
     this.edit = false;
   }
@@ -129,5 +130,15 @@ export default class UserModal {
       m('br'),
       m(UserView),
     ]);
+  }
+}
+
+export class UserTable {
+  view() {
+    return m(TableView, {
+      resource: 'users',
+      keys: tableKeys,
+      titles: tableKeys.map(key => keyDescriptors[key] || key),
+    });
   }
 }

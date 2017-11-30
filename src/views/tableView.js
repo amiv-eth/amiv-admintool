@@ -21,6 +21,7 @@ export default class TableView {
   constructor(vnode) {
     this.items = [];
     this.show_keys = vnode.attrs.keys;
+    this.titles = vnode.attrs.titles || this.show_keys;
     this.resource = vnode.attrs.resource;
     // the querystring is either given or will be parsed from the url
     if (vnode.attrs.querystring) {
@@ -47,7 +48,7 @@ export default class TableView {
   view() {
     return m('div', [
       m('table.table.table-hover', [
-        m('thead', m('tr', this.show_keys.map(title => m('th', title)))),
+        m('thead', m('tr', this.titles.map(title => m('th', title)))),
         m('tbody', this.items.map(item =>
           m(TableRow, { show_keys: this.show_keys, data: item }))),
       ]),

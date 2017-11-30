@@ -1,6 +1,6 @@
 import { LoginScreen } from './login';
 import TableView from './views/tableView';
-import UserModal from './userTool';
+import { UserModal, UserTable } from './userTool';
 
 const m = require('mithril');
 
@@ -10,14 +10,7 @@ const root = main;
 
 
 m.route(root, '/users', {
-  '/users': {
-    view() {
-      return m(TableView, {
-        resource: 'users',
-        keys: ['firstname', 'lastname', 'nethz', 'legi', 'membership'],
-      });
-    },
-  },
+  '/users': UserTable,
   '/users/:id': UserModal,
   '/events': {
     view() {
