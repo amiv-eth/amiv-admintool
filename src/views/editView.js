@@ -16,7 +16,11 @@ export class EditView extends ItemView {
 
     // state for validation
     this.valid = valid;
-    this.ajv = new Ajv({ missingRefs: 'ignore' });
+    this.ajv = new Ajv({
+      missingRefs: 'ignore',
+      errorDataPath: 'property',
+      allErrors: true,
+    });
     this.errors = {};
 
     // callback when edit is finished
@@ -24,12 +28,14 @@ export class EditView extends ItemView {
   }
 
   oninit() {
-    // load data for item
-    getSession().then((apiSession) => {
-      this.loadItemData(apiSession);
-    }).catch(() => {
-      m.route.set('/login');
-    });
+    if (this.id) {
+      // load data for item
+      getSession().then((apiSession) => {
+        this.loadItemData(apiSession);
+      }).catch(() => {
+        m.route.set('/login');
+      });
+    }
     // load schema
     m.request('http://amiv-api.ethz.ch/docs/api-docs').then((schema) => {
       const objectSchema = schema.definitions[
@@ -52,15 +58,21 @@ export class EditView extends ItemView {
         // validate against schema
         const validate = this.ajv.getSchema('schema');
         this.valid = validate(this.data);
+        console.log(validate.schema);
 
-        // get errors of this field
-        let errors = [];
-        if (!this.valid) {
-          errors = validate.errors.filter(error =>
-            `.${e.target.name}` === error.dataPath);
-          errors = errors.map(error => error.message);
+        console.log(validate.errors);
+        if (this.valid) {
+          Object.keys(this.errors).forEach((field) => {
+            this.errors[field] = [];
+          });
+        } else {
+          // get errors for respective fields
+          Object.keys(this.errors).forEach((field) => {
+            const errors = validate.errors.filter(error =>
+              `.${field}` === error.dataPath);
+            this.errors[field] = errors.map(error => error.message);
+          });
         }
-        this.errors[e.target.name] = errors;
       },
       getErrors: () => this.errors[attrs.name],
       value: this.data[attrs.name],
@@ -71,7 +83,7 @@ export class EditView extends ItemView {
     return boundFormelement;
   }
 
-  patchOnClick(patchableFields) {
+  patchOnClick(patchableFields, callback) {
     return {
       onclick: () => {
         if (this.changed) {
@@ -85,11 +97,29 @@ export class EditView extends ItemView {
 
             apiSession.patch(`${this.resource}/${this.id}`, patchData, {
               headers: { 'If-Match': this.data._etag },
-            }).then(() => { this.callback(); });
+            }).then(() => { callback(); });
           });
         } else {
-          this.callback();
+          callback();
         }
+      },
+    };
+  }
+
+  createOnClick(fields, callback) {
+    return {
+      onclick: () => {
+        getSession().then((apiSession) => {
+          // fields like `_id` are not patchable and would lead to an error
+          // We therefore only send patchable fields
+          const postData = {};
+          fields.forEach((key) => {
+            postData[key] = this.data[key];
+          });
+
+          apiSession.post(this.resource, postData)
+            .then(response => { callback(response); });
+        });
       },
     };
   }
@@ -107,11 +137,12 @@ export class inputGroup {
   view(vnode) {
     // set display-settings accoridng to error-state
     let errorField = null;
-    const groupClasses = vnode.attrs.classes ? vnode.attrs.classes : [];
+    let groupClasses = vnode.attrs.classes ? vnode.attrs.classes : '';
+    console.log(groupClasses)
     const errors = this.getErrors();
     if (errors.length > 0) {
       errorField = m('span.help-block', `Error: ${errors.join(', ')}`);
-      groupClasses.push('has-error');
+      groupClasses += ' has-error';
     }
 
     return m('div.form-group', { class: groupClasses }, [

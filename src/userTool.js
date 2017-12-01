@@ -73,19 +73,7 @@ class UserEdit extends EditView {
     super(vnode, 'users');
   }
 
-  view() {
-    // do not render anything if there is no data yet
-    if (!this.data) return m.trust('');
-
-    // UPDATE button is inactive if form is not valid
-    const buttonArgs = this.patchOnClick([
-      'lastname', 'firstname', 'email', 'membership', 'gender']);
-    const updateButton = m(
-      'div.btn.btn-warning',
-      this.valid ? buttonArgs : { disabled: 'disabled' },
-      'Update',
-    );
-
+  getForm() {
     return m('form', [
       m('div.row', [
         m(inputGroup, this.bind({
@@ -109,8 +97,55 @@ class UserEdit extends EditView {
         })),
       ]),
       m('span', JSON.stringify(this.data)),
-      m('span', JSON.stringify(this.errorLists)),
+      m('span', JSON.stringify(this.errors)),
+    ]);
+  }
+
+  view() {
+    // do not render anything if there is no data yet
+    if (!this.data) return m.trust('');
+
+    // UPDATE button is inactive if form is not valid
+    const buttonArgs = this.patchOnClick([
+      'lastname', 'firstname', 'email', 'membership', 'gender']);
+    const updateButton = m(
+      'div.btn.btn-warning',
+      this.valid ? buttonArgs : { disabled: 'disabled' },
+      'Update',
+    );
+
+    return m('form', [
+      this.getForm(),
       updateButton,
+    ]);
+  }
+}
+
+export class NewUser extends UserEdit {
+  constructor(vnode) {
+    super(vnode);
+    this.data = {
+      gender: 'male',
+      membership: 'regular',
+    };
+    this.valid = false;
+  }
+
+  view() {
+    // UPDATE button is inactive if form is not valid
+    const buttonArgs = this.createOnClick(
+      ['lastname', 'firstname', 'email', 'membership', 'gender'],
+      (response) => { m.route.set(`/users/${response.data._id}`); },
+    );
+    const postButton = m(
+      'div.btn.btn-warning',
+      this.valid ? buttonArgs : { disabled: 'disabled' },
+      'Create',
+    );
+
+    return m('form', [
+      this.getForm(),
+      postButton,
     ]);
   }
 }
