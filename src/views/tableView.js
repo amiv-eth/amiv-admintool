@@ -3,6 +3,7 @@ import { getSession } from '../auth';
 const m = require('mithril');
 
 class TableRow {
+  // A row in the Table specified below.
   view(vnode) {
     return m(
       'tr',
@@ -19,6 +20,20 @@ class TableRow {
 
 
 export default class TableView {
+  /* Shows a table of objects for a given API resource.
+   *
+   * Required attributes:
+   *   - resource: a string of the API resource to display, e.g. 'users'
+   *   - keys: Keys of this resource to display as columns, e.g. ['firstname']
+   *       Works with embedded resources, i.e. if you add
+   *       { embedded: { event: 1 } } to a list of eventsignups,
+   *       you can display event.title_de as a table key
+   * Addutional attirbutes:
+   *   - query: A query object that is valid accoring to
+   *       http://python-eve.org/features.html#Filtering
+   *       https://docs.mongodb.com/v3.2/reference/operator/query/
+   *       e.g. : { where: {name: somename } }
+   */
   constructor(vnode) {
     this.items = [];
     this.show_keys = vnode.attrs.keys;
@@ -78,6 +93,8 @@ export default class TableView {
         this.items = response.data._items;
         console.log(this.items);
         m.redraw();
+      }).catch((e) => {
+        console.log(e);
       });
     }).catch(() => {
       m.route.set('/login');
