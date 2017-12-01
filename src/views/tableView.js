@@ -107,15 +107,24 @@ export default class TableView {
 
   view() {
     return m('div', [
-      m('div.row', m('div.col-xs-4.input-group', [
-        m('input[name=search].form-control', {
-          value: this.query.search,
-          onchange: m.withAttr('value', (value) => { this.query.search = value; }),
-        }),
-        m('span.input-group-btn', m('button.btn.btn-default', {
-          onclick: () => { this.buildList(); },
-        }, 'Search')),
-      ])),
+      m('div.row', [
+        m('div.col-xs-4', [
+          m('div.input-group', [
+            m('input[name=search].form-control', {
+              value: this.query.search,
+              onchange: m.withAttr('value', (value) => { this.query.search = value; }),
+            }),
+            m('span.input-group-btn', m('button.btn.btn-default', {
+              onclick: () => { this.buildList(); },
+            }, 'Search')),
+          ]),
+        ]),
+        m('div.col-xs-4', [
+          m('div.btn.btn-default', {
+            onclick: () => { m.route.set(`/new${this.resource}`); },
+          }, 'New')
+        ]),
+      ]),
       m('table.table.table-hover', [
         m('thead', m('tr', this.titles.map(title => m('th', title)))),
         m('tbody', this.items.map(item =>
