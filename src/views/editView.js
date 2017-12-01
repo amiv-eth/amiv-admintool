@@ -99,46 +99,37 @@ export class EditView extends ItemView {
     return boundFormelement;
   }
 
-  patchOnClick(patchableFields) {
-    return {
-      onclick: () => {
-        if (this.changed) {
-          getSession().then((apiSession) => {
-            // fields like `_id` are not patchable and would lead to an error
-            // We therefore only send patchable fields
-            const patchData = {};
-            patchableFields.forEach((key) => {
-              patchData[key] = this.data[key];
-            });
-
-            apiSession.patch(`${this.resource}/${this.id}`, patchData, {
-              headers: { 'If-Match': this.data._etag },
-            }).then((response) => {
-              this.callback(response);
-            });
-          });
-        } else {
-          this.callback();
-        }
-      },
-    };
-  }
-
-  createOnClick(fields) {
-    return {
-      onclick: () => {
+  submit(method, fields) {
+    return () => {
+      if (this.changed) {
         getSession().then((apiSession) => {
-          // fields like `_id` are not patchable and would lead to an error
-          // We therefore only send patchable fields
-          const postData = {};
-          fields.forEach((key) => {
-            postData[key] = this.data[key];
-          });
+          // build request
+          const request = { method };
+          if (method === 'POST' || method === 'PATCH') {
+            // fields like `_id` are not post/patchable
+            // We therefore only send patchable fields
+            const submitData = {};
+            fields.forEach((key) => {
+              submitData[key] = this.data[key];
+            });
+            request.data = submitData;
+          }
 
-          apiSession.post(this.resource, postData)
-            .then((response) => { this.callback(response); });
+          // if request is PATCH or DELETE, add If-Match header and set url
+          if (method === 'PATCH' || method === 'DELETE') {
+            request.headers = { 'If-Match': this.data._etag };
+            request.url = `${this.resource}/${this.id}`;
+          } else {
+            request.url = this.resource;
+          }
+
+          apiSession(request).then((response) => {
+            this.callback(response);
+          });
         });
-      },
+      } else {
+        this.callback();
+      }
     };
   }
 }
@@ -182,5 +173,15 @@ export class selectGroup {
         vnode.attrs.options.map(option => m('option', option)),
       ),
     ]);
+  }
+}
+
+export class submitButton {
+  view(vnode) {
+    const args = vnode.attrs.args;
+    if (!vnode.attrs.active) {
+      args.disabled = 'disabled';
+    }
+    return m('div.btn', args, vnode.attrs.text);
   }
 }

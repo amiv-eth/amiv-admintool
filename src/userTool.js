@@ -1,5 +1,5 @@
 import { ItemView } from './views/itemView';
-import { EditView, inputGroup, selectGroup } from './views/editView';
+import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
 import TableView from './views/tableView';
 
 const m = require('mithril');
@@ -105,18 +105,17 @@ class UserEdit extends EditView {
     // do not render anything if there is no data yet
     if (!this.data) return m.trust('');
 
-    // UPDATE button is inactive if form is not valid
-    const buttonArgs = this.patchOnClick([
-      'lastname', 'firstname', 'email', 'membership', 'gender']);
-    const updateButton = m(
-      'div.btn.btn-warning',
-      this.valid ? buttonArgs : { disabled: 'disabled' },
-      'Update',
-    );
-
     return m('form', [
       this.getForm(),
-      updateButton,
+      m(submitButton, {
+        active: this.valid,
+        args: {
+          onclick: this.submit('PATCH', [
+            'lastname', 'firstname', 'email', 'membership', 'gender']),
+          class: 'btn-warning',
+        },
+        text: 'Update',
+      }),
     ]);
   }
 }
@@ -135,18 +134,17 @@ export class NewUser extends UserEdit {
   }
 
   view() {
-    // UPDATE button is inactive if form is not valid
-    const buttonArgs = this.createOnClick([
-      'lastname', 'firstname', 'email', 'membership', 'gender']);
-    const postButton = m(
-      'div.btn.btn-warning',
-      this.valid ? buttonArgs : { disabled: 'disabled' },
-      'Create',
-    );
-
     return m('form', [
       this.getForm(),
-      postButton,
+      m(submitButton, {
+        active: this.valid,
+        args: {
+          onclick: this.submit('POST', [
+            'lastname', 'firstname', 'email', 'membership', 'gender']),
+          class: 'btn-warning',
+        },
+        text: 'Create',
+      }),
     ]);
   }
 }
