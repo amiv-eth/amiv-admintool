@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as localStorage from './localStorage';
+import { apiUrl } from './config.json';
 
 // Object which stores the current login-state
 const APISession = {
@@ -8,7 +9,7 @@ const APISession = {
 };
 
 const amivapi = axios.create({
-  baseURL: 'https://amiv-api.ethz.ch/',
+  baseURL: apiUrl,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -59,7 +60,7 @@ export function getSession() {
     checkAuthenticated().then((authenticated) => {
       if (authenticated) {
         const authenticatedSession = axios.create({
-          baseURL: 'https://amiv-api.ethz.ch/',
+          baseURL: apiUrl,
           timeout: 10000,
           headers: {
             'Content-Type': 'application/json',

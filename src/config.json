@@ -1,4 +1,5 @@
 {
+    "apiUrl": "https://amiv-api.ethz.ch/",
     "Users": {
         "keyDescriptors": {
             "legi": "Legi Number",

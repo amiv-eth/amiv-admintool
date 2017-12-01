@@ -1,6 +1,7 @@
 import Ajv from 'ajv';
 import { ItemView } from './itemView';
 import { getSession } from '../auth';
+import { apiUrl } from '../config.json';
 
 const m = require('mithril');
 
@@ -53,7 +54,7 @@ export class EditView extends ItemView {
       });
     }
     // load schema
-    m.request('http://amiv-api.ethz.ch/docs/api-docs').then((schema) => {
+    m.request(`${apiUrl}docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
       this.ajv.addSchema(objectSchema, 'schema');
