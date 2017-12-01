@@ -129,14 +129,15 @@ export class NewUser extends UserEdit {
       membership: 'regular',
     };
     this.valid = false;
+
+    // if the creation is finished, UI should switch to new User
+    this.callback = (response) => { m.route.set(`/users/${response.data._id}`); }
   }
 
   view() {
     // UPDATE button is inactive if form is not valid
-    const buttonArgs = this.createOnClick(
-      ['lastname', 'firstname', 'email', 'membership', 'gender'],
-      (response) => { m.route.set(`/users/${response.data._id}`); },
-    );
+    const buttonArgs = this.createOnClick([
+      'lastname', 'firstname', 'email', 'membership', 'gender']);
     const postButton = m(
       'div.btn.btn-warning',
       this.valid ? buttonArgs : { disabled: 'disabled' },

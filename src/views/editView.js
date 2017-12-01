@@ -83,7 +83,7 @@ export class EditView extends ItemView {
     return boundFormelement;
   }
 
-  patchOnClick(patchableFields, callback) {
+  patchOnClick(patchableFields) {
     return {
       onclick: () => {
         if (this.changed) {
@@ -97,16 +97,18 @@ export class EditView extends ItemView {
 
             apiSession.patch(`${this.resource}/${this.id}`, patchData, {
               headers: { 'If-Match': this.data._etag },
-            }).then(() => { callback(); });
+            }).then((response) => {
+              this.callback(response);
+            });
           });
         } else {
-          callback();
+          this.callback();
         }
       },
     };
   }
 
-  createOnClick(fields, callback) {
+  createOnClick(fields) {
     return {
       onclick: () => {
         getSession().then((apiSession) => {
@@ -118,7 +120,7 @@ export class EditView extends ItemView {
           });
 
           apiSession.post(this.resource, postData)
-            .then(response => { callback(response); });
+            .then((response) => { this.callback(response); });
         });
       },
     };
@@ -138,7 +140,6 @@ export class inputGroup {
     // set display-settings accoridng to error-state
     let errorField = null;
     let groupClasses = vnode.attrs.classes ? vnode.attrs.classes : '';
-    console.log(groupClasses)
     const errors = this.getErrors();
     if (errors.length > 0) {
       errorField = m('span.help-block', `Error: ${errors.join(', ')}`);
