@@ -1,4 +1,4 @@
-import { LoginScreen } from './login';
+import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
 import Sidebar from './sidebar';
