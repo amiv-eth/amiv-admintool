@@ -50,19 +50,19 @@ class UserView extends ItemView {
       m(TableView, {
         resource: 'groupmemberships',
         keys: ['group.name', 'expiry'],
-        querystring: m.buildQueryString({
-          where: `user=="${this.id}"`,
-          embedded: '{"group":1}',
-        }),
+        query: {
+          where: { user: this.id },
+          embedded: { group: 1 },
+        },
       }),
       m('h2', 'Signups'), m('br'),
       m(TableView, {
         resource: 'eventsignups',
         keys: ['event.title_de'],
-        querystring: m.buildQueryString({
-          where: `user=="${this.id}"`,
-          embedded: '{"event":1}',
-        }),
+        query: {
+          where: { user: this.id },
+          embedded: { event: 1 },
+        },
       }),
     ]);
   }
