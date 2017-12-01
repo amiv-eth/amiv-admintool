@@ -161,7 +161,7 @@ export class UserModal {
     }
     // else
     return m('div', [
-      m('div.btn', { onclick: () => { this.edit = true; } }, 'Edit'),
+      m('div.btn.btn-default', { onclick: () => { this.edit = true; } }, 'Edit'),
       m('br'),
       m(UserView),
     ]);
