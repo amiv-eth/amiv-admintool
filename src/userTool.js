@@ -1,21 +1,9 @@
 import { ItemView } from './views/itemView';
 import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
 import TableView from './views/tableView';
+import { Users as config } from './config.json';
 
 const m = require('mithril');
-
-const keyDescriptors = {
-  legi: 'Legi Number',
-  firstname: 'First Name',
-  lastname: 'Last Name',
-  rfid: 'RFID',
-  phone: 'Phone',
-  nethz: 'nethz Account',
-  gender: 'Gender',
-  department: 'Department',
-  email: 'Email',
-};
-const tableKeys = ['firstname', 'lastname', 'nethz', 'legi', 'membership'];
 
 class UserView extends ItemView {
   constructor() {
@@ -43,7 +31,7 @@ class UserView extends ItemView {
       m('h1', `${this.data.firstname} ${this.data.lastname}`),
       membershipBadge,
       m('table', detailKeys.map(key => m('tr', [
-        m('td.detail-descriptor', keyDescriptors[key]),
+        m('td.detail-descriptor', config.keyDescriptors[key]),
         m('td', this.data[key] ? this.data[key] : ''),
       ]))),
       m('h2', 'Memberships'), m('br'),
@@ -110,8 +98,7 @@ class UserEdit extends EditView {
       m(submitButton, {
         active: this.valid,
         args: {
-          onclick: this.submit('PATCH', [
-            'lastname', 'firstname', 'email', 'membership', 'gender']),
+          onclick: this.submit('PATCH', config.patchableKeys),
           class: 'btn-warning',
         },
         text: 'Update',
@@ -139,8 +126,7 @@ export class NewUser extends UserEdit {
       m(submitButton, {
         active: this.valid,
         args: {
-          onclick: this.submit('POST', [
-            'lastname', 'firstname', 'email', 'membership', 'gender']),
+          onclick: this.submit('POST', config.patchableKeys),
           class: 'btn-warning',
         },
         text: 'Create',
@@ -171,8 +157,8 @@ export class UserTable {
   view() {
     return m(TableView, {
       resource: 'users',
-      keys: tableKeys,
-      titles: tableKeys.map(key => keyDescriptors[key] || key),
+      keys: config.tableKeys,
+      titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
     });
   }
 }

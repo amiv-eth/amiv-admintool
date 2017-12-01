@@ -1,0 +1,29 @@
+{
+    "Users": {
+        "keyDescriptors": {
+            "legi": "Legi Number",
+            "firstname": "First Name",
+            "lastname": "Last Name",
+            "rfid": "RFID",
+            "phone": "Phone",
+            "nethz": "nethz Account",
+            "gender": "Gender",
+            "department": "Department",
+            "email": "Email"
+        },
+        "tableKeys": [
+            "firstname",
+            "lastname",
+            "nethz",
+            "legi",
+            "membership"
+        ],
+        "patchableKeys": [
+            "firstname",
+            "lastname",
+            "email",
+            "membership",
+            "gender"
+        ]
+    }
+}
