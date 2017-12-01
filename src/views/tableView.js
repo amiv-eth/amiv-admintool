@@ -122,7 +122,7 @@ export default class TableView {
         m('div.col-xs-4', [
           m('div.btn.btn-default', {
             onclick: () => { m.route.set(`/new${this.resource}`); },
-          }, 'New')
+          }, 'New'),
         ]),
       ]),
       m('table.table.table-hover', [

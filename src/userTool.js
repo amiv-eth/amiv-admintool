@@ -131,7 +131,7 @@ export class NewUser extends UserEdit {
     this.valid = false;
 
     // if the creation is finished, UI should switch to new User
-    this.callback = (response) => { m.route.set(`/users/${response.data._id}`); }
+    this.callback = (response) => { m.route.set(`/users/${response.data._id}`); };
   }
 
   view() {
