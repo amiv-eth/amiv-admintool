@@ -2,14 +2,30 @@ import Ajv from 'ajv';
 import { ItemView } from './itemView';
 import { getSession } from '../auth';
 
-
 const m = require('mithril');
 
+// Mapper for resource vs schema-object names
 const objectNameForResource = {
   users: 'User',
+  groupmembershipds: 'Groupmembership',
+  groups: 'Group',
+  eventsignups: 'Eventsignup',
+  events: 'Event',
 };
 
 export class EditView extends ItemView {
+  /* Extension of ItemView to edit a data item
+   *
+   * Requires:
+   * - call constructor with vnode, resource, (valid, true by default)
+   * - vnode.attrs.onfinish has to be a callback function that is called after
+   *   the edit is finished
+   *
+   * Provides Methods:
+   * - bind(attrs): binds a form-field against this.data
+   * - patchOnClick: onclick-function for patching
+   * - postOnClick: onclick-function for posting
+   */
   constructor(vnode, resource, valid = true) {
     super(resource);
     this.changed = false;
