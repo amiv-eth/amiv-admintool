@@ -3,6 +3,7 @@ import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
 import Sidebar from './sidebar';
+import AnnounceTool from './announceTool';
 
 const m = require('mithril');
 
@@ -51,4 +52,5 @@ m.route(root, '/users', {
     },
   }),
   '/login': LoginScreen,
+  '/announce': layoutWith(AnnounceTool),
 });

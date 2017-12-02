@@ -15,6 +15,7 @@
   "author": "Hermann Blum et al",
   "dependencies": {
     "ajv": "^5.5.0",
+    "announcetool": "git+ssh://git@gitlab.ethz.ch:amiv/amivapi-announce-tool.git#webpack-version",
     "axios": "^0.17.1",
     "babel": "^6.23.0",
     "babel-core": "^6.26.0",
