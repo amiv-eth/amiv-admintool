@@ -1,6 +1,7 @@
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
+import { MembershipView } from './membershipTool';
 import Sidebar from './sidebar';
 
 const m = require('mithril');
@@ -32,6 +33,7 @@ m.route(root, '/users', {
   '/users': layoutWith(UserTable),
   '/users/:id': layoutWith(UserModal),
   '/newusers': layoutWith(NewUser),
+  '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith({
     view() {
       return m(TableView, {
