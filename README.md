@@ -3,7 +3,7 @@
 * ```ubuntu /14.04.1```
 * ```nginx /1.4.6```
 
-### Dependecies:
+### Dependencies:
 * ```jQuery /2.2.2```
 * ```bootstrap /3.3.6```
 
