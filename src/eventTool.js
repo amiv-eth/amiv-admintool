@@ -1,13 +1,13 @@
 import { ItemView } from './views/itemView';
 import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
 import TableView from './views/tableView';
-import { Users as config } from './config.json';
+import { Events as config } from './config.json';
 
 const m = require('mithril');
 
 class EventView extends ItemView {
   constructor() {
-    super('event');
+    super('events');
     this.memberships = [];
   }
 
@@ -56,9 +56,6 @@ class EventView extends ItemView {
           where: { user: this.id },
           embedded: { event: 1 },
         },
-      }),
-      m(TableView, {
-        resource: '',
       }),
     ]);
   }
@@ -130,7 +127,7 @@ export class NewEvent extends EventEdit {
     };
     this.valid = false;
 
-    // if the creation is finished, UI should switch to new User
+    // if the creation is finished, UI should switch to new Event
     this.callback = (response) => { m.route.set(`/events/${response.data._id}`); };
   }
 
@@ -170,7 +167,7 @@ export class EventModal {
 export class EventTable {
   view() {
     return m(TableView, {
-      resource: 'users',
+      resource: 'events',
       keys: config.tableKeys,
       titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
     });
