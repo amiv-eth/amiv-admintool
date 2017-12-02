@@ -8,7 +8,6 @@ const m = require('mithril');
 class UserView extends ItemView {
   constructor() {
     super('users');
-    this.memberships = [];
   }
 
   view() {

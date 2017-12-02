@@ -24,8 +24,7 @@ export class EditView extends ItemView {
    *
    * Provides Methods:
    * - bind(attrs): binds a form-field against this.data
-   * - patchOnClick: onclick-function for patching
-   * - postOnClick: onclick-function for posting
+   * - submit
    */
   constructor(vnode, resource, valid = true) {
     super(resource);
@@ -126,6 +125,21 @@ export class EditView extends ItemView {
 
           apiSession(request).then((response) => {
             this.callback(response);
+          }).catch((error) => {
+            // Process the API error
+            const { response } = error;
+            if (response.status === 422) {
+              // there are problems with some fields, display them
+              Object.keys(response.data._issues).forEach((field) => {
+                this.errors[field] = [response.data._issues[field]];
+              });
+              m.redraw();
+            } else if (response.status === 403) {
+              // Unauthorized
+              m.route.set('/login');
+            } else {
+              console.log(error);
+            }
           });
         });
       } else {
