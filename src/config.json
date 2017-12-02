@@ -1,5 +1,21 @@
 {
     "apiUrl": "https://amiv-api.ethz.ch/",
+    "Events": {
+        "keyDescriptors": {
+            "title_de": "Titel in Deutsch",
+            "title_en": "Title in English",
+            "location": "Location (Ort) of the event",
+            "allow_email_signup": "Event open for non-AMIV members",
+            "show_website": "Event is shown on the website",
+            "priority": "TODO: What type of priority is meant here? Edit priority? Organization prio?"
+        },
+        "tableKeys": [
+            "title_de",
+            "location",
+            "show_website",
+            "priority"
+        ]
+    },
     "Users": {
         "keyDescriptors": {
             "legi": "Legi Number",
