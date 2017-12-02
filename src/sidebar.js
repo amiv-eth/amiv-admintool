@@ -19,6 +19,7 @@ export default class Sidebar {
         m(Button, { href: '/users', glyph: 'list-alt', title: 'Users' }),
         m(Button, { href: '/events', glyph: 'calendar', title: 'Events' }),
         m(Button, { href: '/groups', glyph: 'blackboard', title: 'Groups' }),
+        m(Button, { href: '/announce', glyph: 'bullhorn', title: 'Announce' }),
       ]),
     ]));
   }
