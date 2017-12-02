@@ -159,3 +159,24 @@ body {
     top: 10px;
     transform: translateX(-50%);
 }
+
+/*
+    ANNOUNCE TOOL
+*/
+
+.selected{
+    background: #98FB98;
+}
+.featured{
+    background: salmon;
+}
+
+.selectedcolor{
+    background: #98FB98;
+}
+.featuredcolor{
+    background: salmon;
+}
+
+
+
