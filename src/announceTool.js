@@ -1,10 +1,14 @@
-import renderAnnounce from 'announcetool';
+import tool from 'announcetool';
 
 const m = require('mithril');
 
 export default class AnnounceTool {
-  oninit() {
-    console.log(renderAnnounce);
+  oncreate() {
+    if (tool.wasRenderedOnce()) {
+      // jQuery catches the first document.ready, but afterwards we have to
+      // trigger a render
+      tool.render();
+    }
   }
 
   view() {
