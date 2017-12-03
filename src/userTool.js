@@ -159,6 +159,7 @@ export class UserTable {
       resource: 'users',
       keys: config.tableKeys,
       titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
+      onAdd: () => { m.route.set('/newuser'); },
     });
   }
 }

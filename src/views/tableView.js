@@ -45,6 +45,7 @@ export default class TableView {
       titles,
       resource,
       query = false,
+      onAdd = () => {},
     },
   }) {
     this.items = [];
@@ -53,6 +54,7 @@ export default class TableView {
     this.resource = resource;
     // the querystring is either given or will be parsed from the url
     this.query = query || m.route.param();
+    this.onAdd = onAdd;
   }
 
   // definitions of query parameters in addition to API go here
@@ -129,7 +131,7 @@ export default class TableView {
         ]),
         m('div.col-xs-4', [
           m('div.btn.btn-default', {
-            onclick: () => { m.route.set(`/new${this.resource}`); },
+            onclick: () => { this.onAdd(); },
           }, 'New'),
         ]),
       ]),

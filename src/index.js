@@ -34,11 +34,11 @@ function layoutWith(view) {
 m.route(root, '/users', {
   '/users': layoutWith(UserTable),
   '/users/:id': layoutWith(UserModal),
-  '/newusers': layoutWith(NewUser),
+  '/newuser': layoutWith(NewUser),
   '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(EventModal),
-  '/newevents': layoutWith(NewEvent),
+  '/newevent': layoutWith(NewEvent),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
