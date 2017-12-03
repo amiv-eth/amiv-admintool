@@ -27,7 +27,7 @@ class EventView extends ItemView {
     // TODO Question Lio171201:are we missing a "responsible" key?
     const detailKeys = [
       'title_de',
-      'email', 'phone', 'rfid',
+      'rfid',
       'location', 'time_start', 'time_end',
       'show_website', 'catchphrase',
       'time_register_start', 'price', 'allow_email_signup'];
