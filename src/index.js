@@ -2,7 +2,7 @@ import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
-import { EventTable, NewEvent, EventView } from './eventTool';
+import { EventTable, NewEvent, EventView, EventModal } from './eventTool';
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
 
@@ -37,7 +37,7 @@ m.route(root, '/users', {
   '/newusers': layoutWith(NewUser),
   '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
-  '/events/:id': layoutWith(EventView),
+  '/events/:id': layoutWith(EventModal),
   '/newevents': layoutWith(NewEvent),
   '/groups': layoutWith({
     view() {
