@@ -5,7 +5,7 @@ import { Events as config } from './config.json';
 
 const m = require('mithril');
 
-class EventView extends ItemView {
+export class EventView extends ItemView {
   constructor() {
     super('events');
     this.memberships = [];
