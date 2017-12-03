@@ -2,7 +2,7 @@ import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
-import { EventTable, NewEvent } from './eventTool';
+import { EventTable, NewEvent, EventView } from './eventTool';
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
 
@@ -37,14 +37,8 @@ m.route(root, '/users', {
   '/newusers': layoutWith(NewUser),
   '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
+  '/events/:id': layoutWith(EventView),
   '/newevents': layoutWith(NewEvent),
-    view() {
-      return m(TableView, {
-        resource: 'events',
-        keys: ['title_de', 'time_start', 'show_website', 'spots', 'signup_count'],
-      });
-    },
-  }),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
