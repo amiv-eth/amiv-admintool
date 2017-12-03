@@ -4,6 +4,7 @@ import TableView from './views/tableView';
 import { inputGroup, selectGroup, submitButton } from './views/elements';
 import SelectList from './views/selectList';
 import { Users as config } from './config.json';
+import { getSession } from './auth';
 
 const m = require('mithril');
 
@@ -11,6 +12,7 @@ class UserView extends ItemView {
   constructor() {
     super('users');
     this.memberships = [];
+    this.groupchoice = false;
   }
 
   view() {
@@ -29,6 +31,22 @@ class UserView extends ItemView {
     const detailKeys = [
       'email', 'phone', 'nethz', 'legi', 'rfid', 'department', 'gender'];
 
+    const groupSelect = m(SelectList, {
+      resource: 'groups',
+      searchKeys: ['name'],
+      itemView: {
+        view({ attrs }) { return m('span', attrs.name); },
+      },
+      onSubmit: (group) => {
+        getSession().then((apiSession) => {
+          apiSession.post('groupmemberships', {
+            user: this.data._id,
+            group: group._id,
+          });
+        });
+      },
+    });
+
     return m('div', [
       m('h1', `${this.data.firstname} ${this.data.lastname}`),
       membershipBadge,
@@ -37,12 +55,16 @@ class UserView extends ItemView {
         m('td', this.data[key] ? this.data[key] : ''),
       ]))),
       m('h2', 'Memberships'), m('br'),
+      this.groupchoice ? groupSelect : '',
       m(TableView, {
         resource: 'groupmemberships',
         keys: ['group.name', 'expiry'],
         query: {
           where: { user: this.id },
           embedded: { group: 1 },
+        },
+        onAdd: () => {
+          this.groupchoice = true;
         },
       }),
       m('h2', 'Signups'), m('br'),
