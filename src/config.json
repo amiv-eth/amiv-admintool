@@ -2,16 +2,41 @@
     "apiUrl": "https://amiv-api.ethz.ch/",
     "Events": {
         "keyDescriptors": {
-            "title_de": "Titel in Deutsch",
+            "title_de": "Titel auf Deutsch",
             "title_en": "Title in English",
-            "location": "Location (Ort) of the event",
-            "allow_email_signup": "Event open for non-AMIV members",
+            "location": "Location (Ort)",
             "show_website": "Event is shown on the website",
-            "priority": "TODO: What type of priority is meant here? Edit priority? Organization prio?"
+            "priority": "TODO: What type of priority is meant here? Edit priority? Organization prio?",
+            "time_end": "Ending time",
+            "time_register_end": "Deadline for registration",
+            "time_start": "Starting time",
+
+            "spots": "Spots available",
+            "allow_email_signup": "Event open for non-AMIV members",
+            "price": "Price",
+
+            "signup_count": "Signed-up participants",
+            "catchphrase_en": "Catchphrase in English. Announce and Website.",
+            "catchphrase_de": "Schlagwort auf Deutsch",
+            "description_de": "Beschreibung auf Deutsch",
+            "description_en": "Description in English",
+            "img_banner": "Banner as png",
+            "img_poster": "Poster as png",
+            "img_thumbnail": "Thumbnail as png",
+            "show_infoscreen": "Does the event show on the infoscreen?",
+            "img_infoscreen": "Infoscreen as png",
+            "time_advertising_end": "Advertisment ends on",
+            "time_advertising_start": "Advertisement starts on",
+            "selection_strategy": "TODO what is this?",
+            "show_announce": "Does it belong to announce?",
+            "_id": "TODO Event ID how is this generated?"
         },
         "tableKeys": [
             "title_de",
             "location",
+            "time_end",
+            "time_start",
+            "time_register_end",
             "show_website",
             "priority"
         ]
