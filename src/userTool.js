@@ -1,6 +1,8 @@
 import { ItemView } from './views/itemView';
-import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
+import EditView from './views/editView';
 import TableView from './views/tableView';
+import { inputGroup, selectGroup, submitButton } from './views/elements';
+import SelectList from './views/selectList';
 import { Users as config } from './config.json';
 
 const m = require('mithril');
