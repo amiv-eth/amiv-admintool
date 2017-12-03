@@ -4,15 +4,20 @@ const m = require('mithril');
 
 class TableRow {
   // A row in the Table specified below.
-  view(vnode) {
+  view({
+    attrs: {
+      showKeys,
+      data,
+    },
+  }) {
     return m(
       'tr',
-      { onclick() { m.route.set(`/${vnode.attrs.data._links.self.href}`); } },
-      vnode.attrs.show_keys.map((key) => {
+      { onclick() { m.route.set(`/${data._links.self.href}`); } },
+      showKeys.map((key) => {
         // Access a nested key, indicated by dot-notation
-        let data = vnode.attrs.data;
-        key.split('.').forEach((subKey) => { data = data[subKey]; });
-        return m('td', data);
+        let nestedData = data;
+        key.split('.').forEach((subKey) => { nestedData = nestedData[subKey]; });
+        return m('td', nestedData);
       }),
     );
   }
@@ -34,17 +39,20 @@ export default class TableView {
    *       https://docs.mongodb.com/v3.2/reference/operator/query/
    *       e.g. : { where: {name: somename } }
    */
-  constructor(vnode) {
+  constructor({
+    attrs: {
+      keys,
+      titles,
+      resource,
+      query = false,
+    },
+  }) {
     this.items = [];
-    this.show_keys = vnode.attrs.keys;
-    this.titles = vnode.attrs.titles || this.show_keys;
-    this.resource = vnode.attrs.resource;
+    this.showKeys = keys;
+    this.titles = titles || keys;
+    this.resource = resource;
     // the querystring is either given or will be parsed from the url
-    if (vnode.attrs.query) {
-      this.query = vnode.attrs.query;
-    } else {
-      this.query = m.route.param();
-    }
+    this.query = query || m.route.param();
   }
 
   // definitions of query parameters in addition to API go here
@@ -58,7 +66,7 @@ export default class TableView {
     if ('search' in this.query && this.query.search.length > 0) {
       // translate search into where, we just look if any field contains search
       const searchQuery = {
-        $or: this.show_keys.map((key) => {
+        $or: this.showKeys.map((key) => {
           const fieldQuery = {};
           fieldQuery[key] = this.query.search;
           return fieldQuery;
@@ -128,7 +136,7 @@ export default class TableView {
       m('table.table.table-hover', [
         m('thead', m('tr', this.titles.map(title => m('th', title)))),
         m('tbody', this.items.map(item =>
-          m(TableRow, { show_keys: this.show_keys, data: item }))),
+          m(TableRow, { showKeys: this.showKeys, data: item }))),
       ]),
     ]);
   }
