@@ -1,7 +1,7 @@
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
-import { EventTable, NewEvent, EventView } from './eventTool';
+import { EventTable, NewEvent, EventView, EventModal } from './eventTool';
 import Sidebar from './sidebar';
 
 const m = require('mithril');
@@ -34,7 +34,7 @@ m.route(root, '/users', {
   '/users/:id': layoutWith(UserModal),
   '/newusers': layoutWith(NewUser),
   '/events': layoutWith(EventTable),
-  '/events/:id': layoutWith(EventView),
+  '/events/:id': layoutWith(EventModal),
   '/newevents': layoutWith(NewEvent),
   '/groups': layoutWith({
     view() {
