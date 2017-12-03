@@ -1,4 +1,5 @@
 import TableView from './tableView';
+import { submitButton } from './elements';
 
 const m = require('mithril');
 
@@ -24,11 +25,19 @@ function debounce(func, wait, immediate) {
 };
 
 export default class SelectList extends TableView {
-  constructor(resource, searchKeys, itemView) {
+  constructor({
+    attrs: {
+      resource,
+      searchKeys,
+      itemView,
+      onSubmit = () => {},
+    },
+  }) {
     super({ attrs: { resource, keys: searchKeys } });
     this.itemView = itemView;
     this.selected = null;
     this.showList = false;
+    this.onSubmit = onSubmit;
   }
 
   view() {
@@ -66,7 +75,19 @@ export default class SelectList extends TableView {
 
     return m('div', {
     }, [
-      m('div.row', m('div.col-xs-6', input)),
+      m('div.row', [
+        m('div.col-xs-6', [
+          input,
+          m(submitButton, {
+            text: 'Submit',
+            active: this.selected !== null,
+            args: {
+              class: 'btn-primary',
+              onclick: () => { this.onSubmit(this.selected); },
+            },
+          }),
+        ]),
+      ]),
       this.showList ? list : '',
     ]);
   }
