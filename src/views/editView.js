@@ -26,8 +26,8 @@ export default class EditView extends ItemView {
    * - bind(attrs): binds a form-field against this.data
    * - submit
    */
-  constructor(vnode, resource, valid = true) {
-    super(resource);
+  constructor(vnode, resource, embedded, valid = true) {
+    super(resource, embedded);
     this.changed = false;
 
     // state for validation
