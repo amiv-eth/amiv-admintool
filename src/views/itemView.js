@@ -2,7 +2,7 @@ import { getSession } from '../auth';
 
 const m = require('mithril');
 
-export class ItemView {
+export default class ItemView {
   /* Basic class show a data item
    *
    *  Required:
@@ -50,11 +50,5 @@ export class ItemView {
     }).catch(() => {
       m.route.set('/login');
     });
-  }
-}
-
-export class Title {
-  view(vnode) {
-    return m('h1', vnode.attrs);
   }
 }

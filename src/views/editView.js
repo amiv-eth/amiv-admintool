@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { ItemView } from './itemView';
+import ItemView from './itemView';
 import { getSession } from '../auth';
 import { apiUrl } from '../config.json';
 

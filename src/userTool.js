@@ -1,4 +1,4 @@
-import { ItemView } from './views/itemView';
+import ItemView from './views/itemView';
 import EditView from './views/editView';
 import TableView from './views/tableView';
 import { inputGroup, selectGroup, submitButton } from './views/elements';
