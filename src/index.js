@@ -1,7 +1,11 @@
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
+<<<<<<< HEAD
 import { MembershipView } from './membershipTool';
+=======
+import { EventTable, NewEvent } from './eventTool';
+>>>>>>> Testing small eventTool.
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
 
@@ -35,7 +39,8 @@ m.route(root, '/users', {
   '/users/:id': layoutWith(UserModal),
   '/newusers': layoutWith(NewUser),
   '/groupmemberships/:id': layoutWith(MembershipView),
-  '/events': layoutWith({
+  '/events': layoutWith(EventTable),
+  '/newevents': layoutWith(NewEvent),
     view() {
       return m(TableView, {
         resource: 'events',
