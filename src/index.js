@@ -1,11 +1,8 @@
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
-<<<<<<< HEAD
 import { MembershipView } from './membershipTool';
-=======
 import { EventTable, NewEvent } from './eventTool';
->>>>>>> Testing small eventTool.
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
 
