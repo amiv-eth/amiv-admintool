@@ -2,7 +2,7 @@ import ItemView from './views/itemView';
 import EditView from './views/editView';
 import { inputGroup, selectGroup, submitButton } from './views/elements';
 import TableView from './views/tableView';
-import { Events as config } from './config.json';
+import { events as config } from './config.json';
 
 const m = require('mithril');
 

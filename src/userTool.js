@@ -3,7 +3,7 @@ import EditView from './views/editView';
 import TableView from './views/tableView';
 import { inputGroup, selectGroup, submitButton } from './views/elements';
 import SelectList from './views/selectList';
-import { Users as config } from './config.json';
+import { users as config } from './config.json';
 import { getSession } from './auth';
 
 const m = require('mithril');
@@ -59,6 +59,7 @@ class UserView extends ItemView {
       m(TableView, {
         resource: 'groupmemberships',
         keys: ['group.name', 'expiry'],
+        searchKeys: ['group.name'],
         query: {
           where: { user: this.id },
           embedded: { group: 1 },

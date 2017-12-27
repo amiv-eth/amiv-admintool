@@ -1,4 +1,4 @@
-import { getSession } from '../auth';
+import { ResourceHandler } from '../auth';
 
 const m = require('mithril');
 
@@ -45,69 +45,24 @@ export default class TableView {
       titles,
       resource,
       query = false,
+      searchKeys = false,
       onAdd = () => {},
     },
   }) {
     this.items = [];
     this.showKeys = keys;
     this.titles = titles || keys;
-    this.resource = resource;
+    this.handler = new ResourceHandler(resource, searchKeys);
     // the querystring is either given or will be parsed from the url
     this.query = query || m.route.param();
     this.onAdd = onAdd;
   }
 
-  // definitions of query parameters in addition to API go here
-  buildQuerystring() {
-    const queryKeys = Object.keys(this.query);
-
-    if (queryKeys.length === 0) return '';
-
-    const query = {};
-
-    if ('search' in this.query && this.query.search.length > 0) {
-      // translate search into where, we just look if any field contains search
-      const searchQuery = {
-        $or: this.showKeys.map((key) => {
-          const fieldQuery = {};
-          fieldQuery[key] = this.query.search;
-          return fieldQuery;
-        }),
-      };
-
-      // if there exists already a where-filter, AND them together
-      if ('where' in this.query) {
-        query.where = JSON.stringify({ $and: [searchQuery, this.query.where] });
-      } else {
-        query.where = JSON.stringify(searchQuery);
-      }
-    } else {
-      query.where = JSON.stringify(this.query.where);
-    }
-
-    // add all other keys
-    queryKeys.filter(key => (key !== 'where' && key !== 'search'))
-      .forEach((key) => { query[key] = JSON.stringify(this.query[key]); });
-
-    console.log(query);
-
-    // now we can acutally build the query string
-    return `?${m.buildQueryString(query)}`;
-  }
-
   buildList() {
-    getSession().then((apiSession) => {
-      let url = this.resource;
-      if (Object.keys(this.query).length > 0) url += this.buildQuerystring();
-      apiSession.get(url).then((response) => {
-        this.items = response.data._items;
-        console.log(this.items);
-        m.redraw();
-      }).catch((e) => {
-        console.log(e);
-      });
-    }).catch(() => {
-      m.route.set('/login');
+    this.handler.get(this.query).then((data) => {
+      this.items = data._items;
+      console.log(this.items);
+      m.redraw();
     });
   }
 
