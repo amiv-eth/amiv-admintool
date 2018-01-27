@@ -1,5 +1,3 @@
-import { ResourceHandler } from '../auth';
-
 const m = require('mithril');
 
 class TableRow {
@@ -23,7 +21,6 @@ class TableRow {
   }
 }
 
-
 export default class TableView {
   /* Shows a table of objects for a given API resource.
    *
@@ -39,61 +36,41 @@ export default class TableView {
    *       https://docs.mongodb.com/v3.2/reference/operator/query/
    *       e.g. : { where: {name: somename } }
    */
-  constructor({
+  constructor() {
+    this.search = '';
+  }
+
+  view({
     attrs: {
       keys,
       titles,
-      resource,
-      query = false,
-      searchKeys = false,
+      controller,
       onAdd = () => {},
     },
   }) {
-    this.items = [];
-    this.showKeys = keys;
-    this.titles = titles || keys;
-    this.handler = new ResourceHandler(resource, searchKeys);
-    // the querystring is either given or will be parsed from the url
-    this.query = query || m.route.param();
-    this.onAdd = onAdd;
-  }
-
-  buildList() {
-    this.handler.get(this.query).then((data) => {
-      this.items = data._items;
-      console.log(this.items);
-      m.redraw();
-    });
-  }
-
-  oninit() {
-    this.buildList();
-  }
-
-  view() {
     return m('div', [
       m('div.row', [
         m('div.col-xs-4', [
           m('div.input-group', [
             m('input[name=search].form-control', {
-              value: this.query.search,
-              onchange: m.withAttr('value', (value) => { this.query.search = value; }),
+              value: this.search,
+              onchange: m.withAttr('value', (value) => { this.search = value; }),
             }),
             m('span.input-group-btn', m('button.btn.btn-default', {
-              onclick: () => { this.buildList(); },
+              onclick: () => { controller.setSearch(this.search); },
             }, 'Search')),
           ]),
         ]),
         m('div.col-xs-4', [
           m('div.btn.btn-default', {
-            onclick: () => { this.onAdd(); },
+            onclick: () => { onAdd(); },
           }, 'New'),
         ]),
       ]),
       m('table.table.table-hover', [
-        m('thead', m('tr', this.titles.map(title => m('th', title)))),
-        m('tbody', this.items.map(item =>
-          m(TableRow, { showKeys: this.showKeys, data: item }))),
+        m('thead', m('tr', titles.map(title => m('th', title)))),
+        m('tbody', controller.items.map(item =>
+          m(TableRow, { showKeys: keys, data: item }))),
       ]),
     ]);
   }

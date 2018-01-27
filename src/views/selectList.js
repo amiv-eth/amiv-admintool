@@ -1,4 +1,3 @@
-import TableView from './tableView';
 import { submitButton } from './elements';
 
 const m = require('mithril');
@@ -22,56 +21,46 @@ function debounce(func, wait, immediate) {
     timeout = setTimeout(later, wait);
     if (callNow) func.apply(context, args);
   };
-};
+}
 
-export default class SelectList extends TableView {
-  constructor({
-    attrs: {
-      resource,
-      searchKeys,
-      itemView,
-      onSubmit = () => {},
-    },
-  }) {
-    super({ attrs: { resource, keys: searchKeys } });
-    this.itemView = itemView;
+export default class SelectList {
+  constructor() {
     this.selected = null;
     this.showList = false;
-    this.onSubmit = onSubmit;
   }
 
-  view() {
+  view({ attrs: { controller, itemView, onSubmit = () => {} } }) {
     // input search and select field
     const updateList = debounce(() => {
-      this.buildList();
+      controller.refresh();
     }, 500);
 
     let input = m('input.form-control', {
       onfocus: () => { this.showList = true; },
       onblur: debounce(() => { this.showList = false; m.redraw(); }, 100),
       onkeyup: (e) => {
-        this.query.search = e.target.value;
+        controller.setSearch(e.target.value);
         updateList();
       },
     });
     if (this.selected !== null) {
       input = m('div.btn-group', [
-        m('div.btn.btn-default', m(this.itemView, this.selected)),
+        m('div.btn.btn-default', m(itemView, this.selected)),
         m('div.btn.btn-primary', {
           onclick: () => {
             this.selected = null;
-            this.query = {};
-            this.buildList();
+            controller.setSearch('');
+            controller.refresh();
           },
         }, m('span.glyphicon.glyphicon-remove-sign')),
       ]);
     }
 
     // list of items
-    const list = m('ul.list-group', this.items.map(item =>
+    const list = m('ul.list-group', controller.items.map(item =>
       m('button.list-group-item', {
         onclick: () => { this.selected = item; this.showList = false; },
-      }, m(this.itemView, item))));
+      }, m(itemView, item))));
 
     return m('div', {
     }, [
@@ -83,7 +72,12 @@ export default class SelectList extends TableView {
             active: this.selected !== null,
             args: {
               class: 'btn-primary',
-              onclick: () => { this.onSubmit(this.selected); },
+              onclick: () => {
+                onSubmit(this.selected);
+                this.selected = null;
+                controller.setSearch('');
+                controller.refresh();
+              },
             },
           }),
         ]),
