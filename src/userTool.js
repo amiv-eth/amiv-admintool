@@ -72,9 +72,8 @@ class UserView extends ItemView {
         this.groupmemberships.handler.post({
           user: this.data._id,
           group: group._id,
-        }).then((data) => {
+        }).then(() => {
           this.groupmemberships.refresh();
-
         });
       },
     });

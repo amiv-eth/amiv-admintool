@@ -187,9 +187,7 @@ export class ResourceHandler {
   post(item) {
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
-        api.post(this.resource, {
-          data: item,
-        }).then((response) => {
+        api.post(this.resource, item).then((response) => {
           if (response.status >= 400) {
             resetSession();
             reject();

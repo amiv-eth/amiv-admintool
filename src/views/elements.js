@@ -43,11 +43,11 @@ export class selectGroup {
 }
 
 export class submitButton {
-  view(vnode) {
-    const args = vnode.attrs.args;
-    if (!vnode.attrs.active) {
-      args.disabled = 'disabled';
+  view({ attrs: { args, active, text } }) {
+    const argsCopy = args;
+    if (!active) {
+      argsCopy.disabled = 'disabled';
     }
-    return m('div.btn', args, vnode.attrs.text);
+    return m('div.btn', argsCopy, text);
   }
 }
