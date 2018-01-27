@@ -68,12 +68,13 @@ class UserView extends ItemView {
         view({ attrs }) { return m('span', attrs.name); },
       },
       onSubmit: (group) => {
+        this.groupchoice = false;
         this.groupmemberships.handler.post({
           user: this.data._id,
           group: group._id,
         }).then((data) => {
           this.groupmemberships.refresh();
-          this.groupchoice = false;
+
         });
       },
     });
