@@ -1,3 +1,5 @@
+const m = require('mithril');
+
 export class inputGroup {
   constructor(vnode) {
     // Link the error-getting function from the binding
