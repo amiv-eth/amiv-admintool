@@ -126,7 +126,9 @@ export class ResourceHandler {
         fullQuery.where = JSON.stringify(searchQuery);
       }
     } else {
-      fullQuery.where = JSON.stringify(query.where);
+      if (query.where) {
+        fullQuery.where = JSON.stringify(query.where);
+      }
     }
 
     // add all other keys

@@ -1,3 +1,4 @@
+import m from 'mithril';
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
@@ -5,8 +6,7 @@ import { MembershipView } from './membershipTool';
 import { EventTable, NewEvent, EventModal } from './eventTool';
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
-
-const m = require('mithril');
+import style from './style';
 
 const main = document.createElement('div');
 document.body.appendChild(main);
@@ -50,3 +50,6 @@ m.route(root, '/users', {
   '/login': LoginScreen,
   '/announce': layoutWith(AnnounceTool),
 });
+
+
+//m.mount(root, layoutWith(userlist));

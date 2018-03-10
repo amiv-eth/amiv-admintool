@@ -1,25 +1,29 @@
-const m = require('mithril');
+import m from 'mithril';
+import infinite from 'mithril-infinite';
+import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
+import 'polythene-css';
+import { styler } from 'polythene-core-css';
+import { debounce } from '../utils';
 
-class TableRow {
-  // A row in the Table specified below.
-  view({
-    attrs: {
-      showKeys,
-      data,
+const tableStyles = [
+  {
+    '.tabletool': {
+      display: 'grid',
+      height: '100%',
+      'grid-template-rows': '100px calc(100% - 100px)',
     },
-  }) {
-    return m(
-      'tr',
-      { onclick() { m.route.set(`/${data._links.self.href}`); } },
-      showKeys.map((key) => {
-        // Access a nested key, indicated by dot-notation
-        let nestedData = data;
-        key.split('.').forEach((subKey) => { nestedData = nestedData[subKey]; });
-        return m('td', nestedData);
-      }),
-    );
-  }
-}
+    '.toolbar': {
+      'grid-row': 1,
+      display: 'flex',
+    },
+    '.scrollTable': {
+      'grid-row': 2,
+      height: '100%',
+    },
+  },
+];
+
+styler.add('tableview', tableStyles);
 
 export default class TableView {
   /* Shows a table of objects for a given API resource.
@@ -36,42 +40,73 @@ export default class TableView {
    *       https://docs.mongodb.com/v3.2/reference/operator/query/
    *       e.g. : { where: {name: somename } }
    */
-  constructor() {
+  constructor({ attrs: { keys, titles } }) {
     this.search = '';
+    this.tableKeys = keys;
+    this.tableTitles = titles;
+  }
+
+  getItemData(data) {
+    return this.tableKeys.map((key) => {
+      // Access a nested key, indicated by dot-notation
+      let nestedData = data;
+      key.split('.').forEach((subKey) => { nestedData = nestedData[subKey]; });
+      return m(
+        'div',
+        { style: { width: `${95 / this.tableKeys.length}%` } },
+        nestedData,
+      );
+    });
+  }
+
+  item() {
+    return (data, opts) => m(ListTile, {
+      style: { padding: '10px' },
+      content: m('div', {
+        onclick() { m.route.set(`/${data._links.self.href}`); },
+        style: { width: '100%', display: 'flex' },
+      }, this.getItemData(data)),
+    });
   }
 
   view({
     attrs: {
-      keys,
-      titles,
       controller,
       onAdd = () => {},
     },
   }) {
-    return m('div', [
-      m('div.row', [
-        m('div.col-xs-4', [
-          m('div.input-group', [
-            m('input[name=search].form-control', {
-              value: this.search,
-              onchange: m.withAttr('value', (value) => { this.search = value; }),
-            }),
-            m('span.input-group-btn', m('button.btn.btn-default', {
-              onclick: () => { controller.setSearch(this.search); },
-            }, 'Search')),
-          ]),
-        ]),
-        m('div.col-xs-4', [
-          m('div.btn.btn-default', {
-            onclick: () => { onAdd(); },
-          }, 'New'),
-        ]),
-      ]),
-      m('table.table.table-hover', [
-        m('thead', m('tr', titles.map(title => m('th', title)))),
-        m('tbody', controller.items.map(item =>
-          m(TableRow, { showKeys: keys, data: item }))),
-      ]),
+    const updateList = debounce(() => {
+      console.log('refreshing');
+      controller.refresh();
+    }, 500);
+
+    return m('div.tabletool', [
+      m(Toolbar, {
+        className: 'toolbar',
+        content: [
+          m(Search, {
+            textfield: {
+              label: 'Search',
+              onChange: ({ value }) => {
+                controller.setSearch(value);
+                updateList();
+              },
+            },
+            fullWidth: true,
+          }),
+          m(Button, {
+            element: 'div',
+            className: 'blue-button',
+            borders: true,
+            label: 'Add',
+            events: { onclick: () => { onAdd(); } },
+          }),
+        ],
+      }),
+      m(List, {
+        className: 'scrollTable',
+        tiles: m(infinite, controller.infiniteScrollParams(this.item())),
+      }),
     ]);
   }
 }
