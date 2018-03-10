@@ -5,6 +5,7 @@ import { inputGroup, selectGroup, submitButton } from './views/elements';
 import SelectList from './views/selectList';
 import { users as config } from './config.json';
 import DatalistController from './listcontroller';
+import { ListTile } from 'polythene-mithril';
 
 const m = require('mithril');
 
@@ -53,8 +54,8 @@ class UserView extends ItemView {
       membershipBadge = m('span.label.label-success', 'Member');
     } else if (this.data.membership === 'extraordinary') {
       membershipBadge = m('span.label.label-success', 'Extraordinary Member');
-    } else if (this.data.membership === 'honory') {
-      membershipBadge = m('span.label.label-warning', 'Honory Member');
+    } else if (this.data.membership === 'honorary') {
+      membershipBadge = m('span.label.label-warning', 'Honorary Member');
     }
 
     const detailKeys = [
@@ -64,9 +65,7 @@ class UserView extends ItemView {
     // groupmemberships. Selects a group to request membership for.
     const groupSelect = m(SelectList, {
       controller: this.groupcontroller,
-      itemView: {
-        view({ attrs }) { return m('span', attrs.name); },
-      },
+      listTileAttrs: data => Object.assign({}, { title: data.name }),
       onSubmit: (group) => {
         this.groupchoice = false;
         this.groupmemberships.handler.post({
