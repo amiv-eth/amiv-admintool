@@ -76,7 +76,6 @@ export default class TableView {
     },
   }) {
     const updateList = debounce(() => {
-      console.log('refreshing');
       controller.refresh();
     }, 500);
 
