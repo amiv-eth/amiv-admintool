@@ -10,7 +10,7 @@ const tableStyles = [
     '.tabletool': {
       display: 'grid',
       height: '100%',
-      'grid-template-rows': '100px calc(100% - 100px)',
+      'grid-template-rows': '48px calc(100% - 48px)',
     },
     '.toolbar': {
       'grid-row': 1,
@@ -18,7 +18,10 @@ const tableStyles = [
     },
     '.scrollTable': {
       'grid-row': 2,
-      height: '100%',
+      'background-color': 'white',
+    },
+    '.tableTile': {
+      padding: '10px',
     },
   },
 ];
@@ -40,10 +43,9 @@ export default class TableView {
    *       https://docs.mongodb.com/v3.2/reference/operator/query/
    *       e.g. : { where: {name: somename } }
    */
-  constructor({ attrs: { keys, titles } }) {
+  constructor({ attrs: { keys } }) {
     this.search = '';
     this.tableKeys = keys;
-    this.tableTitles = titles;
   }
 
   getItemData(data) {
@@ -61,9 +63,12 @@ export default class TableView {
 
   item() {
     return (data, opts) => m(ListTile, {
-      style: { padding: '10px' },
+      className: 'themed-list-tile',
+      hoverable: true,
+      compactFront: true,
       content: m('div', {
         onclick() { m.route.set(`/${data._links.self.href}`); },
+        className: 'tableTile',
         style: { width: '100%', display: 'flex' },
       }, this.getItemData(data)),
     });
@@ -72,6 +77,7 @@ export default class TableView {
   view({
     attrs: {
       controller,
+      titles,
       onAdd = () => {},
     },
   }) {
@@ -82,8 +88,10 @@ export default class TableView {
     return m('div.tabletool', [
       m(Toolbar, {
         className: 'toolbar',
+        compact: true,
         content: [
           m(Search, {
+            compact: true,
             textfield: {
               label: 'Search',
               onChange: ({ value }) => {
@@ -103,8 +111,21 @@ export default class TableView {
         ],
       }),
       m(List, {
+        borders: true,
         className: 'scrollTable',
-        tiles: m(infinite, controller.infiniteScrollParams(this.item())),
+        tiles: [
+          m(ListTile, {
+            className: 'tableTile',
+            content: m(
+              'div',
+              { style: { width: '100%', display: 'flex' } },
+              titles.map(title => m('div', {
+                style: { width: `${95 / this.tableKeys.length}%` },
+              }, title)),
+            ),
+          }),
+          m(infinite, controller.infiniteScrollParams(this.item())),
+        ],
       }),
     ]);
   }

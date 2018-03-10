@@ -2,7 +2,7 @@
 	IMPORTS
 */
 
-@font-face {
+/*@font-face {
     font-family: DINPro;
     font-weight: normal;
     src: url(../../res/fonts/DINPro-Light.ttf);
@@ -11,7 +11,7 @@
     font-family: DINPro;
     font-weight: bold;
     src: url(../../res/fonts/DINPro-Bold.ttf);
-}
+}*/
 
 /*
 	GENERAL SETUP
@@ -33,7 +33,6 @@ body {
 /*
 	UTILITY CLASSES
 */
-
 .smooth {
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -73,7 +72,6 @@ body {
 /*
 	MAIN FRAMEWORK
 */
-
 .wrapper-main {
     height: 100%;
     width: 100%;
@@ -110,8 +108,7 @@ body {
     height: 100vh;
     grid-column: 2;
     background: #eee;
-    /*width: 100%;*/
-    overflow: auto;
+    overflow: hidden;
 }
 
 /*
@@ -120,18 +117,6 @@ body {
 
 .navbar-main .container-fluid>ul>li {
     float: left;
-}
-
-/*
-	LOG BAR
-*/
-
-.alertCont {
-    position: fixed;
-    z-index: 10000;
-    left: 50%;
-    top: 10px;
-    transform: translateX(-50%);
 }
 
 /*

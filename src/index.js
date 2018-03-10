@@ -17,7 +17,6 @@ class Layout {
   view(vnode) {
     return m('div.wrapper-main.smooth', [
       m(Sidebar),
-      m('div.navbar.navbar-defailt.navbar-main'),
       m('div.wrapper-content', vnode.children),
     ]);
   }

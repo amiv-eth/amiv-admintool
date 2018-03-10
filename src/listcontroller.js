@@ -29,7 +29,7 @@ export default class DatalistController {
     // check this and return nothing
     const query = {};
     Object.keys(this.query).forEach((key) => { query[key] = this.query[key]; });
-    query.max_results = 5;
+    query.max_results = 10;
     query.page = pageNum;
 
     return new Promise((resolve, reject) => {
