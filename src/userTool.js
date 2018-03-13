@@ -5,7 +5,6 @@ import { inputGroup, selectGroup, submitButton } from './views/elements';
 import SelectList from './views/selectList';
 import { users as config } from './config.json';
 import DatalistController from './listcontroller';
-import { ListTile } from 'polythene-mithril';
 
 const m = require('mithril');
 

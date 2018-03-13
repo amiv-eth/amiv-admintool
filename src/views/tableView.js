@@ -22,6 +22,7 @@ const tableStyles = [
     },
     '.tableTile': {
       padding: '10px',
+      'border-bottom': '1px solid rgba(0, 0, 0, 0.12)',
     },
   },
 ];
@@ -55,7 +56,7 @@ export default class TableView {
       key.split('.').forEach((subKey) => { nestedData = nestedData[subKey]; });
       return m(
         'div',
-        { style: { width: `${95 / this.tableKeys.length}%` } },
+        { style: { width: `${98 / this.tableKeys.length}%` } },
         nestedData,
       );
     });
@@ -91,7 +92,6 @@ export default class TableView {
         compact: true,
         content: [
           m(Search, {
-            compact: true,
             textfield: {
               label: 'Search',
               onChange: ({ value }) => {
@@ -102,7 +102,6 @@ export default class TableView {
             fullWidth: true,
           }),
           m(Button, {
-            element: 'div',
             className: 'blue-button',
             borders: true,
             label: 'Add',
@@ -111,7 +110,6 @@ export default class TableView {
         ],
       }),
       m(List, {
-        borders: true,
         className: 'scrollTable',
         tiles: [
           m(ListTile, {
@@ -120,7 +118,7 @@ export default class TableView {
               'div',
               { style: { width: '100%', display: 'flex' } },
               titles.map(title => m('div', {
-                style: { width: `${95 / this.tableKeys.length}%` },
+                style: { width: `${98 / this.tableKeys.length}%` },
               }, title)),
             ),
           }),
