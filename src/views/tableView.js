@@ -33,16 +33,13 @@ export default class TableView {
   /* Shows a table of objects for a given API resource.
    *
    * Required attributes:
-   *   - resource: a string of the API resource to display, e.g. 'users'
+   *   vnode: { attrs: { controller, titles, keys } }
+   *   - controller: a listcontroller for some API resource data
+   *   - titles: the titles of the table
    *   - keys: Keys of this resource to display as columns, e.g. ['firstname']
    *       Works with embedded resources, i.e. if you add
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
-   * Addutional attirbutes:
-   *   - query: A query object that is valid accoring to
-   *       http://python-eve.org/features.html#Filtering
-   *       https://docs.mongodb.com/v3.2/reference/operator/query/
-   *       e.g. : { where: {name: somename } }
    */
   constructor({ attrs: { keys } }) {
     this.search = '';
@@ -99,7 +96,7 @@ export default class TableView {
                 updateList();
               },
             },
-            fullWidth: true,
+            fullWidth: false,
           }),
           m(Button, {
             className: 'blue-button',
