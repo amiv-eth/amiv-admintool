@@ -1,11 +1,4 @@
 # Admintool
-### Software:
-* ```ubuntu /14.04.1```
-* ```nginx /1.4.6```
-
-### Dependencies:
-* ```jQuery /2.2.2```
-* ```bootstrap /3.3.6```
 
 # Developer Installation
 
@@ -16,17 +9,16 @@ npm install
 And now, start developing:
 
 ```
-npm start
+npm run start
 ```
 
+This will open up a local server outputting the current version of the admintools. It refreshes automatically as soon as you save changes in any `.js` file.
+
 ### File Structure:
-* admin (Admintool)
-  * res (Resources)
-    * bg (big pictures and backgrounds)
-    * favicon
-    * fonts
-    * logo
-    * bootstrap
-    * js
-  * src
-* public (Website)
+* res (Resources)
+    - favicon
+    - logo
+* src
+    - views (reusable view components, etc for Tables and selection lists)
+    - `index.js` main file
+    - `*Tool.js` main file per API resource, e.g. for all user-related UIs.
