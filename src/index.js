@@ -6,7 +6,7 @@ import { MembershipView } from './membershipTool';
 import { EventTable, NewEvent, EventModal } from './eventTool';
 import Sidebar from './sidebar';
 import AnnounceTool from './announceTool';
-import style from './style';
+import './style';
 
 const main = document.createElement('div');
 document.body.appendChild(main);
@@ -49,6 +49,3 @@ m.route(root, '/users', {
   '/login': LoginScreen,
   '/announce': layoutWith(AnnounceTool),
 });
-
-
-//m.mount(root, layoutWith(userlist));
