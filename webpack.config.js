@@ -1,5 +1,7 @@
 const publicPath = '/dist';
 
+const webpack = require('webpack');
+
 const config = {
   context: `${__dirname}/src`, // `__dirname` is root of project
 
@@ -20,6 +22,14 @@ const config = {
     index: 'index.html',
   },
 
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'windows.jQuery': 'jquery',
+    }),
+  ],
+
   module: {
     rules: [
       {
@@ -36,11 +46,22 @@ const config = {
         exclude: /node_modules/,
         use: [{
           loader: 'babel-loader',
-          options: { presets: ['es2015'] },
+          options: { presets: ['env'] },
         }],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              publicPath,
+            },
+          },
+        ],
+      },
+      {
+        test: /node_modules\/announcetool.*\.(html|css)$/,
         use: [
           {
             loader: 'file-loader',

@@ -1,10 +1,12 @@
+import m from 'mithril';
 import LoginScreen from './login';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
-import { EventTable, NewEvent, EventView, EventModal } from './eventTool';
+import { MembershipView } from './membershipTool';
+import { EventTable, NewEvent, EventModal } from './eventTool';
 import Sidebar from './sidebar';
-
-const m = require('mithril');
+import AnnounceTool from './announceTool';
+import './style';
 
 const main = document.createElement('div');
 document.body.appendChild(main);
@@ -15,7 +17,6 @@ class Layout {
   view(vnode) {
     return m('div.wrapper-main.smooth', [
       m(Sidebar),
-      m('div.navbar.navbar-defailt.navbar-main'),
       m('div.wrapper-content', vnode.children),
     ]);
   }
@@ -32,10 +33,11 @@ function layoutWith(view) {
 m.route(root, '/users', {
   '/users': layoutWith(UserTable),
   '/users/:id': layoutWith(UserModal),
-  '/newusers': layoutWith(NewUser),
+  '/newuser': layoutWith(NewUser),
+  '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(EventModal),
-  '/newevents': layoutWith(NewEvent),
+  '/newevent': layoutWith(NewEvent),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
@@ -45,4 +47,5 @@ m.route(root, '/users', {
     },
   }),
   '/login': LoginScreen,
+  '/announce': layoutWith(AnnounceTool),
 });

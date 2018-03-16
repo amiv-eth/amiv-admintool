@@ -1,7 +1,8 @@
-import { ItemView } from './views/itemView';
-import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
+import ItemView from './views/itemView';
+import EditView from './views/editView';
+import { inputGroup, selectGroup, submitButton } from './views/elements';
 import TableView from './views/tableView';
-import { Events as config } from './config.json';
+import { events as config } from './config.json';
 
 const m = require('mithril');
 
@@ -170,6 +171,7 @@ export class EventTable {
       resource: 'events',
       keys: config.tableKeys,
       titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
+      onAdd: () => { m.route.set('/newevent'); },
     });
   }
 }

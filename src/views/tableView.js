@@ -1,135 +1,127 @@
-import { getSession } from '../auth';
+import m from 'mithril';
+import infinite from 'mithril-infinite';
+import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
+import 'polythene-css';
+import { styler } from 'polythene-core-css';
+import { debounce } from '../utils';
 
-const m = require('mithril');
+const tableStyles = [
+  {
+    '.tabletool': {
+      display: 'grid',
+      height: '100%',
+      'grid-template-rows': '48px calc(100% - 48px)',
+    },
+    '.toolbar': {
+      'grid-row': 1,
+      display: 'flex',
+    },
+    '.scrollTable': {
+      'grid-row': 2,
+      'background-color': 'white',
+    },
+    '.tableTile': {
+      padding: '10px',
+      'border-bottom': '1px solid rgba(0, 0, 0, 0.12)',
+    },
+  },
+];
 
-class TableRow {
-  // A row in the Table specified below.
-  view(vnode) {
-    return m(
-      'tr',
-      { onclick() { m.route.set(`/${vnode.attrs.data._links.self.href}`); } },
-      vnode.attrs.show_keys.map((key) => {
-        // Access a nested key, indicated by dot-notation
-        let data = vnode.attrs.data;
-        key.split('.').forEach((subKey) => { data = data[subKey]; });
-        return m('td', data);
-      }),
-    );
-  }
-}
-
+styler.add('tableview', tableStyles);
 
 export default class TableView {
   /* Shows a table of objects for a given API resource.
    *
    * Required attributes:
-   *   - resource: a string of the API resource to display, e.g. 'users'
+   *   vnode: { attrs: { controller, titles, keys } }
+   *   - controller: a listcontroller for some API resource data
+   *   - titles: the titles of the table
    *   - keys: Keys of this resource to display as columns, e.g. ['firstname']
    *       Works with embedded resources, i.e. if you add
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
-   * Addutional attirbutes:
-   *   - query: A query object that is valid accoring to
-   *       http://python-eve.org/features.html#Filtering
-   *       https://docs.mongodb.com/v3.2/reference/operator/query/
-   *       e.g. : { where: {name: somename } }
    */
-  constructor(vnode) {
-    this.items = [];
-    this.show_keys = vnode.attrs.keys;
-    this.titles = vnode.attrs.titles || this.show_keys;
-    this.resource = vnode.attrs.resource;
-    // the querystring is either given or will be parsed from the url
-    if (vnode.attrs.query) {
-      this.query = vnode.attrs.query;
-    } else {
-      this.query = m.route.param();
-    }
+  constructor({ attrs: { keys } }) {
+    this.search = '';
+    this.tableKeys = keys;
   }
 
-  // definitions of query parameters in addition to API go here
-  buildQuerystring() {
-    const queryKeys = Object.keys(this.query);
-
-    if (queryKeys.length === 0) return '';
-
-    const query = {};
-
-    if ('search' in this.query && this.query.search.length > 0) {
-      // translate search into where, we just look if any field contains search
-      const searchQuery = {
-        $or: this.show_keys.map((key) => {
-          const fieldQuery = {};
-          fieldQuery[key] = this.query.search;
-          return fieldQuery;
-        }),
-      };
-
-      // if there exists already a where-filter, AND them together
-      if ('where' in this.query) {
-        query.where = JSON.stringify({ $and: [searchQuery, this.query.where] });
-      } else {
-        query.where = JSON.stringify(searchQuery);
-      }
-    } else {
-      query.where = JSON.stringify(this.query.where);
-    }
-
-    // add all other keys
-    queryKeys.filter(key => (key !== 'where' && key !== 'search'))
-      .forEach((key) => { query[key] = JSON.stringify(this.query[key]); });
-
-    console.log(query);
-
-    // now we can acutally build the query string
-    return `?${m.buildQueryString(query)}`;
-  }
-
-  buildList() {
-    getSession().then((apiSession) => {
-      let url = this.resource;
-      if (Object.keys(this.query).length > 0) url += this.buildQuerystring();
-      apiSession.get(url).then((response) => {
-        this.items = response.data._items;
-        console.log(this.items);
-        m.redraw();
-      }).catch((e) => {
-        console.log(e);
-      });
-    }).catch(() => {
-      m.route.set('/login');
+  getItemData(data) {
+    return this.tableKeys.map((key) => {
+      // Access a nested key, indicated by dot-notation
+      let nestedData = data;
+      key.split('.').forEach((subKey) => { nestedData = nestedData[subKey]; });
+      return m(
+        'div',
+        { style: { width: `${98 / this.tableKeys.length}%` } },
+        nestedData,
+      );
     });
   }
 
-  oninit() {
-    this.buildList();
+  item() {
+    return (data, opts) => m(ListTile, {
+      className: 'themed-list-tile',
+      hoverable: true,
+      compactFront: true,
+      content: m('div', {
+        onclick() { m.route.set(`/${data._links.self.href}`); },
+        className: 'tableTile',
+        style: { width: '100%', display: 'flex' },
+      }, this.getItemData(data)),
+    });
   }
 
-  view() {
-    return m('div', [
-      m('div.row', [
-        m('div.col-xs-4', [
-          m('div.input-group', [
-            m('input[name=search].form-control', {
-              value: this.query.search,
-              onchange: m.withAttr('value', (value) => { this.query.search = value; }),
-            }),
-            m('span.input-group-btn', m('button.btn.btn-default', {
-              onclick: () => { this.buildList(); },
-            }, 'Search')),
-          ]),
-        ]),
-        m('div.col-xs-4', [
-          m('div.btn.btn-default', {
-            onclick: () => { m.route.set(`/new${this.resource}`); },
-          }, 'New'),
-        ]),
-      ]),
-      m('table.table.table-hover', [
-        m('thead', m('tr', this.titles.map(title => m('th', title)))),
-        m('tbody', this.items.map(item =>
-          m(TableRow, { show_keys: this.show_keys, data: item }))),
-      ]),
+  view({
+    attrs: {
+      controller,
+      titles,
+      onAdd = () => {},
+    },
+  }) {
+    const updateList = debounce(() => {
+      controller.refresh();
+    }, 500);
+
+    return m('div.tabletool', [
+      m(Toolbar, {
+        className: 'toolbar',
+        compact: true,
+        content: [
+          m(Search, {
+            textfield: {
+              label: 'Search',
+              onChange: ({ value }) => {
+                controller.setSearch(value);
+                updateList();
+              },
+            },
+            fullWidth: false,
+          }),
+          m(Button, {
+            className: 'blue-button',
+            borders: true,
+            label: 'Add',
+            events: { onclick: () => { onAdd(); } },
+          }),
+        ],
+      }),
+      m(List, {
+        className: 'scrollTable',
+        tiles: [
+          m(ListTile, {
+            className: 'tableTile',
+            content: m(
+              'div',
+              { style: { width: '100%', display: 'flex' } },
+              titles.map(title => m('div', {
+                style: { width: `${98 / this.tableKeys.length}%` },
+              }, title)),
+            ),
+          }),
+          m(infinite, controller.infiniteScrollParams(this.item())),
+        ],
+      }),
     ]);
   }
 }

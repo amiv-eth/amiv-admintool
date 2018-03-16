@@ -1,43 +1,26 @@
-import { getSession } from '../auth';
+import { ResourceHandler } from '../auth';
 
 const m = require('mithril');
 
-export class ItemView {
+export default class ItemView {
   /* Basic class show a data item
    *
-   *  Required Arguments:
+   *  Required:
    *  - call constructor with 'resource'
    *  - either make sure m.route.params('id') exists or set this.id in
    *    constructor
-   *
-   *  Provides Methods:
-   *  - loadItemData: Loads data specified by resource and id into this.data
-   *    (is per default called by oninit)
    */
-  constructor(resource) {
+  constructor(resource, embedded) {
     this.data = null;
     this.id = m.route.param('id');
-    this.resource = resource;
-  }
-
-  loadItemData(session) {
-    session.get(`${this.resource}/${this.id}`).then((response) => {
-      this.data = response.data;
-      m.redraw();
-    });
+    this.handler = new ResourceHandler(resource);
+    this.embedded = embedded || {};
   }
 
   oninit() {
-    getSession().then((apiSession) => {
-      this.loadItemData(apiSession);
-    }).catch(() => {
-      m.route.set('/login');
+    this.handler.getItem(this.id, this.embedded).then((item) => {
+      this.data = item;
+      m.redraw();
     });
-  }
-}
-
-export class Title {
-  view(vnode) {
-    return m('h1', vnode.attrs);
   }
 }

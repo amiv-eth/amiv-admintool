@@ -1,14 +1,47 @@
-import { ItemView } from './views/itemView';
-import { EditView, inputGroup, selectGroup, submitButton } from './views/editView';
+import ItemView from './views/itemView';
+import EditView from './views/editView';
 import TableView from './views/tableView';
-import { Users as config } from './config.json';
+import { inputGroup, selectGroup, submitButton } from './views/elements';
+import SelectList from './views/selectList';
+import { users as config } from './config.json';
+import DatalistController from './listcontroller';
 
 const m = require('mithril');
 
 class UserView extends ItemView {
   constructor() {
     super('users');
-    this.memberships = [];
+    // a controller to handle the groupmemberships of this user
+    this.groupmemberships = new DatalistController('groupmemberships', {
+      where: { user: this.id },
+      embedded: { group: 1 },
+    });
+    // a controller to handle the eventsignups of this user
+    this.eventsignups = new DatalistController('eventsignups', {
+      where: { user: this.id },
+      embedded: { event: 1 },
+    });
+    // initially, don't display the choice field for a new group
+    // (this will be displayed once the user clicks on 'new')
+    this.groupchoice = false;
+    // a controller to handle the list of possible groups to join
+    this.groupcontroller = new DatalistController('groups', {}, ['name']);
+    // exclude the groups where the user is already a member
+    this.groupmemberships.handler.get({ where: { user: this.id } })
+      .then((data) => {
+        const groupIds = data._items.map(item => item.group);
+        this.groupcontroller.setQuery({
+          where: { _id: { $nin: groupIds } },
+        });
+      });
+  }
+
+  oninit() {
+    this.handler.getItem(this.id, this.embedded).then((item) => {
+      this.data = item;
+      m.redraw();
+    });
+    this.groupmemberships.refresh();
   }
 
   view() {
@@ -20,12 +53,28 @@ class UserView extends ItemView {
       membershipBadge = m('span.label.label-success', 'Member');
     } else if (this.data.membership === 'extraordinary') {
       membershipBadge = m('span.label.label-success', 'Extraordinary Member');
-    } else if (this.data.membership === 'honory') {
-      membershipBadge = m('span.label.label-warning', 'Honory Member');
+    } else if (this.data.membership === 'honorary') {
+      membershipBadge = m('span.label.label-warning', 'Honorary Member');
     }
 
     const detailKeys = [
       'email', 'phone', 'nethz', 'legi', 'rfid', 'department', 'gender'];
+
+    // Selector that is only displayed if "new" is clicked in the
+    // groupmemberships. Selects a group to request membership for.
+    const groupSelect = m(SelectList, {
+      controller: this.groupcontroller,
+      listTileAttrs: data => Object.assign({}, { title: data.name }),
+      onSubmit: (group) => {
+        this.groupchoice = false;
+        this.groupmemberships.handler.post({
+          user: this.data._id,
+          group: group._id,
+        }).then(() => {
+          this.groupmemberships.refresh();
+        });
+      },
+    });
 
     return m('div', [
       m('h1', `${this.data.firstname} ${this.data.lastname}`),
@@ -35,22 +84,18 @@ class UserView extends ItemView {
         m('td', this.data[key] ? this.data[key] : ''),
       ]))),
       m('h2', 'Memberships'), m('br'),
+      this.groupchoice ? groupSelect : '',
       m(TableView, {
-        resource: 'groupmemberships',
+        controller: this.groupmemberships,
         keys: ['group.name', 'expiry'],
-        query: {
-          where: { user: this.id },
-          embedded: { group: 1 },
-        },
+        titles: ['groupname', 'expiry'],
+        onAdd: () => { this.groupchoice = true; },
       }),
       m('h2', 'Signups'), m('br'),
       m(TableView, {
-        resource: 'eventsignups',
+        controller: this.eventsignups,
         keys: ['event.title_de'],
-        query: {
-          where: { user: this.id },
-          embedded: { event: 1 },
-        },
+        titles: ['event'],
       }),
     ]);
   }
@@ -154,11 +199,15 @@ export class UserModal {
 }
 
 export class UserTable {
+  constructor() {
+    this.ctrl = new DatalistController('users', {}, config.tableKeys);
+  }
   view() {
     return m(TableView, {
-      resource: 'users',
+      controller: this.ctrl,
       keys: config.tableKeys,
       titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
+      onAdd: () => { m.route.set('/newuser'); },
     });
   }
 }

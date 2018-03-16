@@ -2,48 +2,26 @@
 	IMPORTS
 */
 
-@font-face {
-    font-family: DINPro;
-    font-weight: normal;
-    src: url(../../res/fonts/DINPro-Light.ttf);
-}
-@font-face {
-    font-family: DINPro;
-    font-weight: bold;
-    src: url(../../res/fonts/DINPro-Bold.ttf);
-}
-
 /*
 	GENERAL SETUP
 */
 
-* {
-    margin: 0;
-    padding: 0;
-}
 html, body {
     width: 100%;
     height: 100%;
 }
 body {
-    font-family: DINPro;
     overflow: hidden;
 }
 
 /*
 	UTILITY CLASSES
 */
-
 .smooth {
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-}
-
-[contenteditable=true]:empty:before {
-  content: attr(placeholder);
-  display: block; /* For Firefox */
 }
 
 /*
@@ -60,7 +38,7 @@ body {
     justify-content: center;
     position: fixed;
     z-index: 20;
-    //background: rgba(30,30,30,.9);
+    /*background: rgba(30,30,30,.9);*/
     background: rgba(31, 45, 84, 1);
 }
 .loginPanel>div {
@@ -73,52 +51,25 @@ body {
 /*
 	MAIN FRAMEWORK
 */
-
 .wrapper-main {
     height: 100%;
     width: 100%;
-    top: 0;
-    left: 0;
-}
-.wrapper-main.toggled {
-    padding-left: 250px;
+    display: grid;
+    grid-template-columns: 280px auto;
 }
 .wrapper-sidebar {
     z-index: 10;
-    left: 250px;
-    width: 0px;
+    grid-column: 1;
     height: 100%;
-    margin-left: -250px;
     overflow-y: auto;
     position: fixed;
     background: #222;
     color: #fff;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
 }
-.wrapper-main.toggled .wrapper-sidebar {
-    width: 250px;
-}
-.nav-sidebar .navbar ul {
-    float: none;
-    display: block;
-}
 .wrapper-sidebar .navbar li {
     float: none;
     display: block;
-}
-@media(min-width:768px) {
-    .wrapper-main {
-        padding-left: 250px;
-    }
-    .wrapper-main.toggled {
-        padding-left: 0px;
-    }
-    .wrapper-sidebar {
-        width: 250px;
-    }
-    .wrapper-main.toggled .wrapper-sidebar {
-        width: 0px;
-    }
 }
 .wrapper-sidebar ul li a {
     color: inherit;
@@ -133,29 +84,29 @@ body {
     width: 100%;
 }
 .wrapper-content {
-    margin-top: -20px;
-    //height: calc(100vh - 51px);
+    height: 100vh;
+    grid-column: 2;
     background: #eee;
-    width: 100%;
-    overflow: auto;
+    overflow: hidden;
 }
 
 /*
-	MAIN NAVBAR
+    ANNOUNCE TOOL
 */
 
-.navbar-main .container-fluid>ul>li {
-    float: left;
+.selected{
+    background: #98FB98;
+}
+.featured{
+    background: salmon;
 }
 
-/*
-	LOG BAR
-*/
-
-.alertCont {
-    position: fixed;
-    z-index: 10000;
-    left: 50%;
-    top: 10px;
-    transform: translateX(-50%);
+.selectedcolor{
+    background: #98FB98;
 }
+.featuredcolor{
+    background: salmon;
+}
+
+
+
