@@ -125,17 +125,13 @@ export class ResourceHandler {
       } else {
         fullQuery.where = JSON.stringify(searchQuery);
       }
-    } else {
-      if (query.where) {
-        fullQuery.where = JSON.stringify(query.where);
-      }
+    } else if (query.where) {
+      fullQuery.where = JSON.stringify(query.where);
     }
 
     // add all other keys
     queryKeys.filter(key => (key !== 'where' && key !== 'search'))
       .forEach((key) => { fullQuery[key] = JSON.stringify(query[key]); });
-
-    console.log(fullQuery);
 
     // now we can acutally build the query string
     return `?${m.buildQueryString(fullQuery)}`;

@@ -10,19 +10,16 @@ import { icons, BackButton, ClearButton, SearchIcon } from './elements';
 
 const createSearchField = () => {
   return {
-    oninit: vnode => {
-      const value = Stream("");
+    oninit: (vnode) => {
+      const value = Stream('');
       const setInputState = Stream();
 
-      //const clear = () => setInputState()({ value: '', focus: false});
+      // const clear = () => setInputState()({ value: '', focus: false});
       const clear = () => value('');
       const leave = () => value('');
 
       vnode.state = {
-        value,
-        setInputState,
-        clear,
-        leave
+        value, setInputState, clear, leave,
       };
     },
     view: ({ state, attrs }) => {
@@ -32,16 +29,14 @@ const createSearchField = () => {
         {},
         {
           textfield: {
-            label: "Search",
+            label: 'Search',
             onChange: (newState) => {
               state.value(newState.value);
               state.setInputState(newState.setInputState);
               // onChange callback added for result list example:
-              attrs.onChange && attrs.onChange(newState, state.setInputState);
+              if (attrs.onChange) attrs.onChange(newState, state.setInputState);
             },
             value,
-            // incoming label and defaultValue added for result list example:
-            label: attrs.label || "Search",
             defaultValue: attrs.defaultValue,
           },
           buttons: {
