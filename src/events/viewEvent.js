@@ -76,7 +76,7 @@ export default class viewEvent extends ItemView {
     return m('main', { style: { height: '100%', overflow: 'scroll' } }, [navigation,
       m('h1', { class: 'title' }, 'Event overview'),
       m('h3', m('em', this.data.title_en)),
-      this.data.time_start ? m('p', m('strong', `when: from ${this.data.time_start} to ${this.data.time_end}`)) : '',
+      this.data.time_start ? m('p', m('strong', `when: from ${dateFormatter(this.data.time_start)} to ${dateFormatter(this.data.time_end)}`)) : '',
       this.data.location ? m('p', m('strong', `where: ${this.data.location}`)) : '',
       editEventButton,
       m('h1', { class: 'title' }, 'Participants'),
