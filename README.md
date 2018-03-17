@@ -3,6 +3,15 @@
 # Developer Installation
 
 ```
+git clone https://gitlab.ethz.ch/amiv/amiv-admintool.git
+```
+Install curl (e.g. for debian):
+```
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install curl
+```
+Install npm:
+```
 npm install
 ```
 
