@@ -2,26 +2,13 @@ import m from 'mithril';
 import { events as config } from '../config.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
+import { dateFormatter } from '../utils';
 
 
 /* Table of all Events
  *
  * Makes use of the standard TableView
  */
-
-
-function dateFormatter(datestring) {
-  // converts an API datestring into the standard format 01.01.1990, 10:21
-  if (!datestring) return '';
-  const date = new Date(datestring);
-  return date.toLocaleString('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 
 export default class EventTable {
