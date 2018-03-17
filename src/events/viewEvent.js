@@ -1,13 +1,72 @@
 import m from 'mithril';
+import { Checkbox, Button, Card, TextField, IconButton, Toolbar, ToolbarTitle } from 'polythene-mithril';
 import ItemView from '../views/itemView';
-import {Button, Card, IconButton, Toolbar, ToolbarTitle } from "polythene-mithril"
+import { events as config, eventsignups as signupConfig } from '../config.json';
+import TableView from '../views/tableView';
+import DatalistController from '../listcontroller';
+import { dateFormatter } from '../utils';
 import { icons } from '../views/elements';
+import { styler } from 'polythene-core-css';
+
+const viewLayout = [
+    {
+        '.eventViewContainer': {
+            display: 'grid',
+            'grid-template-columns': '50% 50%',
+            'grid-gap': '50px',
+        },
+        '.eventViewLeft': {
+            'grid-column': 1,
+        },
+        '.eventViewRight': {
+            'grid-column': 2,
+        },
+        '.eventViewRight h4': {
+                'margin-top': '0px',
+        }
+    }
+];
+styler.add('eventView', viewLayout);
+
+
+class ParticipantsTable {
+  constructor({ attrs: { where } }) {
+    this.ctrl = new DatalistController('eventsignups', {
+      embedded: { user: 1 },
+      where,
+    }, signupConfig.tableKeys);
+  }
+
+  getItemData(data) {
+    return [
+      m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
+      m('div', { style: { width: '9em' } }, data.user.lastname),
+      m('div', { style: { width: '9em' } }, data.user.firstname),
+      m('div', { style: { width: '9em' } }, data.email),
+    ];
+  }
+
+  view() {
+    return m(Card, {
+      content: m(TableView, {
+        controller: this.ctrl,
+        keys: signupConfig.tableKeys,
+        tileContent: this.getItemData,
+        titles: [
+          { text: 'Date of Signup', width: '9em' },
+          { text: 'Name', width: '9em' },
+          { text: 'First Name', width: '9em' },
+          { text: 'Email', width: '9em' },
+        ],
+      }),
+    });
+  }
+}
 
 export default class viewEvent extends ItemView {
     constructor() {
         super('events');
         this.details = false;
-        this.participants = false;
         this.waitlist = false;
         this.emailAdresses = false;
     }
@@ -53,10 +112,6 @@ export default class viewEvent extends ItemView {
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "details" }),
         ]);
-        let displayParticipantsButton = m(Toolbar, { compact: true, events: { onclick: () => this.participants = !this.participants } }, [
-            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
-            m(ToolbarTitle, { text: "participants" }),
-        ]);
         let displayWaitlistButton = m(Toolbar, { compact: true, events: { onclick: () => this.waitlist = !this.waitlist } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "waitlist" }),
@@ -69,7 +124,6 @@ export default class viewEvent extends ItemView {
 
 
         let displayDetails = null;
-        let displayParticipants = null;
         let displayWaitlist = null;
         let displayEmailAdresses = null;
 
@@ -83,7 +137,17 @@ export default class viewEvent extends ItemView {
                     {
                         primary: {
                             title: "Catchphrase",
-                            subtitle: displayCatchphrase
+                            subtitle: displayCatchphrase,
+                        }
+                    },
+                    {
+                        any: {
+                            content: this.data.time_start ? m('p', m('strong', `when: from ${dateFormatter(this.data.time_start)} to ${dateFormatter(this.data.time_end)}`)) : '',
+                        },
+                    },
+                    {
+                        any: {
+                            content: this.data.location ? m('p', m('strong', `where: ${this.data.location}`)) : '',
                         }
                     },
                     {
@@ -96,41 +160,6 @@ export default class viewEvent extends ItemView {
                         primary: {
                             title: "Priority",
                             subtitle: displayPriority
-                        }
-                    },
-                    {
-                        actions: {
-                            content: [
-                                m(Button, {
-                                    label: "Action 1"
-                                }),
-                                m(Button, {
-                                    label: "Action 2"
-                                })
-                            ]
-                        }
-                    },
-                    {
-                        text: {
-                            content: "More text"
-                        }
-                    }
-                ]
-
-            })
-        }
-
-        if (this.participants) {
-            displayParticipantsButton = m(Toolbar, { compact: true, events: { onclick: () => this.participants = !this.participants } }, [
-                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
-                m(ToolbarTitle, { text: "participants" }),
-            ]);
-            displayParticipants = m(Card, {
-                content: [
-                    {
-                        primary: {
-                            title: "Primary title",
-                            subtitle: "Subtitle"
                         }
                     },
                     {
@@ -232,20 +261,26 @@ export default class viewEvent extends ItemView {
             m("h1", {class: "title"}, this.data.title_de),
             m(Button, {element: 'div', label: "Update Event"}),
 
-            displayDetailsButton,
-            displayDetails,
+            m('div.eventViewContainer', [
+               m('div.eventViewLeft', [
+                   displayDetailsButton,
+                   displayDetails,
 
-            displayParticipantsButton,
-            displayParticipants,
+                   displayWaitlistButton,
+                   displayWaitlist,
 
-            displayWaitlistButton,
-            displayWaitlist,
-
-            displayEmailAdressesButton,
-            displayEmailAdresses,
+                   displayEmailAdressesButton,
+                   displayEmailAdresses,
+               ]),
+               m('div.eventViewRight', [
+                   m('h4', 'Accepted Participants'),
+                   m(ParticipantsTable, { where: { accepted: true } }),
+                   m('p', ''),
+                   m('h4', 'Participants on Waiting List'),
+                   m(ParticipantsTable, { where: { accepted: false } }),
+               ])
+            ]),
 
         ])
     }
-
-
 }
