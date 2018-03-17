@@ -46,10 +46,9 @@ export default class EditView extends ItemView {
   oninit() {
     if (this.id) {
       // load data for item
-      getSession().then((apiSession) => {
-        this.loadItemData(apiSession);
-      }).catch(() => {
-        m.route.set('/login');
+      this.handler.getItem(this.id, this.embedded).then((item) => {
+        this.data = item;
+        m.redraw();
       });
     }
     // load schema
@@ -102,45 +101,30 @@ export default class EditView extends ItemView {
   submit(method, fields) {
     return () => {
       if (this.changed) {
-        getSession().then((apiSession) => {
-          // build request
-          const request = { method };
-          if (method === 'POST' || method === 'PATCH') {
-            // fields like `_id` are not post/patchable
-            // We therefore only send patchable fields
-            const submitData = {};
-            fields.forEach((key) => {
-              submitData[key] = this.data[key];
+        let request;
+        if (method === 'POST') {
+          request = this.handler.post(this.data);
+        } else if (method === 'PATCH') {
+          request = this.handler.patch(this.data);
+        }
+        request.then((response) => {
+          this.callback(response);
+        }).catch((error) => {
+          console.log(error);
+          // Process the API error
+          const { response } = error;
+          if (response.status === 422) {
+            // there are problems with some fields, display them
+            Object.keys(response.data._issues).forEach((field) => {
+              this.errors[field] = [response.data._issues[field]];
             });
-            request.data = submitData;
-          }
-
-          // if request is PATCH or DELETE, add If-Match header and set url
-          if (method === 'PATCH' || method === 'DELETE') {
-            request.headers = { 'If-Match': this.data._etag };
-            request.url = `${this.resource}/${this.id}`;
+            m.redraw();
+          } else if (response.status === 403) {
+            // Unauthorized
+            m.route.set('/login');
           } else {
-            request.url = this.resource;
+            console.log(error);
           }
-
-          apiSession(request).then((response) => {
-            this.callback(response);
-          }).catch((error) => {
-            // Process the API error
-            const { response } = error;
-            if (response.status === 422) {
-              // there are problems with some fields, display them
-              Object.keys(response.data._issues).forEach((field) => {
-                this.errors[field] = [response.data._issues[field]];
-              });
-              m.redraw();
-            } else if (response.status === 403) {
-              // Unauthorized
-              m.route.set('/login');
-            } else {
-              console.log(error);
-            }
-          });
         });
       } else {
         this.callback();
