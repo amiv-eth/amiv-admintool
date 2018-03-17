@@ -2,11 +2,11 @@
     "apiUrl": "https://amiv-api.ethz.ch/",
     "events": {
         "keyDescriptors": {
-            "title_de": "Titel auf Deutsch",
-            "title_en": "Title in English",
-            "location": "Location (Ort)",
+            "title_de": "German Title",
+            "title_en": "English Title",
+            "location": "Location",
             "show_website": "Event is shown on the website",
-            "priority": "TODO: What type of priority is meant here? Edit priority? Organization prio?",
+            "priority": "Priority",
             "time_end": "Ending time",
             "time_register_end": "Deadline for registration",
             "time_start": "Starting time",
@@ -32,8 +32,8 @@
         "tableKeys": [
             "title_de",
             "location",
-            "time_end",
             "time_start",
+            "time_end",
             "time_register_end",
             "show_website",
             "priority"
