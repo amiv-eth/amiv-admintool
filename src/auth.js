@@ -186,7 +186,9 @@ export class ResourceHandler {
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
         api.post(this.resource, item).then((response) => {
-          if (response.status >= 400) {
+          if (response.status === 422) {
+            reject(response.data);
+          } else if (response.status >= 400) {
             resetSession();
             reject();
           } else {
@@ -212,7 +214,9 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
           data: submitData,
         }).then((response) => {
-          if (response.status >= 400) {
+          if (response.status === 422) {
+            reject(response.data);
+          } else if (response.status >= 400) {
             resetSession();
             reject();
           } else {
