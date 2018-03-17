@@ -5,7 +5,7 @@ import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
 import { EventTable, NewEvent, EventModal } from './eventTool';
 import Sidebar from './sidebar';
-import AnnounceTool from './announceTool';
+// import AnnounceTool from './announceTool';
 import './style';
 
 const main = document.createElement('div');
