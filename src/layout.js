@@ -10,23 +10,32 @@ const layoutStyle = [
       padding: 0,
       margin: 0,
     },
+    '.main-toolbar': {
+      backgroundColor: '#1f2d54',
+      color: '#fff',
+      height: '72px',
+      'grid-column': '1 / span 2',
+      'grid-row': 1,
+    },
     '.wrapper-main': {
       height: '100%',
       width: '100%',
       display: 'grid',
       'grid-template-columns': '200px auto',
+      'grid-template-rows': '72px auto',
     },
     '.wrapper-sidebar': {
       'grid-column': 1,
+      'grid-row': 2,
       height: '100%',
       'overflow-y': 'auto',
-      position: 'fixed',
       background: '#cccccc',
       color: 'white',
     },
     '.wrapper-content': {
-      height: '100vh',
+      height: 'calc(100vh - 72px)',
       'grid-column': 2,
+      'grid-row': 2,
       background: '#eee',
       overflow: 'hidden',
     },
@@ -53,16 +62,10 @@ class Menupoint {
 export default class Layout {
   view({ children }) {
     return m('div', [
-      m(Toolbar, {
-        style: {
-          backgroundColor: '#1f2d54',
-          color: '#fff',
-          height: '72px',
-        },
-      }, [
-        m(ToolbarTitle, { text: 'AMIV Admintools' }),
-      ]),
       m('div.wrapper-main.smooth', [
+        m(Toolbar, { className: 'main-toolbar' }, [
+          m(ToolbarTitle, { text: 'AMIV Admintools' }),
+        ]),
         m(
           'nav.mdc-drawer.mdc-drawer--permanent.mdc-typography.wrapper-sidebar',
           { style: { width: '200px' } },
