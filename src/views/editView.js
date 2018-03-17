@@ -98,7 +98,7 @@ export default class EditView extends ItemView {
     return boundFormelement;
   }
 
-  submit(method, fields) {
+  submit(method) {
     return () => {
       if (this.changed) {
         let request;
