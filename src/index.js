@@ -6,6 +6,7 @@ import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
 import newEvent from './events/newEvent';
 import viewEvent from './events/viewEvent';
+import eventDraft from './events/eventDraft';
 import Sidebar from './sidebar';
 // import AnnounceTool from './announceTool';
 import './style';
@@ -40,6 +41,7 @@ m.route(root, '/users', {
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(viewEvent),
   '/newevent': layoutWith(newEvent),
+  '/draftevent': layoutWith(eventDraft),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
