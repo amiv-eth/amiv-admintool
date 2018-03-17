@@ -1,8 +1,6 @@
 import m from 'mithril';
 import ItemView from '../views/itemView';
-//import { Button } from "polythene-mithril"
 import {Button, Card, IconButton, Toolbar, ToolbarTitle } from "polythene-mithril"
-//import { addLayoutStyles } from "polythene-css"
 import { icons } from '../views/elements';
 
 export default class viewEvent extends ItemView {
@@ -19,16 +17,26 @@ export default class viewEvent extends ItemView {
         console.log(Object.keys(this));
         console.log(this['data']);
 
-        let displayCatchphrase = null;
-        let displayDescription = null;
+        let displayCatchphraseDe = null;
+        let displayCatchphraseEn = null;
+        let displayDescriptionDe = null;
+        let displayDescriptionEn = null;
         let displayPriority = null;
 
         if(this.data.catchphrase_de) {
-            displayCatchphrase = m("t3", {class: "text"}, this.data.catchphrase_de);
+            displayCatchphraseDe = m("t3", {class: "text"}, this.data.catchphrase_de);
+        }
+
+        if(this.data.catchphrase_en) {
+            displayCatchphraseEn = m("t3", {class: "text"}, this.data.catchphrase_en);
         }
 
         if(this.data.description_de) {
-            displayDescription = m("t3", {class: "text"}, this.data.description_de);
+            displayDescriptionDe = m("t3", {class: "text"}, this.data.description_de);
+        }
+
+        if(this.data.description_en) {
+            displayDescriptionEn = m("t3", {class: "text"}, this.data.description_en);
         }
 
         if(this.data.priority) {
@@ -37,11 +45,20 @@ export default class viewEvent extends ItemView {
 
         let displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
-            m(ToolbarTitle, { text: "Title" }),
+            m(ToolbarTitle, { text: "details" }),
         ]);
-        let displayParticipantsButton = null;
-        let displayWaitlistButton = null;
-        let displayEmailAdressesButton = null;
+        let displayParticipantsButton = m(Toolbar, { compact: true, events: { onclick: () => this.participants = !this.participants } }, [
+            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
+            m(ToolbarTitle, { text: "participants" }),
+        ]);
+        let displayWaitlistButton = m(Toolbar, { compact: true, events: { onclick: () => this.waitlist = !this.waitlist } }, [
+            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
+            m(ToolbarTitle, { text: "waitlist" }),
+        ]);
+        let displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
+            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
+            m(ToolbarTitle, { text: "email adresses" }),
+        ]);
 
 
 
@@ -51,18 +68,34 @@ export default class viewEvent extends ItemView {
         let displayEmailAdresses = null;
 
         if (this.details) {
+            displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "details" }),
+            ]);
             displayDetails = m(Card, {
                 content: [
                     {
                         primary: {
-                            title: "Catchphrase",
-                            subtitle: displayCatchphrase
+                            title: "Catchphrase DE",
+                            subtitle: displayCatchphraseDe
                         }
                     },
                     {
                         primary: {
-                            title: "Description",
-                            subtitle: displayDescription
+                            title: "Catchphrase EN",
+                            subtitle: displayCatchphraseEn
+                        }
+                    },
+                    {
+                        primary: {
+                            title: "Description DE",
+                            subtitle: displayDescriptionDe
+                        }
+                    },
+                    {
+                        primary: {
+                            title: "Description EN",
+                            subtitle: displayDescriptionEn
                         }
                     },
                     {
@@ -94,6 +127,10 @@ export default class viewEvent extends ItemView {
         }
 
         if (this.participants) {
+            displayParticipantsButton = m(Toolbar, { compact: true, events: { onclick: () => this.participants = !this.participants } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "participants" }),
+            ]);
             displayParticipants = m(Card, {
                 content: [
                     {
@@ -125,6 +162,10 @@ export default class viewEvent extends ItemView {
         }
 
         if (this.waitlist) {
+            displayWaitlistButton = m(Toolbar, { compact: true, events: { onclick: () => this.waitlist = !this.waitlist } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "waitlist" }),
+            ]);
             displayWaitlist = m(Card, {
                 content: [
                     {
@@ -156,6 +197,10 @@ export default class viewEvent extends ItemView {
         }
 
         if (this.emailAdresses) {
+            displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "email adresses" }),
+            ]);
             displayEmailAdresses = m(Card, {
                 content: [
                     {
@@ -192,50 +237,17 @@ export default class viewEvent extends ItemView {
             },[
             m("h1", {class: "title"}, this.data.title_de),
             m(Button, {element: 'div', label: "Update Event"}),
-            m('br'),
-            m(Button, {
-                element: 'div',
-                label: "Details",
-                events: {
-                    onclick: () => this.details = !this.details
-                }
-            }),
-
-            displayDetails,
 
             displayDetailsButton,
+            displayDetails,
 
-            m('br'),
-            m(Button, {
-                element: 'div',
-                label: "Participants",
-                events: {
-                    onclick: () => this.participants = !this.participants
-                }
-            }),
-
+            displayParticipantsButton,
             displayParticipants,
 
-            m('br'),
-            m(Button, {
-                element: 'div',
-                label: "Waitlist",
-                events: {
-                    onclick: () => this.waitlist = !this.waitlist
-                }
-            }),
-
+            displayWaitlistButton,
             displayWaitlist,
 
-            m('br'),
-            m(Button, {
-                element: 'div',
-                label: "Email Adresses",
-                events: {
-                    onclick: () => this.emailAdresses = !this.emailAdresses
-                }
-            }),
-
+            displayEmailAdressesButton,
             displayEmailAdresses,
 
         ])
