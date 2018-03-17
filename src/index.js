@@ -8,7 +8,6 @@ import newEvent from './events/newEvent';
 import viewEvent from './events/viewEvent';
 import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
-import Sidebar from './sidebar';
 import Layout from './layout';
 // import AnnounceTool from './announceTool';
 import './style';

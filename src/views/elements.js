@@ -1,32 +1,23 @@
 import m from 'mithril';
-import { IconButton } from 'polythene-mithril';
+import { IconButton, TextField } from 'polythene-mithril';
 
-export class inputGroup {
-  constructor(vnode) {
+export class textInput {
+  constructor({ attrs: { getErrors } }) {
     // Link the error-getting function from the binding
     this.getErrors = () => [];
-    if (vnode.attrs.getErrors) {
-      this.getErrors = vnode.attrs.getErrors;
+    if (getErrors) {
+      this.getErrors = getErrors;
     }
   }
 
-  view(vnode) {
+  view({ attrs }) {
     // set display-settings accoridng to error-state
-    let errorField = null;
-    let groupClasses = vnode.attrs.classes ? vnode.attrs.classes : '';
     const errors = this.getErrors();
-    if (errors.length > 0) {
-      errorField = m('span.help-block', `Error: ${errors.join(', ')}`);
-      groupClasses += ' has-error';
-    }
 
-    return m('div.form-group', { class: groupClasses }, [
-      m(`label[for=${vnode.attrs.name}]`, vnode.attrs.title),
-      m(`input[name=${vnode.attrs.name}][id=${vnode.attrs.name}].form-control`, {
-        value: vnode.attrs.value, onchange: vnode.attrs.onchange,
-      }),
-      errorField,
-    ]);
+    const attributes = Object.assign({}, attrs);
+    attributes.valid = errors.length > 0;
+    attributes.error = errors.join(', ');
+    return m(TextField, attributes);
   }
 }
 
