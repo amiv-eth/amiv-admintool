@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Button, Card, TextField } from "polythene-mithril"
+import { Button, Card } from "polythene-mithril"
 import EditView from '../views/editView';
 import { styler } from 'polythene-core-css';
 
@@ -27,15 +27,7 @@ export default class eventDraft extends EditView {
 
   view() {
   	
-  	const fieldDescriptionEn = m(TextField, { 
-            label: 'Description [EN]', 
-            required: true, 
-            floatingLabel: true, 
-            dense: true, 
-            multiLine: true, 
-            rows: 6, 
-        });
-        
+  	
     const buttonMaker = m(Button, {
     	label: "Submit Request",
 
