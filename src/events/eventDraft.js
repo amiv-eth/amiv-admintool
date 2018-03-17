@@ -1,7 +1,9 @@
 import m from 'mithril';
-import { Button, Card } from "polythene-mithril"
+import { Button} from "polythene-mithril"
 import EditView from '../views/editView';
 import { styler } from 'polythene-core-css';
+
+
 
 const draftStyle = [
 	{
@@ -10,9 +12,9 @@ const draftStyle = [
 		    left: 0,
 		    bottom: 0,
 		    width: '100%', 
-		    'background-color': 'red',
-		    color: 'white',
-		    'text-align': 'center',
+		    'background-color': '#E8462B',
+		    color: '#FFFFFF',
+		    'text-align': 'right',
 		}
 	}
 ]
@@ -26,17 +28,21 @@ export default class eventDraft extends EditView {
   }
 
   view() {
-  	
-  	
-    const buttonMaker = m(Button, {
+  	//Submit Button
+  	 const buttonMaker = m(Button, {
     	label: "Submit Request",
+    	color:   "white",
 
-    });
+    	 //Error pop-up in case not all mandatory fields were completed
+    	 //CURRENTLY: Error triggered onclick
+    	events: {
+					onclick: () => alert("You did not complete all prioritary fields!")
+				}
+     });
 
 
-    //	])
     return m('div',[
-    	m('h1', {class: "title"}, "Request a new event"),
+    	m('h2', {class: "title"}, "Creating a new event:"),
     	m('div.footer', buttonMaker),
     ]);
   }
