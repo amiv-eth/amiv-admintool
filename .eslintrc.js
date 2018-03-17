@@ -11,5 +11,6 @@ module.exports = {
         "class-methods-use-this": 0,
         "prefer-destructuring": 1,
         "no-underscore-dangle": 0,
+        "linebreak-style": 0,
     }
 };

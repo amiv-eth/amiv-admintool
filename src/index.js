@@ -7,7 +7,8 @@ import EventTable from './events/table';
 import newEvent from './events/newEvent';
 import viewEvent from './events/viewEvent';
 import eventDraft from './events/eventDraft';
-import Sidebar from './sidebar';
+import eventWithExport from './events/eventWithExport';
+import Layout from './layout';
 // import AnnounceTool from './announceTool';
 import './style';
 
@@ -15,15 +16,6 @@ const main = document.createElement('div');
 document.body.appendChild(main);
 const root = main;
 
-
-class Layout {
-  view(vnode) {
-    return m('div.wrapper-main.smooth', [
-      m(Sidebar),
-      m('div.wrapper-content', vnode.children),
-    ]);
-  }
-}
 
 function layoutWith(view) {
   return {
@@ -42,6 +34,7 @@ m.route(root, '/users', {
   '/events/:id': layoutWith(viewEvent),
   '/newevent': layoutWith(newEvent),
   '/draftevent': layoutWith(eventDraft),
+  '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
