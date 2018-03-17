@@ -41,9 +41,10 @@ export default class TableView {
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
    */
-  constructor({ attrs: { keys } }) {
+  constructor({ attrs: { keys, tileContent } }) {
     this.search = '';
     this.tableKeys = keys;
+    this.tileContent = tileContent;
   }
 
   getItemData(data) {
@@ -68,7 +69,7 @@ export default class TableView {
         onclick() { m.route.set(`/${data._links.self.href}`); },
         className: 'tableTile',
         style: { width: '100%', display: 'flex' },
-      }, this.getItemData(data)),
+      }, this.tileContent ? this.tileContent(data) : this.getItemData(data)),
     });
   }
 
@@ -114,9 +115,11 @@ export default class TableView {
             content: m(
               'div',
               { style: { width: '100%', display: 'flex' } },
+              // Either titles is a list of titles that are distributed equally,
+              // or it is a list of objects with text and width
               titles.map(title => m('div', {
-                style: { width: `${98 / this.tableKeys.length}%` },
-              }, title)),
+                style: { width: title.width || `${98 / this.tableKeys.length}%` },
+              }, title.width ? title.text : title)),
             ),
           }),
           m(infinite, controller.infiniteScrollParams(this.item())),

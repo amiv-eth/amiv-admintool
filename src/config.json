@@ -31,7 +31,6 @@
         },
         "tableKeys": [
             "title_de",
-            "location",
             "time_start",
             "time_end",
             "time_register_end",
