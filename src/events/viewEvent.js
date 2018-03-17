@@ -78,7 +78,6 @@ export default class viewEvent extends ItemView {
         super('events');
         this.signupHandler = new ResourceHandler('eventsignups');
         this.details = false;
-        this.waitlist = false;
         this.emailAdresses = false;
 
 
@@ -141,10 +140,6 @@ export default class viewEvent extends ItemView {
         let displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "details" }),
-        ]);
-        let displayWaitlistButton = m(Toolbar, { compact: true, events: { onclick: () => this.waitlist = !this.waitlist } }, [
-            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
-            m(ToolbarTitle, { text: "waitlist" }),
         ]);
         let displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
@@ -214,40 +209,6 @@ export default class viewEvent extends ItemView {
             })
         }
 
-        if (this.waitlist) {
-            displayWaitlistButton = m(Toolbar, { compact: true, events: { onclick: () => this.waitlist = !this.waitlist } }, [
-                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
-                m(ToolbarTitle, { text: "waitlist" }),
-            ]);
-            displayWaitlist = m(Card, {
-                content: [
-                    {
-                        primary: {
-                            title: "Primary title",
-                            subtitle: "Subtitle"
-                        }
-                    },
-                    {
-                        actions: {
-                            content: [
-                                m(Button, {
-                                    label: "Action 1"
-                                }),
-                                m(Button, {
-                                    label: "Action 2"
-                                })
-                            ]
-                        }
-                    },
-                    {
-                        text: {
-                            content: "More text"
-                        }
-                    }
-                ]
-
-            })
-        }
 
         if (this.emailAdresses) {
             displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
@@ -292,9 +253,6 @@ export default class viewEvent extends ItemView {
                m('div.eventViewLeft', [
                    displayDetailsButton,
                    displayDetails,
-
-                   displayWaitlistButton,
-                   displayWaitlist,
 
                    displayEmailAdressesButton,
                    displayEmailAdresses,
