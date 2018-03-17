@@ -1,6 +1,9 @@
 import m from 'mithril';
-import { TextField } from 'polythene-mithril';
-import { Button } from 'polythene-mithril';
+import { 
+    TextField,
+    Button,
+    Card
+} from 'polythene-mithril';
 import EditView from '../views/editView';
 
 export default class eventWithExport extends EditView {
