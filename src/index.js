@@ -47,5 +47,5 @@ m.route(root, '/users', {
     },
   }),
   '/login': LoginScreen,
-  '/announce': layoutWith(AnnounceTool),
+  // '/announce': layoutWith(AnnounceTool),
 });
