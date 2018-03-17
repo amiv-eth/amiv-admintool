@@ -83,6 +83,15 @@
         "patchableKeys": ["user", "group"]
     },
     "eventsignups": {
-        "patchableKeys": ["event"]
+        "patchableKeys": ["event"],
+        "tableKeys": [
+            "_created",
+            "user.lastname",
+            "user.firstname",
+            "email"
+        ],
+        "searchKeys": [
+            "email"
+        ]
     }
 }
