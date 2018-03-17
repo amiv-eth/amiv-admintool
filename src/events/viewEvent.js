@@ -20,6 +20,9 @@ const viewLayout = [
         },
         '.eventViewRight': {
             'grid-column': 2,
+        },
+        '.eventViewRight h4': {
+                'margin-top': '0px',
         }
     }
 ];
@@ -73,26 +76,32 @@ export default class viewEvent extends ItemView {
         console.log(Object.keys(this));
         console.log(this['data']);
 
-        let displayCatchphraseDe = null;
-        let displayCatchphraseEn = null;
-        let displayDescriptionDe = null;
-        let displayDescriptionEn = null;
+        let displayCatchphrase = null;
+        let displayDescription = null;
         let displayPriority = null;
 
-        if(this.data.catchphrase_de) {
-            displayCatchphraseDe = m("t3", {class: "text"}, this.data.catchphrase_de);
+        /*if(this.data.catchphrase_de) {
+            displayCatchphraseDe = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de);
         }
 
         if(this.data.catchphrase_en) {
-            displayCatchphraseEn = m("t3", {class: "text"}, this.data.catchphrase_en);
+            displayCatchphraseEn = m("t3", {class: "text"}, "en: " + this.data.catchphrase_en);
+        }*/
+
+        if(this.data.catchphrase_de && this.data.catchphrase_en) {
+            displayCatchphrase = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de + " / en: " + this.data.catchphrase_en);
+        } else if(this.data.catchphrase_de) {
+            displayCatchphrase = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de);
+        } else if(this.data.catchphrase_en) {
+            displayCatchphrase = m("t3", {class: "text"}, "en: " + this.data.catchphrase_en);
         }
 
-        if(this.data.description_de) {
-            displayDescriptionDe = m("t3", {class: "text"}, this.data.description_de);
-        }
-
-        if(this.data.description_en) {
-            displayDescriptionEn = m("t3", {class: "text"}, this.data.description_en);
+        if(this.data.description_de && this.data.description_en) {
+            displayDescription = m("t3", {class: "text"}, "de: " + this.data.description_de + " / en: " + this.data.description_en);
+        } else if(this.data.catchphrase_de) {
+            displayDescription = m("t3", {class: "text"}, "de: " + this.data.description_de);
+        } else if(this.data.catchphrase_en) {
+            displayDescription = m("t3", {class: "text"}, "en: " + this.data.description_en);
         }
 
         if(this.data.priority) {
@@ -127,14 +136,8 @@ export default class viewEvent extends ItemView {
                 content: [
                     {
                         primary: {
-                            title: "Catchphrase DE",
-                            subtitle: displayCatchphraseDe
-                        }
-                    },
-                    {
-                        primary: {
-                            title: "Catchphrase EN",
-                            subtitle: displayCatchphraseEn
+                            title: "Catchphrase",
+                            subtitle: displayCatchphrase,
                         }
                     },
                     {
@@ -149,15 +152,8 @@ export default class viewEvent extends ItemView {
                     },
                     {
                         primary: {
-                            title: "Description DE",
-                            subtitle: displayDescriptionDe
-                        }
-                    },
-
-                    {
-                        primary: {
-                            title: "Description EN",
-                            subtitle: displayDescriptionEn
+                            title: "Description",
+                            subtitle: displayDescription
                         }
                     },
                     {
