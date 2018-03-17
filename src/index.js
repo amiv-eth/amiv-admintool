@@ -7,6 +7,8 @@ import EventTable from './events/table';
 import newEvent from './events/newEvent';
 import viewEvent from './events/viewEvent';
 import eventDraft from './events/eventDraft';
+import eventWithExport from './events/eventWithExport';
+import Sidebar from './sidebar';
 import Layout from './layout';
 // import AnnounceTool from './announceTool';
 import './style';
@@ -33,6 +35,7 @@ m.route(root, '/users', {
   '/events/:id': layoutWith(viewEvent),
   '/newevent': layoutWith(newEvent),
   '/draftevent': layoutWith(eventDraft),
+  '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith({
     view() {
       return m(TableView, {
