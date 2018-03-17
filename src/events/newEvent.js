@@ -230,17 +230,23 @@ export default class newEvent extends EditView {
     }
     // checks currentPage and selects the fitting page
     if (this.currentpage === 1) {
-      return layoutWith(m('h1', 'Event description:', iconLeft, iconRight, m('br'), fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe, fieldCatchphraseDe, fieldDescriptionDe));
+      return layoutWith(m(
+        'h1', 'Event description:', iconLeft, iconRight, m('br'),
+        fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe,
+        fieldCatchphraseDe, fieldDescriptionDe,
+      ));
     } else if (this.currentpage === 2) {
       return layoutWith(m(
-        'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate, fieldEndDate, fieldStartRegDate,
-        fieldEndRegDate, fieldLocation, fieldPrice, fieldNumberOfParticipants,
+        'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate,
+        fieldEndDate, fieldStartRegDate, fieldEndRegDate, fieldLocation, fieldPrice,
+        fieldNumberOfParticipants,
       ));
     } else if (this.currentpage === 3) {
       return layoutWith(m(
-        'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart, fieldAdvEnd, checkboxWebsite,
-        checkboxAnnounce, checkboxInfoScreen, buttonBannerUp, buttonInfoUp, buttonPosterUp,
-        buttonThumbUp, m('br'), buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+        'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart,
+        fieldAdvEnd, checkboxWebsite, checkboxAnnounce, checkboxInfoScreen,
+        buttonBannerUp, buttonInfoUp, buttonPosterUp, buttonThumbUp, m('br'),
+        buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
       ));
     }
     return layoutWith(m(''));
