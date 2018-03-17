@@ -231,22 +231,37 @@ export default class newEvent extends EditView {
     // checks currentPage and selects the fitting page
     if (this.currentpage === 1) {
       return layoutWith(m(
-        'h1', 'Event description:', iconLeft, iconRight, m('br'),
-        fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe,
-        fieldCatchphraseDe, fieldDescriptionDe,
+        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
+        , [
+          m(
+            'h1', 'Event description:', iconLeft, iconRight, m('br'),
+            fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe,
+            fieldCatchphraseDe, fieldDescriptionDe,
+          ),
+        ],
       ));
     } else if (this.currentpage === 2) {
       return layoutWith(m(
-        'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate,
-        fieldEndDate, fieldStartRegDate, fieldEndRegDate, fieldLocation, fieldPrice,
-        fieldNumberOfParticipants,
+        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
+        , [
+          m(
+            'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate,
+            fieldEndDate, fieldStartRegDate, fieldEndRegDate, fieldLocation, fieldPrice,
+            fieldNumberOfParticipants,
+          ),
+        ],
       ));
     } else if (this.currentpage === 3) {
       return layoutWith(m(
-        'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart,
-        fieldAdvEnd, checkboxWebsite, checkboxAnnounce, checkboxInfoScreen,
-        buttonBannerUp, buttonInfoUp, buttonPosterUp, buttonThumbUp, m('br'),
-        buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
+        , [
+          m(
+            'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart,
+            fieldAdvEnd, checkboxWebsite, checkboxAnnounce, checkboxInfoScreen,
+            buttonBannerUp, buttonInfoUp, buttonPosterUp, buttonThumbUp, m('br'),
+            buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+          ),
+        ],
       ));
     }
     return layoutWith(m(''));
