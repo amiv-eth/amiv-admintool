@@ -29,6 +29,7 @@ export default class EditView extends ItemView {
   constructor(vnode, resource, embedded, valid = true) {
     super(resource, embedded);
     this.changed = false;
+    this.resource = resource;
 
     // state for validation
     this.valid = valid;
@@ -38,6 +39,7 @@ export default class EditView extends ItemView {
       allErrors: true,
     });
     this.errors = {};
+    this.data = {};
 
     // callback when edit is finished
     this.callback = vnode.attrs.onfinish;
@@ -55,7 +57,8 @@ export default class EditView extends ItemView {
     m.request(`${apiUrl}docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
-      this.ajv.addSchema(objectSchema, 'schema');
+      console.log(schema);
+      //this.ajv.addSchema(objectSchema, 'schema');
     });
   }
 
@@ -65,13 +68,15 @@ export default class EditView extends ItemView {
     if (!this.errors[attrs.name]) this.errors[attrs.name] = [];
 
     const boundFormelement = {
-      onchange: (e) => {
+      onChange: (name, value) => {
         this.changed = true;
         // bind changed data
-        this.data[e.target.name] = e.target.value;
+        this.data[name] = value;
+
+        //console.log(this.data);
 
         // validate against schema
-        const validate = this.ajv.getSchema('schema');
+        /*const validate = this.ajv.getSchema('schema');
         this.valid = validate(this.data);
         console.log(validate.schema);
 
@@ -87,7 +92,7 @@ export default class EditView extends ItemView {
               `.${field}` === error.dataPath);
             this.errors[field] = errors.map(error => error.message);
           });
-        }
+        }*/
       },
       getErrors: () => this.errors[attrs.name],
       value: this.data[attrs.name],

@@ -1,11 +1,22 @@
 import m from 'mithril';
-import { TextField, Button, Checkbox, RadioGroup, IconButton, SVG } from 'polythene-mithril';
+import { Button, Checkbox, RadioGroup, IconButton, SVG } from 'polythene-mithril';
+import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
-import { icons } from '../views/elements';
+import { icons, textInput } from '../views/elements';
+
+const style = [
+  {
+    '.mywrapper': {
+      padding: '10px',
+    },
+  },
+];
+styler.add('event-add', style);
+
 
 export default class newEvent extends EditView {
   constructor(vnode) {
-    super(vnode, 'events');
+    super(vnode, 'events', {});
     this.currentpage = 1;
   }
 
@@ -14,6 +25,7 @@ export default class newEvent extends EditView {
     if (this.currentpage === 4) {
       this.currentpage = 3;
     }
+    //m.redraw();
   }
 
   subOne() {
@@ -21,126 +33,131 @@ export default class newEvent extends EditView {
     if (this.currentpage === 0) {
       this.currentpage = 1;
     }
+    //m.redraw();
   }
 
-  view(vnode) {
+  view() {
     if (!this.currentpage) return '';
     // German and English Information
-    const fieldTitleEn = m(TextField, {
+    const fieldTitleEn = m(textInput, this.bind({
+      name: 'title_en',
       label: 'Event Title [EN]',
       required: true,
       floatingLabel: true,
-      dense: true,
-      onChange: (newState) => { this.title_en = newState.value; console.log(this.title_en); },
-      value: vnode.state.title_en,
-    });
+    }));
 
-    const fieldCatchphraseEn = m(TextField, {
+    const fieldCatchphraseEn = m(textInput, this.bind({
+      name: 'catchphrase_en',
       label: 'Catchphrase [EN]',
       floatingLabel: true,
-      dense: true,
       help: 'Fun description to make your event look more interesting than it is',
       focusHelp: true,
-    });
+    }));
 
-    const fieldDescriptionEn = m(TextField, {
+    const fieldDescriptionEn = m(textInput, this.bind({
+      name: 'description_en',
       label: 'Description [EN]',
       required: true,
       floatingLabel: true,
-      dense: true,
       multiLine: true,
       rows: 6,
-    });
+    }));
 
-    const fieldTitleDe = m(TextField, {
+    const fieldTitleDe = m(textInput, this.bind({
+      name: 'title_de',
       label: 'Event Title [DE]',
       floatingLabel: true,
-      dense: true,
-    });
+    }));
 
-    const fieldCatchphraseDe = m(TextField, {
+    const fieldCatchphraseDe = m(textInput, this.bind({
+      name: 'catchphrase_de',
       label: 'Catchphrase [DE]',
       floatingLabel: true,
-      dense: true,
       help: 'Fun description to make your event look more interesting than it is',
       focusHelp: true,
-    });
+    }));
 
-    const fieldDescriptionDe = m(TextField, {
+    const fieldDescriptionDe = m(textInput, this.bind({
+      name: 'description_de',
       label: 'Description [DE]',
       floatingLabel: true,
-      dense: true,
       multiLine: true,
       rows: 6,
-    });
+    }));
 
     // Start of relevant data
 
-    const fieldPrice = m(TextField, {
+    const fieldPrice = m(textInput, this.bind({
+      name: 'price',
       label: 'Price:',
       type: 'number',
       help: 'In Rappen/Cents',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldStartDate = m(TextField, {
+    }));
+    const fieldStartDate = m(textInput, this.bind({
+      name: 'time_start',
       label: 'Event Start[Date and Time]:',
       help: 'Format: 01.01.1970-18:00',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldEndDate = m(TextField, {
+    }));
+    const fieldEndDate = m(textInput, this.bind({
+      name: 'time_end',
       label: 'Event End[Date and Time]:',
       help: 'Format: 01.01.1970-1800',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldStartRegDate = m(TextField, {
+    }));
+    const fieldStartRegDate = m(textInput, this.bind({
+      name: 'time_register_start',
       label: 'Registration Start[Date and Time]:',
       help: 'Format: 01.01.1970-18:00',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldEndRegDate = m(TextField, {
+    }));
+    const fieldEndRegDate = m(textInput, this.bind({
+      name: 'time_register_end',
       label: 'Registration End[Date and Time]:',
       help: 'Format: 01.01.1970-1800',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldLocation = m(TextField, {
+    }));
+    const fieldLocation = m(textInput, this.bind({
+      name: 'location',
       label: 'Location:',
       floatingLabel: true,
       required: true,
-    });
-    const fieldNumberOfParticipants = m(TextField, {
+    }));
+    const fieldNumberOfParticipants = m(textInput, this.bind({
+      name: 'spots',
       label: 'Number of open spots:',
       type: 'number',
       floatingLabel: true,
       required: true,
-    });
-
-    // Everything above is working fine atm. (13:35)
-
-    const fieldAdvStart = m(TextField, {
+    }));
+    const fieldAdvStart = m(textInput, this.bind({
+      name: 'time_advertising_start',
       label: 'Registration Start[Date and Time]:',
       type: 'datetime',
       help: 'Format: 01.01.1970-18:00',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
-    const fieldAdvEnd = m(TextField, {
+    }));
+    const fieldAdvEnd = m(textInput, this.bind({
+      name: 'time_advertising_end',
       label: 'Registration End[Date and Time]:',
       help: 'Format: 01.01.1970-1800',
       focusHelp: true,
       floatingLabel: true,
       required: true,
-    });
+    }));
 
     const buttonBannerUp = m(Button, {
       label: 'Select Banner File',
@@ -226,22 +243,41 @@ export default class newEvent extends EditView {
     });
 
     function layoutWith(page) {
-      return m('div', page);
+      return m('div.mywrapper', page);
     }
+
+    const page1 = {
+      view: function () {
+        return layoutWith(m(
+          'h1', 'Event description:', m('br'), iconLeft, iconRight, m('br'),
+          fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe,
+        ));
+      },
+    };
+    const page2 = {
+      view: function () {
+        return layoutWith(m(
+          'h1', 'Critical Information:', m('br'), iconLeft, iconRight, m('br'), fieldStartDate, fieldEndDate, fieldStartRegDate,
+          fieldEndRegDate, fieldLocation, fieldPrice, fieldNumberOfParticipants,
+        ));
+      },
+    };
+    const page3 = {
+      view: function () {
+        return layoutWith(m(
+          'h1', 'Advertise Information', m('br'), iconLeft, iconRight, m('br'), fieldAdvStart, fieldAdvEnd, checkboxWebsite,
+          checkboxAnnounce, checkboxInfoScreen, m('br'), buttonBannerUp, buttonInfoUp, buttonPosterUp,
+          buttonThumbUp, m('br'), buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+        ));
+      },
+    };   
     // checks currentPage and selects the fitting page
     if (this.currentpage === 1) {
-      return layoutWith(m('h1', 'Event description:', iconLeft, iconRight, m('br'), fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe, fieldCatchphraseDe, fieldDescriptionDe));
+      return m(page1);
     } else if (this.currentpage === 2) {
-      return layoutWith(m(
-        'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate, fieldEndDate, fieldStartRegDate,
-        fieldEndRegDate, fieldLocation, fieldPrice, fieldNumberOfParticipants,
-      ));
+      return m(page2);
     } else if (this.currentpage === 3) {
-      return layoutWith(m(
-        'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart, fieldAdvEnd, checkboxWebsite,
-        checkboxAnnounce, checkboxInfoScreen, buttonBannerUp, buttonInfoUp, buttonPosterUp,
-        buttonThumbUp, m('br'), buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
-      ));
+      return m(page3);
     }
     return layoutWith(m(''));
   }

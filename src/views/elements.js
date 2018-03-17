@@ -2,12 +2,14 @@ import m from 'mithril';
 import { IconButton, TextField } from 'polythene-mithril';
 
 export class textInput {
-  constructor({ attrs: { getErrors } }) {
+  constructor({ attrs: { getErrors, name, label } }) {
     // Link the error-getting function from the binding
     this.getErrors = () => [];
+    this.name = name;
     if (getErrors) {
       this.getErrors = getErrors;
     }
+    this.value = '';
   }
 
   view({ attrs }) {
@@ -15,8 +17,14 @@ export class textInput {
     const errors = this.getErrors();
 
     const attributes = Object.assign({}, attrs);
-    attributes.valid = errors.length > 0;
+    attributes.valid = errors.length === 0;
     attributes.error = errors.join(', ');
+    attributes.onChange = ({ value }) => {
+      if (value !== this.value) {
+        this.value = value;
+        attrs.onChange(this.name, value);
+      }
+    };
     return m(TextField, attributes);
   }
 }
