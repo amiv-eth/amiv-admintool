@@ -164,14 +164,3 @@ export class EventModal {
     ]);
   }
 }
-
-export class EventTable {
-  view() {
-    return m(TableView, {
-      resource: 'events',
-      keys: config.tableKeys,
-      titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
-      onAdd: () => { m.route.set('/newevent'); },
-    });
-  }
-}

@@ -57,8 +57,16 @@ export default class EditView extends ItemView {
     m.request(`${apiUrl}docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
-      console.log(schema);
-      //this.ajv.addSchema(objectSchema, 'schema');
+      console.log(objectSchema);
+      // filter out any field that is of type media and replace with type
+      // object
+      Object.keys(objectSchema.properties).forEach((property) => {
+        if (objectSchema.properties[property].type === 'media' ||
+            objectSchema.properties[property].type === 'json_schema_object') {
+          objectSchema.properties[property].type = 'object';
+        }
+      });
+      this.ajv.addSchema(objectSchema, 'schema');
     });
   }
 
@@ -73,10 +81,10 @@ export default class EditView extends ItemView {
         // bind changed data
         this.data[name] = value;
 
-        //console.log(this.data);
+        console.log(this.data);
 
         // validate against schema
-        /*const validate = this.ajv.getSchema('schema');
+        const validate = this.ajv.getSchema('schema');
         this.valid = validate(this.data);
         console.log(validate.schema);
 
@@ -92,7 +100,7 @@ export default class EditView extends ItemView {
               `.${field}` === error.dataPath);
             this.errors[field] = errors.map(error => error.message);
           });
-        }*/
+        }
       },
       getErrors: () => this.errors[attrs.name],
       value: this.data[attrs.name],
