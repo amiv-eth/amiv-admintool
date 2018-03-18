@@ -5,6 +5,7 @@ import {
   Card,
   TextField,
   IconButton,
+  Icon,
   Toolbar,
   ToolbarTitle,
 } from 'polythene-mithril';
@@ -151,7 +152,8 @@ export default class viewEvent extends ItemView {
     super('events');
     this.signupHandler = new ResourceHandler('eventsignups');
     this.description = false;
-    this.details = false;
+    this.advertisement = false;
+    this.registration = false;
     this.emailAdresses = false;
     this.emaillist = [''];
     this.showAllEmails = false;
@@ -188,9 +190,13 @@ export default class viewEvent extends ItemView {
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "description" }),
         ]);
-        let displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
+        let displayAdvertisementButton = m(Toolbar, { compact: true, events: { onclick: () => this.advertisement = !this.advertisement } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
-            m(ToolbarTitle, { text: "details" }),
+            m(ToolbarTitle, { text: "advertisement" }),
+        ]);
+        let displayRegistrationButton = m(Toolbar, { compact: true, events: { onclick: () => this.registration = !this.registration } }, [
+            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
+            m(ToolbarTitle, { text: "registration" }),
         ]);
         let displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
@@ -200,7 +206,8 @@ export default class viewEvent extends ItemView {
 
 
         let displayDescription = null;
-        let displayDetails = null;
+        let displayAdvertisement = null;
+        let displayRegistration = null;
         let displayEmailAdresses = null;
 
         if (this.description) {
@@ -211,13 +218,6 @@ export default class viewEvent extends ItemView {
             displayDescription = m(Card, {
                 className: 'eventInfoCard',
                 content: [
-                    {
-                        any: {
-                            content: [
-                                this.data.allow_email_signup ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'non AMIV-Members allowed')]) : '',
-                            ]
-                        }
-                    },
                     {
                         any: {
                             content: [
@@ -240,35 +240,33 @@ export default class viewEvent extends ItemView {
                             ]
                         }
                     },
-                    {
-                        any: {
-                            content: [
-                                this.data.priority ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Priority')]) : '',
-                                this.data.priority ? m('div', m('p.propertyText', ` ${this.data.priority}`)) : '',
-                            ]
-                        }
-                    },
-                    {
-                        any: {
-                            content: [
-                                this.data.priority ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Price')]) : '',
-                                this.data.priority ? m('div', m('p.propertyText', ` ${this.data.price}`)) : '',
-                            ]
-                        }
-                    },
                 ]
 
             })
         }
 
-        if (this.details) {
-            displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
+        if (this.advertisement) {
+            displayAdvertisementButton = m(Toolbar, { compact: true, events: { onclick: () => this.advertisement = !this.advertisement } }, [
                 m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
-                m(ToolbarTitle, { text: "details" }),
+                m(ToolbarTitle, { text: "advertisement" }),
             ]);
-            displayDetails = m(Card, {
+            displayAdvertisement = m(Card, {
                 className: 'eventInfoCard',
+
                 content: [
+                    {
+                        any: {
+                            content: [
+
+                                m('p',
+                                    [
+                                        m('span', { style: { float: 'left'} }, 'annonce:'), this.data.show_annonce ? m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconCheckedSVG) }): m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconClearSVG) }  ),
+                                        m('span', { style: {  float: 'left'} }, '    infoscreen:'), this.data.show_infoscreen ? m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconCheckedSVG) }): m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconClearSVG) }  ),
+                                        m('span', { style: { float: 'left'} }, '    website:'), this.data.show_website ? m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconCheckedSVG) }): m(Icon, { style: { float: 'left'}, svg: m.trust(icons.iconClearSVG) }  )
+                                    ]),
+                            ]
+                        }
+                    },
                     {
                         any: {
                             content: [
@@ -280,11 +278,41 @@ export default class viewEvent extends ItemView {
                     {
                         any: {
                             content: [
+                                this.data.priority ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Priority')]) : '',
+                                this.data.priority ? m('div', m('p.propertyText', ` ${this.data.priority}`)) : '',
+                            ]
+                        }
+                    },
+                ]
+
+            })
+        }
+
+        if (this.registration) {
+            displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.registration = !this.registration } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "registration" }),
+            ]);
+            displayRegistration = m(Card, {
+                className: 'eventInfoCard',
+                content: [
+                    {
+                        any: {
+                            content: [
+                                this.data.price ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Price')]) : '',
+                                this.data.price ? m('div', m('p.propertyText', ` ${this.data.price}`)) : '',
+                            ]
+                        }
+                    },
+                    {
+                        any: {
+                            content: [
                                 this.data.time_register_start ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Registration Time')]) : '',
                                 this.data.time_register_start ? m('div', m('p.propertyText', ` ${dateFormatter(this.data.time_register_start)} - ${dateFormatter(this.data.time_register_end)}`)) : '',
                             ]
                         }
                     },
+
                     {
                         any: {
                             content: [
@@ -296,14 +324,13 @@ export default class viewEvent extends ItemView {
                     {
                         any: {
                             content: [
-                                this.data.show_annonce ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Annonce is shown')]) : '',
-                                this.data.show_annonce ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Infoscreen is shown')]) : '',
-                                this.data.show_website ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Website is shown')]) : '',]
+                                this.data.allow_email_signup ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'non AMIV-Members allowed')]) : '',
+                            ]
                         }
                     },
-                ]
+                ],
 
-            })
+            });
         }
 
         if (this.emailAdresses) {
@@ -371,8 +398,11 @@ export default class viewEvent extends ItemView {
                    displayDescriptionButton,
                    displayDescription,
 
-                   displayDetailsButton,
-                   displayDetails,
+                   displayAdvertisementButton,
+                   displayAdvertisement,
+
+                   displayRegistrationButton,
+                   displayRegistration,
 
                    displayEmailAdressesButton,
                    displayEmailAdresses,
