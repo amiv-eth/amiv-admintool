@@ -178,7 +178,7 @@ export default class viewEvent extends ItemView {
     }
   }
 
-    view() {
+    view({ attrs: { onEdit } }) {
         if (!this.data) return '';
         console.log(Object.keys(this));
         console.log(this['data']);
@@ -280,7 +280,11 @@ export default class viewEvent extends ItemView {
         return m("div", {
             style: { height: '100%', 'overflow-y': 'scroll', padding: '10px'}
             },[
-            m(Button, {element: 'div', label: "Update Event"}),
+            m(Button, {
+              element: 'div',
+              label: 'Update Event',
+              events: { onclick: onEdit },
+            }),
             m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
             m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
                 this.data.time_start ? m('div', m('span.propertyTitle', `Time`)) : '',
