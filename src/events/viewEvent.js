@@ -18,6 +18,44 @@ import { icons } from '../views/elements';
 import { ResourceHandler } from '../auth';
 
 const viewLayout = [
+    {
+        '.eventViewContainer': {
+            display: 'grid',
+            'grid-template-columns': '40% 55%',
+            'grid-gap': '50px',
+        },
+        '.propertyTitle': {
+            color: 'rgba(0, 0, 0, 0.54)',
+        },
+        '.propertyText': {
+            color: 'rgba(0, 0, 0, 0.87)',
+        },
+        '.propertyLangIndicator': {
+            width: '30px',
+            height: '20px',
+            float: 'left',
+            'background-color': 'rgb(031,045,084)',
+            'border-radius': '10px',
+            'text-align': 'center',
+            'line-height': '20px',
+            color: 'rgb(255,255,255)',
+            'margin-right': '10px',
+            'font-size' : '11px',
+        },
+        '.eventInfoCard': {
+          padding: '10px',
+            'font-size': '15sp',
+        },
+        '.eventViewLeft': {
+            'grid-column': 1,
+        },
+        '.eventViewRight': {
+            'grid-column': 2,
+        },
+        '.eventViewRight h4': {
+                'margin-top': '0px',
+        }
+    }
   {
     '.eventViewContainer': {
       display: 'grid',
@@ -37,6 +75,41 @@ const viewLayout = [
 ];
 styler.add('eventView', viewLayout);
 
+class PropertyInfo {
+    view({ attrs: { title, de, en } }) {
+        //const text = '';
+
+        if(de && en) {
+            return m('div',
+                m('p.propertyTitle', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
+                m('div', [
+                    m('div', { className: 'propertyLangIndicator' }, 'DE'),
+                    m('p.propertyText', de),
+                ]),
+                m('div', [
+                    m('div', { className: 'propertyLangIndicator' }, 'EN'),
+                    m('p.propertyText', en ),
+                ]),
+            )
+        } else if(de) {
+            return m('div',
+                m('p.propertyTitle', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
+                m('div', [
+                    m('div', { className: 'propertyLangIndicator' }, 'DE'),
+                    m('p.propertyText', de),
+                ]),
+            )
+        } else if(en) {
+            return m('div',
+                m('p.propertyTitle', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
+                m('div', [
+                    m('div', { className: 'propertyLangIndicator' }, 'EN'),
+                    m('p.propertyText', en),
+                ]),
+            )
+        }
+    }
+}
 
 class ParticipantsTable {
   constructor({ attrs: { where } }) {
@@ -123,30 +196,8 @@ export default class viewEvent extends ItemView {
 
     view() {
         if (!this.data) return '';
-
-        let displayCatchphrase = null;
-        let displayDescription = null;
-        let displayPriority = null;
-
-        if(this.data.catchphrase_de && this.data.catchphrase_en) {
-            displayCatchphrase = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de + " / en: " + this.data.catchphrase_en);
-        } else if(this.data.catchphrase_de) {
-            displayCatchphrase = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de);
-        } else if(this.data.catchphrase_en) {
-            displayCatchphrase = m("t3", {class: "text"}, "en: " + this.data.catchphrase_en);
-        }
-
-        if(this.data.description_de && this.data.description_en) {
-            displayDescription = m("t3", {class: "text"}, "de: " + this.data.description_de + " / en: " + this.data.description_en);
-        } else if(this.data.catchphrase_de) {
-            displayDescription = m("t3", {class: "text"}, "de: " + this.data.description_de);
-        } else if(this.data.catchphrase_en) {
-            displayDescription = m("t3", {class: "text"}, "en: " + this.data.description_en);
-        }
-
-        if(this.data.priority) {
-            displayPriority = m("t3", {class: "text"}, this.data.priority);
-        }
+        console.log(Object.keys(this));
+        console.log(this['data']);
 
         let displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
@@ -169,52 +220,39 @@ export default class viewEvent extends ItemView {
                 m(ToolbarTitle, { text: "details" }),
             ]);
             displayDetails = m(Card, {
+                className: 'eventInfoCard',
                 content: [
-                    {
-                        primary: {
-                            title: "Catchphrase",
-                            subtitle: displayCatchphrase,
-                        }
-                    },
+
                     {
                         any: {
-                            content: this.data.time_start ? m('p', m('strong', `when: from ${dateFormatter(this.data.time_start)} to ${dateFormatter(this.data.time_end)}`)) : '',
-                        },
-                    },
-                    {
-                        any: {
-                            content: this.data.location ? m('p', m('strong', `where: ${this.data.location}`)) : '',
-                        }
-                    },
-                    {
-                        primary: {
-                            title: "Description",
-                            subtitle: displayDescription
-                        }
-                    },
-                    {
-                        primary: {
-                            title: "Priority",
-                            subtitle: displayPriority
-                        }
-                    },
-                    {
-                        actions: {
                             content: [
-                                m(Button, {
-                                    label: "Action 1"
+                                m(PropertyInfo, {
+                                    title: 'Catchphrase',
+                                    de: this.data.catchphrase_de,
+                                    en: this.data.catchphrase_en,
                                 }),
-                                m(Button, {
-                                    label: "Action 2"
-                                })
                             ]
                         }
                     },
                     {
-                        text: {
-                            content: "More text"
+                        any: {
+                            content: [
+                                m(PropertyInfo, {
+                                    title: 'Description',
+                                    de: this.data.description_de,
+                                    en: this.data.description_en,
+                                }),
+                            ]
                         }
-                    }
+                    },
+                    {
+                        any: {
+                            content: [
+                                this.data.priority ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Priority')]) : '',
+                                this.data.priority ? m('div', m('p.propertyText', ` ${this.data.priority}`)) : '',
+                            ]
+                        }
+                    },
                 ]
 
             })
@@ -227,6 +265,7 @@ export default class viewEvent extends ItemView {
                 m(ToolbarTitle, { text: "email adresses" }),
             ]);
             displayEmailAdresses = m(Card, {
+                className: 'eventInfoCard',
                 content: [
                     {
                         any:
@@ -254,14 +293,23 @@ export default class viewEvent extends ItemView {
         }
 
 
-        return m('div', {
-            style: { height: '100%', 'overflow-y': 'scroll'},
-            }, [
-            m("h1", this.data.title_de || this.data.title_en),
+        return m("div", {
+            style: { height: '100%', 'overflow-y': 'scroll', padding: '10px'}
+            },[
             m(Button, {element: 'div', label: "Update Event"}),
+            m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
+            m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
+                this.data.time_start ? m('div', m('span.propertyTitle', `Time`)) : '',
+                this.data.time_start ? m('div', m('p.propertyText', ` ${dateFormatter(this.data.time_start)} to ${dateFormatter(this.data.time_end)}`)) : '',
+            ]),
+            m('div', [
+                this.data.location ? m('div', m('span.propertyTitle', `Location`)) : m.trust('&nbsp;'),
+                this.data.location ? m('div', m('p.propertyText', ` ${this.data.location}`)) : ' ',
+            ]),
 
-            m('div.eventViewContainer', [
+            m('div.eventViewContainer', { style: { 'margin-top': '50px' } }, [
                m('div.eventViewLeft', [
+
                    displayDetailsButton,
                    displayDetails,
 
