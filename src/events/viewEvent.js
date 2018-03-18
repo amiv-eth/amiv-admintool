@@ -124,6 +124,7 @@ class ParticipantsTable {
 
   view() {
     return m(Card, {
+      style: { 'height': '300px' },
       content: m(TableView, {
         controller: this.ctrl,
         keys: signupConfig.tableKeys,
