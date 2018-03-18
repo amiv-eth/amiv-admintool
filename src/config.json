@@ -90,8 +90,6 @@
             "user.firstname",
             "email"
         ],
-        "searchKeys": [
-            "email"
-        ]
+        "searchKeys": []
     }
 }

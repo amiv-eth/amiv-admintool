@@ -13,15 +13,14 @@ const style = [
 ];
 styler.add('event-add', style);
 
-
 export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode, 'events', {});
     this.currentpage = 1;
     this.food = false;
     this.sbbAbo = false;
+    this.data = {};
   }
-
   addOne() {
     this.currentpage = this.currentpage + 1;
     if (this.currentpage === 5) {
@@ -103,12 +102,14 @@ export default class newEvent extends EditView {
     };
 
     const iconRight = m(
-      IconButton, { events: { onclick: () => { this.addOne(); } } },
+      IconButton,
+      { events: { onclick: () => { this.addOne(); } } },
       m(SVG, m.trust(icons.ArrowRight)),
     );
 
     const iconLeft = m(
-      IconButton, { events: { onclick: () => { this.subOne(); } } },
+      IconButton,
+      { events: { onclick: () => { this.subOne(); } } },
       m(SVG, m.trust(icons.ArrowLeft)),
     );
 
@@ -179,13 +180,18 @@ export default class newEvent extends EditView {
         {
           value: 'fcfs',
           label: 'First come, first serve',
-          defaultChecked: true,
         },
         {
           value: 'manual',
           label: 'Selection made by organizer',
         },
       ],
+      onChange: (state) => {
+        this.selection_strategy = state.value;
+        this.data.selection_strategy = state.value;
+        console.log(this.data); // Temp proof of concept.
+      },
+      value: this.selection_strategy,
     });
 
     const buttonFinish = m(Button, {
