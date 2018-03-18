@@ -2,7 +2,7 @@ import m from 'mithril';
 import { Button, Checkbox, RadioGroup, IconButton, SVG, TextField } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
-import { icons, textInput } from '../views/elements';
+import { icons, textInput, datetimeInput } from '../views/elements';
 
 const style = [
   {
@@ -60,23 +60,6 @@ export default class newEvent extends EditView {
         multiLine: true,
         rows: 5,
       },
-    };
-
-    const secondTableInputs = {
-      location: {
-        label: 'Location',
-      },
-      time_start: {
-        label: 'Event Start [Date and Time]:',
-        help: 'Format: 01.01.1970-18:00',
-        focusHelp: true,
-      },
-      time_end: {
-        label: 'Event End [Date and Time]:',
-        help: 'Format: 01.01.1970-1800',
-        focusHelp: true,
-      },
-
     };
 
     const thirdTableInputs = {
@@ -185,13 +168,21 @@ export default class newEvent extends EditView {
         style: {
           display: (this.currentpage === 2) ? 'block' : 'none',
         },
-      }, Object.keys(secondTableInputs).map((key) => {
-        const attrs = secondTableInputs[key];
-        const attributes = Object.assign({}, attrs);
-        attributes.name = key;
-        attributes.floatingLabel = true;
-        return m(textInput, this.bind(attributes));
-      })),
+      }, [
+        m(datetimeInput, this.bind({
+          name: 'time_start',
+          label: 'Event Start Time',
+        })),
+        m(datetimeInput, this.bind({
+          name: 'time_end',
+          label: 'Event End Time',
+        })),
+        m(textInput, this.bind({
+          name: 'location',
+          label: 'Location',
+          floatingLabel: true,
+        })),
+      ]),
       m('div', {
         style: {
           display: (this.currentpage === 3) ? 'block' : 'none',
