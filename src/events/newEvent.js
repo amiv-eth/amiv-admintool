@@ -18,6 +18,8 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode, 'events', {});
     this.currentpage = 1;
+    this.food = false;
+    this.sbbAbo = false;
   }
 
   addOne() {
@@ -25,12 +27,18 @@ export default class newEvent extends EditView {
     if (this.currentpage === 5) {
       this.currentpage = 4;
     }
+    if (this.currentpage === 6) {
+      this.currentpage = 6;
+    }
   }
 
   subOne() {
     this.currentpage = this.currentpage - 1;
     if (this.currentpage === 0) {
       this.currentpage = 1;
+    }
+    if (this.currentpage === 6) {
+      this.currentpage = 6;
     }
   }
 
@@ -91,7 +99,7 @@ export default class newEvent extends EditView {
       },
       priority: {
         label: 'Priority',
-      }
+      },
     };
 
     const iconRight = m(
@@ -108,24 +116,61 @@ export default class newEvent extends EditView {
       defaultChecked: false,
       label: 'Advertise in Announce?',
       value: '100',
+      onChange: (state) => {
+        this.show_announce = state.checked;
+        console.log(this.show_announce);
+      },
     });
 
     const checkboxWebsite = m(Checkbox, {
       defaultChecked: false,
       label: 'Advertise on Website?',
       value: '100',
+      onChange: (state) => {
+        this.show_website = state.checked;
+      },
     });
 
     const checkboxInfoScreen = m(Checkbox, {
       defaultChecked: false,
       label: 'Advertise on Infoscreen?',
       value: '100',
+      onChange: (state) => {
+        this.show_infoscreen = state.checked;
+      },
+
     });
 
     const checkboxAllowMail = m(Checkbox, {
       defaultChecked: false,
       label: 'Allow non AMIV Members?',
       value: '100',
+      onChange: (state) => {
+        this.allow_email_signup = state.checked;
+      },
+      checked: this.allow_email_signup,
+    });
+
+    const addFood = m(Checkbox, {
+      defaultChecked: false,
+      label: 'Food limitations',
+      value: '100',
+      onChange: (state) => {
+        this.food = state.checked;
+        console.log(this.food);
+      },
+      checked: this.food,
+    });
+
+    const addSBB = m(Checkbox, {
+      defaultChecked: false,
+      label: 'SBB ABO',
+      value: '100',
+      onChange: (state) => {
+        this.sbbAbo = state.checked;
+        console.log(this.sbbAbo);
+      },
+      checked: this.sbbAbo,
     });
 
     const radioButtonSelectionMode = m(RadioGroup, {
@@ -134,6 +179,7 @@ export default class newEvent extends EditView {
         {
           value: 'fcfs',
           label: 'First come, first serve',
+          defaultChecked: true,
         },
         {
           value: 'manual',
@@ -142,8 +188,45 @@ export default class newEvent extends EditView {
       ],
     });
 
+    const buttonFinish = m(Button, {
+      label: 'Create event',
+      events: {
+        onclick: () => {
+          const additionalFields = {
+            title: 'Additional Fields',
+            type: 'object',
+            properties: {},
+            required: [],
+          };
+          if (this.sbbAbo) {
+            additionalFields.properties.SBB_Abo = {
+              type: 'string',
+              enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
+            };
+            additionalFields.required.push('SBB_Abo');
+          }
+
+          if (this.food) {
+            additionalFields.properties.Food = {
+              type: 'string',
+              enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
+            };
+            additionalFields.properties.specialFood = {
+              'Special Food Requirements': {
+                type: 'string',
+              },
+            };
+            additionalFields.required.push('Food');
+          }
+          this.data.additional_fields = additionalFields;
+          console.log(this.data.additional_fields);
+          this.submit('POST');
+        },
+      },
+    });
+
     const title = [
-      'Create an Event', 'When and Where?', 'Signups', 'Advertisement'
+      'Create an Event', 'When and Where?', 'Signups', 'Advertisement',
     ][this.currentpage - 1];
 
     // checks currentPage and selects the fitting page
@@ -187,24 +270,38 @@ export default class newEvent extends EditView {
         style: {
           display: (this.currentpage === 3) ? 'block' : 'none',
         },
-      }, Object.keys(thirdTableInputs).map((key) => {
-        const attrs = thirdTableInputs[key];
-        const attributes = Object.assign({}, attrs);
-        attributes.name = key;
-        attributes.floatingLabel = true;
-        return m(textInput, this.bind(attributes));
-      })),
+      }, [
+        Object.keys(thirdTableInputs).map((key) => {
+          const attrs = thirdTableInputs[key];
+          const attributes = Object.assign({}, attrs);
+          attributes.name = key;
+          attributes.floatingLabel = true;
+          return m(textInput, this.bind(attributes));
+        }),
+        addFood, addSBB, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+      ]),
       m('div', {
         style: {
           display: (this.currentpage === 4) ? 'block' : 'none',
         },
-      }, Object.keys(forthTableInputs).map((key) => {
-        const attrs = forthTableInputs[key];
-        const attributes = Object.assign({}, attrs);
-        attributes.name = key;
-        attributes.floatingLabel = true;
-        return m(textInput, this.bind(attributes));
-      })),
+      }, [
+        Object.keys(forthTableInputs).map((key) => {
+          const attrs = forthTableInputs[key];
+          const attributes = Object.assign({}, attrs);
+          attributes.name = key;
+          attributes.floatingLabel = true;
+          return m(textInput, this.bind(attributes));
+        }),
+        checkboxWebsite, checkboxAnnounce, checkboxInfoScreen, m('br'), buttonFinish,
+      ]),
+
+      m('div', {
+        style: {
+          display: (this.currentpage === 6) ? 'block' : 'none',
+        },
+      }, ['Event created!',
+      ]),
+
     ]);
   }
 }
