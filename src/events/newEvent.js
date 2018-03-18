@@ -1,18 +1,29 @@
 import m from 'mithril';
-import { TextField, Button, Checkbox, RadioGroup, IconButton, SVG } from 'polythene-mithril';
+import { Button, Checkbox, RadioGroup, IconButton, SVG, TextField } from 'polythene-mithril';
+import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
-import { icons } from '../views/elements';
+import { icons, textInput } from '../views/elements';
+
+const style = [
+  {
+    '.mywrapper': {
+      padding: '10px',
+    },
+  },
+];
+styler.add('event-add', style);
+
 
 export default class newEvent extends EditView {
   constructor(vnode) {
-    super(vnode, 'events');
+    super(vnode, 'events', {});
     this.currentpage = 1;
   }
 
   addOne() {
     this.currentpage = this.currentpage + 1;
-    if (this.currentpage === 4) {
-      this.currentpage = 3;
+    if (this.currentpage === 5) {
+      this.currentpage = 4;
     }
   }
 
@@ -23,159 +34,82 @@ export default class newEvent extends EditView {
     }
   }
 
-  view(vnode) {
+  view() {
     if (!this.currentpage) return '';
-    // German and English Information
-    const fieldTitleEn = m(TextField, {
-      label: 'Event Title [EN]',
-      required: true,
-      floatingLabel: true,
-      dense: true,
-      onChange: (newState) => { this.title_en = newState.value; console.log(this.title_en); },
-      value: vnode.state.title_en,
-    });
 
-    const fieldCatchphraseEn = m(TextField, {
-      label: 'Catchphrase [EN]',
-      floatingLabel: true,
-      dense: true,
-      help: 'Fun description to make your event look more interesting than it is',
-      focusHelp: true,
-    });
-
-    const fieldDescriptionEn = m(TextField, {
-      label: 'Description [EN]',
-      required: true,
-      floatingLabel: true,
-      dense: true,
-      multiLine: true,
-      rows: 6,
-    });
-
-    const fieldTitleDe = m(TextField, {
-      label: 'Event Title [DE]',
-      floatingLabel: true,
-      dense: true,
-    });
-
-    const fieldCatchphraseDe = m(TextField, {
-      label: 'Catchphrase [DE]',
-      floatingLabel: true,
-      dense: true,
-      help: 'Fun description to make your event look more interesting than it is',
-      focusHelp: true,
-    });
-
-    const fieldDescriptionDe = m(TextField, {
-      label: 'Description [DE]',
-      floatingLabel: true,
-      dense: true,
-      multiLine: true,
-      rows: 6,
-    });
-
-    // Start of relevant data
-
-    const fieldPrice = m(TextField, {
-      label: 'Price:',
-      type: 'number',
-      help: 'In Rappen/Cents',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldStartDate = m(TextField, {
-      label: 'Event Start[Date and Time]:',
-      help: 'Format: 01.01.1970-18:00',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldEndDate = m(TextField, {
-      label: 'Event End[Date and Time]:',
-      help: 'Format: 01.01.1970-1800',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldStartRegDate = m(TextField, {
-      label: 'Registration Start[Date and Time]:',
-      help: 'Format: 01.01.1970-18:00',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldEndRegDate = m(TextField, {
-      label: 'Registration End[Date and Time]:',
-      help: 'Format: 01.01.1970-1800',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldLocation = m(TextField, {
-      label: 'Location:',
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldNumberOfParticipants = m(TextField, {
-      label: 'Number of open spots:',
-      type: 'number',
-      floatingLabel: true,
-      required: true,
-    });
-
-    // Everything above is working fine atm. (13:35)
-
-    const fieldAdvStart = m(TextField, {
-      label: 'Registration Start[Date and Time]:',
-      type: 'datetime',
-      help: 'Format: 01.01.1970-18:00',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-    const fieldAdvEnd = m(TextField, {
-      label: 'Registration End[Date and Time]:',
-      help: 'Format: 01.01.1970-1800',
-      focusHelp: true,
-      floatingLabel: true,
-      required: true,
-    });
-
-    const buttonBannerUp = m(Button, {
-      label: 'Select Banner File',
-      events: {
-        onclick: () => console.log('click'),
+    const firstTableInputs = {
+      title_en: {
+        label: 'English Event Title',
       },
-    });
-
-    const buttonInfoUp = m(Button, {
-      label: 'Select Infoscreen File',
-      events: {
-        onclick: () => console.log('click'),
+      catchphrase_en: {
+        label: 'English Catchphrase',
       },
-    });
-
-    const buttonPosterUp = m(Button, {
-      label: 'Select Poster File',
-      events: {
-        onclick: () => console.log('click'),
+      description_en: {
+        label: 'English Description',
+        multiLine: true,
+        rows: 5,
       },
-    });
-
-    const buttonThumbUp = m(Button, {
-      label: 'Select Thumbnail File',
-      events: {
-        onclick: () => console.log('click'),
+      title_de: {
+        label: 'German Event Title',
       },
-    });
-
-    const buttonUploadAll = m(Button, {
-      label: 'Upload',
-      events: {
-        onclick: () => console.log('click'),
+      catchphrase_de: {
+        label: 'German Catchphrase',
       },
-    });
+      description_de: {
+        label: 'German Description',
+        multiLine: true,
+        rows: 5,
+      },
+    };
+
+    const secondTableInputs = {
+      location: {
+        label: 'Location',
+      },
+      time_start: {
+        label: 'Event Start [Date and Time]:',
+        help: 'Format: 01.01.1970-18:00',
+        focusHelp: true,
+      },
+      time_end: {
+        label: 'Event End [Date and Time]:',
+        help: 'Format: 01.01.1970-1800',
+        focusHelp: true,
+      },
+
+    };
+
+    const thirdTableInputs = {
+      spots: {
+        label: 'Number of Spots',
+        help: '0 for open event',
+        focusHelp: true,
+      },
+      price: {
+        label: 'Price',
+      },
+      time_register_start: {
+        label: 'Start of Registration',
+      },
+      time_register_end: {
+        label: 'End of Registration',
+      },
+    };
+
+    const forthTableInputs = {
+      time_advertising_start: {
+        label: 'Start of Advertisement',
+        type: 'datetime',
+        required: true,
+      },
+      time_advertising_end: {
+        label: 'End of Advertisement',
+        required: true,
+      },
+      priority: {
+        label: 'Priority',
+      }
+    };
 
     const iconRight = m(
       IconButton, { events: { onclick: () => { this.addOne(); } } },
@@ -225,45 +159,61 @@ export default class newEvent extends EditView {
       ],
     });
 
-    function layoutWith(page) {
-      return m('div', page);
-    }
+    const title = [
+      'Create an Event', 'When and Where?', 'Signups', 'Advertisement'
+    ][this.currentpage - 1];
+
     // checks currentPage and selects the fitting page
-    if (this.currentpage === 1) {
-      return layoutWith(m(
-        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
-        , [
-          m(
-            'h1', 'Event description:', iconLeft, iconRight, m('br'),
-            fieldTitleEn, fieldCatchphraseEn, fieldDescriptionEn, fieldTitleDe,
-            fieldCatchphraseDe, fieldDescriptionDe,
-          ),
-        ],
-      ));
-    } else if (this.currentpage === 2) {
-      return layoutWith(m(
-        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
-        , [
-          m(
-            'h1', 'Critical Information:', iconLeft, iconRight, m('br'), fieldStartDate,
-            fieldEndDate, fieldStartRegDate, fieldEndRegDate, fieldLocation, fieldPrice,
-            fieldNumberOfParticipants,
-          ),
-        ],
-      ));
-    } else if (this.currentpage === 3) {
-      return layoutWith(m(
-        'div', { style: { height: '100%', 'overflow-y': 'scroll' } }
-        , [
-          m(
-            'h1', 'Advertise Information', iconLeft, iconRight, m('br'), fieldAdvStart,
-            fieldAdvEnd, checkboxWebsite, checkboxAnnounce, checkboxInfoScreen,
-            buttonBannerUp, buttonInfoUp, buttonPosterUp, buttonThumbUp, m('br'),
-            buttonUploadAll, m('br'), checkboxAllowMail, radioButtonSelectionMode,
-          ),
-        ],
-      ));
-    }
-    return layoutWith(m(''));
+    return m('div.mywrapper', [
+      m('h1', title),
+      m('br'),
+      iconLeft,
+      iconRight,
+      m('br'),
+      m('div', {
+        style: {
+          display: (this.currentpage === 1) ? 'block' : 'none',
+        },
+      }, Object.keys(firstTableInputs).map((key) => {
+        const attrs = firstTableInputs[key];
+        const attributes = Object.assign({}, attrs);
+        attributes.name = key;
+        attributes.floatingLabel = true;
+        return m(textInput, this.bind(attributes));
+      })),
+      m('div', {
+        style: {
+          display: (this.currentpage === 2) ? 'block' : 'none',
+        },
+      }, Object.keys(secondTableInputs).map((key) => {
+        const attrs = secondTableInputs[key];
+        const attributes = Object.assign({}, attrs);
+        attributes.name = key;
+        attributes.floatingLabel = true;
+        return m(textInput, this.bind(attributes));
+      })),
+      m('div', {
+        style: {
+          display: (this.currentpage === 3) ? 'block' : 'none',
+        },
+      }, Object.keys(thirdTableInputs).map((key) => {
+        const attrs = thirdTableInputs[key];
+        const attributes = Object.assign({}, attrs);
+        attributes.name = key;
+        attributes.floatingLabel = true;
+        return m(textInput, this.bind(attributes));
+      })),
+      m('div', {
+        style: {
+          display: (this.currentpage === 4) ? 'block' : 'none',
+        },
+      }, Object.keys(forthTableInputs).map((key) => {
+        const attrs = forthTableInputs[key];
+        const attributes = Object.assign({}, attrs);
+        attributes.name = key;
+        attributes.floatingLabel = true;
+        return m(textInput, this.bind(attributes));
+      })),
+    ]);
   }
 }
