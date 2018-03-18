@@ -1,31 +1,39 @@
 import m from 'mithril';
-import { Switch, Button, Card, TextField, IconButton, Toolbar, ToolbarTitle, MaterialDesignSpinner as Spinner } from 'polythene-mithril';
+import {
+  Switch,
+  Button,
+  Card,
+  TextField,
+  IconButton,
+  Toolbar,
+  ToolbarTitle,
+} from 'polythene-mithril';
+import { styler } from 'polythene-core-css';
 import ItemView from '../views/itemView';
-import { events as config, eventsignups as signupConfig } from '../config.json';
+import { eventsignups as signupConfig } from '../config.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 import { icons } from '../views/elements';
-import { styler } from 'polythene-core-css';
-import {ResourceHandler} from "../auth";
+import { ResourceHandler } from '../auth';
 
 const viewLayout = [
-    {
-        '.eventViewContainer': {
-            display: 'grid',
-            'grid-template-columns': '40% 55%',
-            'grid-gap': '50px',
-        },
-        '.eventViewLeft': {
-            'grid-column': 1,
-        },
-        '.eventViewRight': {
-            'grid-column': 2,
-        },
-        '.eventViewRight h4': {
-                'margin-top': '0px',
-        }
-    }
+  {
+    '.eventViewContainer': {
+      display: 'grid',
+      'grid-template-columns': '40% 60%',
+      'grid-gap': '50px',
+    },
+    '.eventViewLeft': {
+      'grid-column': 1,
+    },
+    '.eventViewRight': {
+      'grid-column': 2,
+    },
+    '.eventViewRight h4': {
+      'margin-top': '2px',
+    },
+  },
 ];
 styler.add('eventView', viewLayout);
 
@@ -65,57 +73,52 @@ class ParticipantsTable {
 }
 
 class EmailList {
-     view({ attrs: { list } }) {
-        const emails = list.toString().replace(/,/g, '; ');
-        return m(Card, {
-            content: m(TextField, { value: emails, label: '', multiLine: true }, ''),
-        });
-    }
+  view({ attrs: { list } }) {
+    const emails = list.toString().replace(/,/g, '; ');
+    return m(Card, {
+      content: m(TextField, { value: emails, label: '', multiLine: true }, ''),
+    });
+  }
 }
 
 export default class viewEvent extends ItemView {
-    constructor() {
-        super('events');
-        this.signupHandler = new ResourceHandler('eventsignups');
-        this.details = false;
-        this.emailAdresses = false;
+  constructor() {
+    super('events');
+    this.signupHandler = new ResourceHandler('eventsignups');
+    this.details = false;
+    this.emailAdresses = false;
+    this.emaillist = [''];
+    this.showAllEmails = false;
+  }
 
+  oninit() {
+    this.handler.getItem(this.id, this.embedded).then((item) => {
+      this.data = item;
+      m.redraw();
+    });
+    this.setUpEmailList(this.showAllEmails);
+  }
 
-        this.emaillist = [''];
-        this.showAllEmails = false;
-        this.setUpEmailList(this.showAllEmails);
-    }
-
-    setUpEmailList(showAll) {
-        if (!showAll) {
-            this.signupHandler.get({ where: { accepted: true } }).then((data) => {
-                this.emaillist = (data._items.map(item => item.email));
-            });
-        }
-        else {
-            this.signupHandler.get({}).then((data) => {
-                this.emaillist = (data._items.map(item => item.email));
-            });
-        }
+  setUpEmailList(showAll) {
+    if (!showAll) {
+      this.signupHandler.get({ where: { accepted: true } }).then((data) => {
+        this.emaillist = (data._items.map(item => item.email));
         m.redraw();
+      });
+    } else {
+      this.signupHandler.get({}).then((data) => {
+        this.emaillist = (data._items.map(item => item.email));
+        m.redraw();
+      });
     }
+  }
 
     view() {
         if (!this.data) return '';
-        console.log(Object.keys(this));
-        console.log(this['data']);
 
         let displayCatchphrase = null;
         let displayDescription = null;
         let displayPriority = null;
-
-        /*if(this.data.catchphrase_de) {
-            displayCatchphraseDe = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de);
-        }
-
-        if(this.data.catchphrase_en) {
-            displayCatchphraseEn = m("t3", {class: "text"}, "en: " + this.data.catchphrase_en);
-        }*/
 
         if(this.data.catchphrase_de && this.data.catchphrase_en) {
             displayCatchphrase = m("t3", {class: "text"}, "de: " + this.data.catchphrase_de + " / en: " + this.data.catchphrase_en);
@@ -243,10 +246,10 @@ export default class viewEvent extends ItemView {
         }
 
 
-        return m("div", {
-            style: { height: '100%', 'overflow-y': 'scroll'}
-            },[
-            m("h1", {class: "title"}, this.data.title_de),
+        return m('div', {
+            style: { height: '100%', 'overflow-y': 'scroll'},
+            }, [
+            m("h1", this.data.title_de || this.data.title_en),
             m(Button, {element: 'div', label: "Update Event"}),
 
             m('div.eventViewContainer', [
