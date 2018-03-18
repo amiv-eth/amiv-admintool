@@ -228,6 +228,7 @@ export default class viewEvent extends ItemView {
                 m(ToolbarTitle, { text: "email adresses" }),
             ]);
             displayEmailAdresses = m(Card, {
+                className: 'eventInfoCard',
                 content: [
                     {
                         any:
