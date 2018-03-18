@@ -5,7 +5,7 @@ import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
 import newEvent from './events/newEvent';
-import viewEvent from './events/viewEvent';
+import EventModal from './events/eventModal';
 import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
 import Layout from './layout';
@@ -28,7 +28,7 @@ m.route(root, '/users', {
   '/newuser': layoutWith(NewUser),
   '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
-  '/events/:id': layoutWith(viewEvent),
+  '/events/:id': layoutWith(EventModal),
   '/newevent': layoutWith(newEvent),
   '/draftevent': layoutWith(eventDraft),
   '/eventwithexport': layoutWith(eventWithExport),

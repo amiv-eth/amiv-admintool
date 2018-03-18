@@ -17,6 +17,7 @@ import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 import { icons } from '../views/elements';
 import { ResourceHandler } from '../auth';
+import { apiUrl } from '../config';
 
 const viewLayout = [
     {
@@ -123,6 +124,7 @@ class ParticipantsTable {
 
   view() {
     return m(Card, {
+      style: { 'height': '300px' },
       content: m(TableView, {
         controller: this.ctrl,
         keys: signupConfig.tableKeys,
@@ -181,7 +183,7 @@ export default class viewEvent extends ItemView {
     }
   }
 
-    view() {
+    view({ attrs: { onEdit } }) {
         if (!this.data) return '';
         console.log(Object.keys(this));
         console.log(this['data']);
@@ -376,8 +378,19 @@ export default class viewEvent extends ItemView {
         return m("div", {
             style: { height: '100%', 'overflow-y': 'scroll', padding: '10px'}
             },[
-            m(Button, {element: 'div', label: "Update Event"}),
-            m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
+            m(Button, {
+              element: 'div',
+              label: 'Update Event',
+              events: { onclick: onEdit },
+            }),
+            m('div', [
+              this.data.img_thumbnail ? m('img', {
+                src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
+                height: '50px',
+                style: { float: 'left' },
+              }) : '',
+              m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
+            ]),
             m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
                 m('div', this.data.signup_count ? m('span.propertyTitle', `Signups`) : m.trust('&nbsp;')),
                 m('div', this.data.signup_count ? m('p.propertyText', ` ${this.data.signup_count} / ${displaySpots}`) : m.trust('&nbsp;')),
@@ -409,10 +422,10 @@ export default class viewEvent extends ItemView {
                ]),
                m('div.eventViewRight', [
                    m('h4', 'Accepted Participants'),
-                   m(ParticipantsTable, { where: { accepted: true } }),
+                   m(ParticipantsTable, { where: { accepted: true, event: this.data['_id'] } }),
                    m('p', ''),
                    m('h4', 'Participants on Waiting List'),
-                   m(ParticipantsTable, { where: { accepted: false } }),
+                   m(ParticipantsTable, { where: { accepted: false, event: this.data['_id'] } }),
                ])
             ]),
 
