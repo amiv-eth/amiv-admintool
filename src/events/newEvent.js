@@ -13,13 +13,12 @@ const style = [
 ];
 styler.add('event-add', style);
 
-
 export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode, 'events', {});
     this.currentpage = 1;
+    this.data = {};
   }
-
   addOne() {
     this.currentpage = this.currentpage + 1;
     if (this.currentpage === 5) {
@@ -91,16 +90,18 @@ export default class newEvent extends EditView {
       },
       priority: {
         label: 'Priority',
-      }
+      },
     };
 
     const iconRight = m(
-      IconButton, { events: { onclick: () => { this.addOne(); } } },
+      IconButton,
+      { events: { onclick: () => { this.addOne(); } } },
       m(SVG, m.trust(icons.ArrowRight)),
     );
 
     const iconLeft = m(
-      IconButton, { events: { onclick: () => { this.subOne(); } } },
+      IconButton,
+      { events: { onclick: () => { this.subOne(); } } },
       m(SVG, m.trust(icons.ArrowLeft)),
     );
 
@@ -126,6 +127,12 @@ export default class newEvent extends EditView {
       defaultChecked: false,
       label: 'Allow non AMIV Members?',
       value: '100',
+      onChange: (state) => {
+        this.allow_email_signup = state.checked;
+        this.data.allow_email_signup = state.checked;
+        console.log(this.data); // Temp proof of concept.
+      },
+      checked: this.allow_email_signup,
     });
 
     const radioButtonSelectionMode = m(RadioGroup, {
@@ -140,10 +147,16 @@ export default class newEvent extends EditView {
           label: 'Selection made by organizer',
         },
       ],
+      onChange: (state) => {
+        this.selection_strategy = state.value;
+        this.data.selection_strategy = state.value;
+        console.log(this.data); // Temp proof of concept.
+      },
+      value: this.selection_strategy,
     });
 
     const title = [
-      'Create an Event', 'When and Where?', 'Signups', 'Advertisement'
+      'Create an Event', 'When and Where?', 'Signups', 'Advertisement',
     ][this.currentpage - 1];
 
     // checks currentPage and selects the fitting page
@@ -182,6 +195,7 @@ export default class newEvent extends EditView {
           label: 'Location',
           floatingLabel: true,
         })),
+        radioButtonSelectionMode, checkboxAllowMail,
       ]),
       m('div', {
         style: {
