@@ -29,6 +29,7 @@ export default class EditView extends ItemView {
   constructor(vnode, resource, embedded, valid = true) {
     super(resource, embedded);
     this.changed = false;
+    this.resource = resource;
 
     // state for validation
     this.valid = valid;
@@ -38,6 +39,7 @@ export default class EditView extends ItemView {
       allErrors: true,
     });
     this.errors = {};
+    this.data = {};
 
     // callback when edit is finished
     this.callback = vnode.attrs.onfinish;
@@ -55,6 +57,15 @@ export default class EditView extends ItemView {
     m.request(`${apiUrl}docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
+      console.log(objectSchema);
+      // filter out any field that is of type media and replace with type
+      // object
+      Object.keys(objectSchema.properties).forEach((property) => {
+        if (objectSchema.properties[property].type === 'media' ||
+            objectSchema.properties[property].type === 'json_schema_object') {
+          objectSchema.properties[property].type = 'object';
+        }
+      });
       this.ajv.addSchema(objectSchema, 'schema');
     });
   }
@@ -65,10 +76,12 @@ export default class EditView extends ItemView {
     if (!this.errors[attrs.name]) this.errors[attrs.name] = [];
 
     const boundFormelement = {
-      onchange: (e) => {
+      onChange: (name, value) => {
         this.changed = true;
         // bind changed data
-        this.data[e.target.name] = e.target.value;
+        this.data[name] = value;
+
+        console.log(this.data);
 
         // validate against schema
         const validate = this.ajv.getSchema('schema');

@@ -9,12 +9,9 @@ import viewEvent from './events/viewEvent';
 import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
 import Layout from './layout';
-// import AnnounceTool from './announceTool';
 import './style';
 
-const main = document.createElement('div');
-document.body.appendChild(main);
-const root = main;
+const root = document.body;
 
 
 function layoutWith(view) {

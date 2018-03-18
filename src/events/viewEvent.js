@@ -1,13 +1,21 @@
 import m from 'mithril';
-import { Switch, Button, Card, TextField, IconButton, Toolbar, ToolbarTitle, MaterialDesignSpinner as Spinner } from 'polythene-mithril';
+import {
+  Switch,
+  Button,
+  Card,
+  TextField,
+  IconButton,
+  Toolbar,
+  ToolbarTitle,
+} from 'polythene-mithril';
+import { styler } from 'polythene-core-css';
 import ItemView from '../views/itemView';
-import { events as config, eventsignups as signupConfig } from '../config.json';
+import { eventsignups as signupConfig } from '../config.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 import { icons } from '../views/elements';
-import { styler } from 'polythene-core-css';
-import {ResourceHandler} from "../auth";
+import { ResourceHandler } from '../auth';
 
 const viewLayout = [
     {
@@ -48,6 +56,22 @@ const viewLayout = [
                 'margin-top': '0px',
         }
     }
+  {
+    '.eventViewContainer': {
+      display: 'grid',
+      'grid-template-columns': '40% 60%',
+      'grid-gap': '50px',
+    },
+    '.eventViewLeft': {
+      'grid-column': 1,
+    },
+    '.eventViewRight': {
+      'grid-column': 2,
+    },
+    '.eventViewRight h4': {
+      'margin-top': '2px',
+    },
+  },
 ];
 styler.add('eventView', viewLayout);
 
@@ -105,7 +129,6 @@ class ParticipantsTable {
   }
 
   view() {
-
     return m(Card, {
       content: m(TableView, {
         controller: this.ctrl,
@@ -123,40 +146,45 @@ class ParticipantsTable {
 }
 
 class EmailList {
-     view({ attrs: { list } }) {
-        const emails = list.toString().replace(/,/g, '; ');
-        return m(Card, {
-            content: m(TextField, { value: emails, label: '', multiLine: true }, ''),
-        });
-    }
+  view({ attrs: { list } }) {
+    const emails = list.toString().replace(/,/g, '; ');
+    return m(Card, {
+      content: m(TextField, { value: emails, label: '', multiLine: true }, ''),
+    });
+  }
 }
 
 export default class viewEvent extends ItemView {
-    constructor() {
-        super('events');
-        this.signupHandler = new ResourceHandler('eventsignups');
-        this.details = false;
-        this.emailAdresses = false;
+  constructor() {
+    super('events');
+    this.signupHandler = new ResourceHandler('eventsignups');
+    this.details = false;
+    this.emailAdresses = false;
+    this.emaillist = [''];
+    this.showAllEmails = false;
+  }
 
+  oninit() {
+    this.handler.getItem(this.id, this.embedded).then((item) => {
+      this.data = item;
+      m.redraw();
+    });
+    this.setUpEmailList(this.showAllEmails);
+  }
 
-        this.emaillist = [''];
-        this.showAllEmails = false;
-        this.setUpEmailList(this.showAllEmails);
-    }
-
-    setUpEmailList(showAll) {
-        if (!showAll) {
-            this.signupHandler.get({ where: { accepted: true } }).then((data) => {
-                this.emaillist = (data._items.map(item => item.email));
-            });
-        }
-        else {
-            this.signupHandler.get({}).then((data) => {
-                this.emaillist = (data._items.map(item => item.email));
-            });
-        }
+  setUpEmailList(showAll) {
+    if (!showAll) {
+      this.signupHandler.get({ where: { accepted: true } }).then((data) => {
+        this.emaillist = (data._items.map(item => item.email));
         m.redraw();
+      });
+    } else {
+      this.signupHandler.get({}).then((data) => {
+        this.emaillist = (data._items.map(item => item.email));
+        m.redraw();
+      });
     }
+  }
 
     view() {
         if (!this.data) return '';
@@ -171,6 +199,8 @@ export default class viewEvent extends ItemView {
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "email adresses" }),
         ]);
+
+
 
         let displayDetails = null;
         let displayWaitlist = null;
@@ -205,7 +235,6 @@ export default class viewEvent extends ItemView {
                                     en: this.data.description_en,
                                 }),
                             ]
-
                         }
                     },
                     {

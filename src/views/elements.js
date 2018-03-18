@@ -2,12 +2,14 @@ import m from 'mithril';
 import { IconButton, TextField } from 'polythene-mithril';
 
 export class textInput {
-  constructor({ attrs: { getErrors } }) {
+  constructor({ attrs: { getErrors, name, label } }) {
     // Link the error-getting function from the binding
     this.getErrors = () => [];
+    this.name = name;
     if (getErrors) {
       this.getErrors = getErrors;
     }
+    this.value = '';
   }
 
   view({ attrs }) {
@@ -15,9 +17,89 @@ export class textInput {
     const errors = this.getErrors();
 
     const attributes = Object.assign({}, attrs);
-    attributes.valid = errors.length > 0;
+    attributes.valid = errors.length === 0;
     attributes.error = errors.join(', ');
+    attributes.onChange = ({ value }) => {
+      if (value !== this.value) {
+        this.value = value;
+        attrs.onChange(this.name, value);
+      }
+    };
     return m(TextField, attributes);
+  }
+}
+
+export class datetimeInput {
+  constructor({ attrs: { getErrors, name, onChange } }) {
+    // Link the error-getting function from the binding
+    this.getErrors = () => [];
+    this.name = name;
+    if (getErrors) {
+      this.getErrors = getErrors;
+    }
+    this.value = '';
+    this.date = null;
+    this.time = null;
+    this.onChangeCallback = onChange;
+  }
+
+  onChange() {
+    if (this.date && this.time) {
+      const date = new Date(this.date);
+      const h_m = this.time.split(':');
+      date.setHours(h_m[0]);
+      date.setMinutes(h_m[1]);
+      if (this.onChangeCallback) {
+        this.onChangeCallback(this.name, date.toISOString());
+      }
+    }
+  }
+
+  view({ attrs: { label } }) {
+    // set display-settings accoridng to error-state
+    const errors = this.getErrors();
+
+    const date = {
+      type: 'date',
+      style: {
+        width: '150px',
+        float: 'left',
+      },
+      onChange: ({ value }) => {
+        if (value !== this.date) {
+          this.date = value;
+          this.onChange();
+        }
+      },
+      valid: errors.length === 0,
+      error: errors.join(', '),
+    };
+
+    const time = {
+      type: 'time',
+      style: {
+        width: '100px',
+      },
+      onChange: ({ value }) => {
+        if (value !== this.time) {
+          this.time = value;
+          this.onChange();
+        }
+      },
+      valid: errors.length === 0,
+    };
+    return m('div', [
+      m(TextField, {
+        label,
+        disabled: true,
+        style: {
+          width: '200px',
+          float: 'left',
+        },
+      }),
+      m(TextField, date),
+      m(TextField, time),
+    ]);
   }
 }
 
