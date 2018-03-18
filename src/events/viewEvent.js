@@ -19,57 +19,41 @@ import { ResourceHandler } from '../auth';
 
 const viewLayout = [
     {
-        '.eventViewContainer': {
-            display: 'grid',
-            'grid-template-columns': '40% 55%',
-            'grid-gap': '50px',
-        },
-        '.propertyTitle': {
-            color: 'rgba(0, 0, 0, 0.54)',
-        },
-        '.propertyText': {
-            color: 'rgba(0, 0, 0, 0.87)',
-        },
-        '.propertyLangIndicator': {
-            width: '30px',
-            height: '20px',
-            float: 'left',
-            'background-color': 'rgb(031,045,084)',
-            'border-radius': '10px',
-            'text-align': 'center',
-            'line-height': '20px',
-            color: 'rgb(255,255,255)',
-            'margin-right': '10px',
-            'font-size' : '11px',
-        },
-        '.eventInfoCard': {
-          padding: '10px',
-            'font-size': '15sp',
-        },
-        '.eventViewLeft': {
-            'grid-column': 1,
-        },
-        '.eventViewRight': {
-            'grid-column': 2,
-        },
-        '.eventViewRight h4': {
-                'margin-top': '0px',
-        }
-    }
-  {
     '.eventViewContainer': {
-      display: 'grid',
-      'grid-template-columns': '40% 60%',
-      'grid-gap': '50px',
+        display: 'grid',
+        'grid-template-columns': '40% 55%',
+        'grid-gap': '50px',
+    },
+    '.propertyTitle': {
+        color: 'rgba(0, 0, 0, 0.54)',
+    },
+    '.propertyText': {
+        color: 'rgba(0, 0, 0, 0.87)',
+    },
+    '.propertyLangIndicator': {
+        width: '30px',
+        height: '20px',
+        float: 'left',
+        'background-color': 'rgb(031,045,084)',
+        'border-radius': '10px',
+        'text-align': 'center',
+        'line-height': '20px',
+        color: 'rgb(255,255,255)',
+        'margin-right': '10px',
+        'font-size' : '11px',
+    },
+    '.eventInfoCard': {
+      padding: '10px',
+        'font-size': '15sp',
     },
     '.eventViewLeft': {
-      'grid-column': 1,
+        'grid-column': 1,
     },
     '.eventViewRight': {
-      'grid-column': 2,
+        'grid-column': 2,
     },
     '.eventViewRight h4': {
-      'margin-top': '2px',
+            'margin-top': '0px',
     },
   },
 ];
