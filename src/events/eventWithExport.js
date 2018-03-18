@@ -35,7 +35,7 @@ export default class eventWithExport extends EditView {
             required: true,
             floatingLabel: true,
             dense: true,
-            onChange : (newState) => {this.title_en = this.title_en;},
+            onChange : (newState) => {this.title_en = newState.value; console.log(this.title_en);},
             value: this.title_en,
         });
         const fieldDescriptionEn = m(TextField, { 
@@ -45,23 +45,30 @@ export default class eventWithExport extends EditView {
             dense: true, 
             multiLine: true, 
             rows: 6,
-            onChange : (newState) => {this.fieldDescriptionEn = this.fieldDescriptionEn;},
+            onChange : (newState) => {this.fieldDescriptionEn = newState.value; console.log(this.fieldDescriptionEn);},
             value: this.fieldDescriptionEn,
         });
+
         // Needs administrator (Kulturi).
         const fieldLocation = m(TextField, {
             label: 'Location:',
             floatingLabel: true,
             required: true,
-            onChange : (newState) => {this.fieldLocation = this.fieldLocation;},
+            onChange : (newState) => {this.fieldLocation = newState.value; console.log(this.fieldLocation);},
             value: this.fieldLocation,
         });
+        
+        // Bottom.
         const buttonMaker = m(Button, {
-        label: "Submit Request!",
-        onClick: () => alert("You did not finish the editing of the fields.")
+            // console.log(JSON.stringify(this.keyDescriptors)),
+            label: "Submit Request!",
+            onClick: () => alert("You did not finish the editing of the fields.")
         });
 
-        return m('div', [
+        // Return!
+        return m('div', {
+            style: { height: '100%', 'overflow-y': 'scroll'}
+            }, [
             m('h1', 'For the event creator:', fieldTitleEn  , fieldDescriptionEn, 'For the AMIV administrator:', fieldLocation),
             m('div.footer', buttonMaker),
         ]);
