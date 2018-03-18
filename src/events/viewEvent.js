@@ -55,7 +55,7 @@ const viewLayout = [
         '.eventViewRight h4': {
                 'margin-top': '0px',
         }
-    }
+    },
   {
     '.eventViewContainer': {
       display: 'grid',
@@ -77,8 +77,6 @@ styler.add('eventView', viewLayout);
 
 class PropertyInfo {
     view({ attrs: { title, de, en } }) {
-        //const text = '';
-
         if(de && en) {
             return m('div',
                 m('p.propertyTitle', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
@@ -158,6 +156,7 @@ export default class viewEvent extends ItemView {
   constructor() {
     super('events');
     this.signupHandler = new ResourceHandler('eventsignups');
+    this.description = false;
     this.details = false;
     this.emailAdresses = false;
     this.emaillist = [''];
@@ -191,6 +190,10 @@ export default class viewEvent extends ItemView {
         console.log(Object.keys(this));
         console.log(this['data']);
 
+        let displayDescriptionButton = m(Toolbar, { compact: true, events: { onclick: () => this.description = !this.description } }, [
+            m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
+            m(ToolbarTitle, { text: "description" }),
+        ]);
         let displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
             m(IconButton, { icon: { svg: m.trust(icons.ArrowRight) } }),
             m(ToolbarTitle, { text: "details" }),
@@ -202,19 +205,25 @@ export default class viewEvent extends ItemView {
 
 
 
+        let displayDescription = null;
         let displayDetails = null;
-        let displayWaitlist = null;
         let displayEmailAdresses = null;
 
-        if (this.details) {
-            displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
+        if (this.description) {
+            displayDescriptionButton = m(Toolbar, { compact: true, events: { onclick: () => this.description = !this.description } }, [
                 m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
-                m(ToolbarTitle, { text: "details" }),
+                m(ToolbarTitle, { text: "description" }),
             ]);
-            displayDetails = m(Card, {
+            displayDescription = m(Card, {
                 className: 'eventInfoCard',
                 content: [
-
+                    {
+                        any: {
+                            content: [
+                                this.data.allow_email_signup ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'non AMIV-Members allowed')]) : '',
+                            ]
+                        }
+                    },
                     {
                         any: {
                             content: [
@@ -245,11 +254,63 @@ export default class viewEvent extends ItemView {
                             ]
                         }
                     },
+                    {
+                        any: {
+                            content: [
+                                this.data.priority ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Price')]) : '',
+                                this.data.priority ? m('div', m('p.propertyText', ` ${this.data.price}`)) : '',
+                            ]
+                        }
+                    },
                 ]
 
             })
         }
 
+        if (this.details) {
+            displayDetailsButton = m(Toolbar, { compact: true, events: { onclick: () => this.details = !this.details } }, [
+                m(IconButton, { icon: { svg: m.trust(icons.ArrowDown) } }),
+                m(ToolbarTitle, { text: "details" }),
+            ]);
+            displayDetails = m(Card, {
+                className: 'eventInfoCard',
+                content: [
+                    {
+                        any: {
+                            content: [
+                                this.data.time_advertising_start ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Advertising Time')]) : '',
+                                this.data.time_advertising_start ? m('div', m('p.propertyText', ` ${dateFormatter(this.data.time_advertising_start)} - ${dateFormatter(this.data.time_advertising_end)}`)) : '',
+                            ]
+                        }
+                    },
+                    {
+                        any: {
+                            content: [
+                                this.data.time_register_start ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Registration Time')]) : '',
+                                this.data.time_register_start ? m('div', m('p.propertyText', ` ${dateFormatter(this.data.time_register_start)} - ${dateFormatter(this.data.time_register_end)}`)) : '',
+                            ]
+                        }
+                    },
+                    {
+                        any: {
+                            content: [
+                                this.data.selection_strategy ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Selection strategy')]) : '',
+                                this.data.selection_strategy ? m('div', m('p.propertyText', ` ${this.data.selection_strategy}`)) : '',
+                            ]
+                        }
+                    },
+                    {
+                        any: {
+                            content: [
+                                this.data.show_annonce ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Annonce is shown')]) : '',
+                                this.data.show_annonce ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Infoscreen is shown')]) : '',
+                                this.data.show_website ? m('div', {style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [m('span.propertyTitle', 'Website is shown')]) : '',]
+                        }
+                    },
+                ]
+
+            })
+        }
 
         if (this.emailAdresses) {
             displayEmailAdressesButton = m(Toolbar, { compact: true, events: { onclick: () => this.emailAdresses = !this.emailAdresses } }, [
@@ -284,6 +345,12 @@ export default class viewEvent extends ItemView {
             });
         }
 
+        let displaySpots = '-';
+
+        if(this.data.spots !== 0) {
+            displaySpots = this.data.spots;
+        }
+
 
         return m("div", {
             style: { height: '100%', 'overflow-y': 'scroll', padding: '10px'}
@@ -291,16 +358,24 @@ export default class viewEvent extends ItemView {
             m(Button, {element: 'div', label: "Update Event"}),
             m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
             m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
-                this.data.time_start ? m('div', m('span.propertyTitle', `Time`)) : '',
-                this.data.time_start ? m('div', m('p.propertyText', ` ${dateFormatter(this.data.time_start)} to ${dateFormatter(this.data.time_end)}`)) : '',
+                m('div', this.data.signup_count ? m('span.propertyTitle', `Signups`) : m.trust('&nbsp;')),
+                m('div', this.data.signup_count ? m('p.propertyText', ` ${this.data.signup_count} / ${displaySpots}`) : m.trust('&nbsp;')),
+            ]),
+            m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
+                m('div', this.data.location ? m('span.propertyTitle', `Location`) : m.trust('&nbsp;') ),
+                m('div', this.data.location ? m('p.propertyText', ` ${this.data.location}`) : m.trust('&nbsp;')),
             ]),
             m('div', [
-                this.data.location ? m('div', m('span.propertyTitle', `Location`)) : m.trust('&nbsp;'),
-                this.data.location ? m('div', m('p.propertyText', ` ${this.data.location}`)) : ' ',
+                m('div', this.data.time_start ? m('span.propertyTitle', `Time`): m.trust('&nbsp;')),
+                m('div', this.data.time_start ? m('p.propertyText', ` ${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`): m.trust('&nbsp;')),
             ]),
+
 
             m('div.eventViewContainer', { style: { 'margin-top': '50px' } }, [
                m('div.eventViewLeft', [
+
+                   displayDescriptionButton,
+                   displayDescription,
 
                    displayDetailsButton,
                    displayDetails,
