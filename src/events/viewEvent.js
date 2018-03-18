@@ -40,10 +40,18 @@ styler.add('eventView', viewLayout);
 
 class ParticipantsTable {
   constructor({ attrs: { where } }) {
-    this.ctrl = new DatalistController('eventsignups', {
-      embedded: { user: 1 },
-      where,
-    }, signupConfig.tableKeys);
+    this.ctrl = new DatalistController(
+      'eventsignups', {
+        embedded: { user: 1 },
+        where,
+      },
+      [
+        'email',
+        'user.firstname',
+        'user.lastname',
+      ],
+      false,
+    );
   }
 
   getItemData(data) {
