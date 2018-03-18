@@ -16,6 +16,7 @@ import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 import { icons } from '../views/elements';
 import { ResourceHandler } from '../auth';
+import { apiUrl } from '../config';
 
 const viewLayout = [
     {
@@ -354,7 +355,14 @@ export default class viewEvent extends ItemView {
               label: 'Update Event',
               events: { onclick: onEdit },
             }),
-            m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
+            m('div', [
+              this.data.img_thumbnail ? m('img', {
+                src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
+                height: '50px',
+                style: { float: 'left' },
+              }) : '',
+              m("h1", {style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de]),
+            ]),
             m('div', { style: { float: 'left', 'margin-right': '20px'} }, [
                 m('div', this.data.signup_count ? m('span.propertyTitle', `Signups`) : m.trust('&nbsp;')),
                 m('div', this.data.signup_count ? m('p.propertyText', ` ${this.data.signup_count} / ${displaySpots}`) : m.trust('&nbsp;')),
@@ -383,10 +391,10 @@ export default class viewEvent extends ItemView {
                ]),
                m('div.eventViewRight', [
                    m('h4', 'Accepted Participants'),
-                   m(ParticipantsTable, { where: { accepted: true } }),
+                   m(ParticipantsTable, { where: { accepted: true, event: this.data['_id'] } }),
                    m('p', ''),
                    m('h4', 'Participants on Waiting List'),
-                   m(ParticipantsTable, { where: { accepted: false } }),
+                   m(ParticipantsTable, { where: { accepted: false, event: this.data['_id'] } }),
                ])
             ]),
 
