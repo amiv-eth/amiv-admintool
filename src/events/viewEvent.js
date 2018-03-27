@@ -52,6 +52,8 @@ styler.add('eventView', viewLayout);
 // on which content is available.
 class DuoLangProperty {
   view({ attrs: { title, de, en } }) {
+    // TODO Lang indicators should be smaller and there should be less margin
+    // between languages
     return m(
       Property,
       { title },
