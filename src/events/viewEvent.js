@@ -4,10 +4,7 @@ import {
   Button,
   Card,
   TextField,
-  IconButton,
   Icon,
-  Toolbar,
-  ToolbarTitle,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import ItemView from '../views/itemView';
@@ -25,12 +22,6 @@ const viewLayout = [
       'grid-template-columns': '40% 55%',
       'grid-gap': '50px',
     },
-    '.propertyTitle': {
-      color: 'rgba(0, 0, 0, 0.54)',
-    },
-    '.propertyText': {
-      color: 'rgba(0, 0, 0, 0.87)',
-    },
     '.propertyLangIndicator': {
       width: '30px',
       height: '20px',
@@ -42,10 +33,6 @@ const viewLayout = [
       color: 'rgb(255,255,255)',
       'margin-right': '10px',
       'font-size': '11px',
-    },
-    '.eventInfoCard': {
-      padding: '10px',
-      'font-size': '15sp',
     },
     '.eventViewLeft': {
       'grid-column': 1,
