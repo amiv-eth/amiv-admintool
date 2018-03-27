@@ -50,40 +50,20 @@ styler.add('eventView', viewLayout);
 
 // small helper class to display both German and English content together, dependent
 // on which content is available.
-class PropertyInfo {
+class DuoLangProperty {
   view({ attrs: { title, de, en } }) {
-    if (de && en) {
-      return m(
-        'div',
-        m('p.propertyTitle', { style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
-        m('div', [
-          m('div', { className: 'propertyLangIndicator' }, 'DE'),
-          m('p.propertyText', de),
-        ]),
-        m('div', [
-          m('div', { className: 'propertyLangIndicator' }, 'EN'),
-          m('p.propertyText', en),
-        ]),
-      );
-    } else if (de) {
-      return m(
-        'div',
-        m('p.propertyTitle', { style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
-        m('div', [
-          m('div', { className: 'propertyLangIndicator' }, 'DE'),
-          m('p.propertyText', de),
-        ]),
-      );
-    } else if (en) {
-      return m(
-        'div',
-        m('p.propertyTitle', { style: { 'margin-top': '10px', 'margin-bottom': '3px' } }, [title]),
-        m('div', [
-          m('div', { className: 'propertyLangIndicator' }, 'EN'),
-          m('p.propertyText', en),
-        ]),
-      );
-    }
+    return m(
+      Property,
+      { title },
+      de ? m('div', [
+        m('div', { className: 'propertyLangIndicator' }, 'DE'),
+        m('p', de),
+      ]) : '',
+      en ? m('div', [
+        m('div', { className: 'propertyLangIndicator' }, 'EN'),
+        m('p', en),
+      ]) : '',
+    );
   }
 }
 
@@ -207,12 +187,12 @@ export default class viewEvent extends ItemView {
       m('div.eventViewContainer', { style: { 'margin-top': '50px' } }, [
         m('div.eventViewLeft', [
           m(DropdownCard, { title: 'description' }, [
-            m(PropertyInfo, {
+            m(DuoLangProperty, {
               title: 'Catchphrase',
               de: this.data.catchphrase_de,
               en: this.data.catchphrase_en,
             }),
-            m(PropertyInfo, {
+            m(DuoLangProperty, {
               title: 'Description',
               de: this.data.description_de,
               en: this.data.description_en,
