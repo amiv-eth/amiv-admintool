@@ -166,7 +166,10 @@ export default class viewEvent extends ItemView {
         label: 'Update Event',
         events: { onclick: onEdit },
       }),
+
+      // this div is the title line
       m('div', [
+        // event image if existing
         this.data.img_thumbnail ? m('img', {
           src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
           height: '50px',
@@ -174,6 +177,7 @@ export default class viewEvent extends ItemView {
         }) : '',
         m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
       ]),
+      // below the title, most important details are listed
       this.data.signup_count ? m(Property, {
         style: { float: 'left', 'margin-right': '20px' },
         title: 'Signups',
@@ -185,7 +189,7 @@ export default class viewEvent extends ItemView {
       this.data.time_start ? m(Property, {
         title: 'Time',
       }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : m.trust('&nbsp;'),
-
+      // everything else is not listed in DropdownCards, which open only on request
       m('div.eventViewContainer', { style: { 'margin-top': '50px' } }, [
         m('div.eventViewLeft', [
           m(DropdownCard, { title: 'description' }, [
@@ -246,6 +250,7 @@ export default class viewEvent extends ItemView {
             this.data.allow_email_signup ? m(Property, 'non AMIV-Members allowed') : '',
           ]),
 
+          // a list of email adresses of all participants, easy to copy-paste
           m(DropdownCard, { title: 'Email Adresses' }, [
             m(Switch, {
               defaultChecked: false,
