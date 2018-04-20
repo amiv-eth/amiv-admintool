@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { Button, Checkbox, RadioGroup, IconButton, SVG, TextField } from 'polythene-mithril';
+import { Button, RadioGroup, IconButton, SVG } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
-import { icons, textInput, datetimeInput } from '../views/elements';
+import { icons } from '../views/elements';
 
 const style = [
   {
@@ -17,162 +17,33 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode, 'events', {});
     this.currentpage = 1;
-    this.food = false;
-    this.sbbAbo = false;
     this.data = {};
-  }
-  addOne() {
-    this.currentpage = this.currentpage + 1;
-    if (this.currentpage === 5) {
-      this.currentpage = 4;
-    }
-    if (this.currentpage === 6) {
-      this.currentpage = 6;
-    }
-  }
-
-  subOne() {
-    this.currentpage = this.currentpage - 1;
-    if (this.currentpage === 0) {
-      this.currentpage = 1;
-    }
-    if (this.currentpage === 6) {
-      this.currentpage = 6;
-    }
   }
 
   view() {
     if (!this.currentpage) return '';
 
-    const firstTableInputs = {
-      title_en: {
-        label: 'English Event Title',
-      },
-      catchphrase_en: {
-        label: 'English Catchphrase',
-      },
-      description_en: {
-        label: 'English Description',
-        multiLine: true,
-        rows: 5,
-      },
-      title_de: {
-        label: 'German Event Title',
-      },
-      catchphrase_de: {
-        label: 'German Catchphrase',
-      },
-      description_de: {
-        label: 'German Description',
-        multiLine: true,
-        rows: 5,
-      },
-    };
-
-    const thirdTableInputs = {
-      spots: {
-        label: 'Number of Spots',
-        help: '0 for open event',
-        focusHelp: true,
-      },
-      price: {
-        label: 'Price',
-      },
-      time_register_start: {
-        label: 'Start of Registration',
-      },
-      time_register_end: {
-        label: 'End of Registration',
-      },
-    };
-
-    const forthTableInputs = {
-      time_advertising_start: {
-        label: 'Start of Advertisement',
-        type: 'datetime',
-        required: true,
-      },
-      time_advertising_end: {
-        label: 'End of Advertisement',
-        required: true,
-      },
-      priority: {
-        label: 'Priority',
-      },
-    };
-
     const iconRight = m(
-      IconButton,
-      { events: { onclick: () => { this.addOne(); } } },
+      IconButton, {
+        events: {
+          onclick: () => {
+            this.currentpage = Math.min(this.currentpage + 1, 4);
+          },
+        },
+      },
       m(SVG, m.trust(icons.ArrowRight)),
     );
 
     const iconLeft = m(
-      IconButton,
-      { events: { onclick: () => { this.subOne(); } } },
+      IconButton, {
+        events: {
+          onclick: () => {
+            this.currentpage = Math.max(1, this.currentpage - 1);
+          },
+        },
+      },
       m(SVG, m.trust(icons.ArrowLeft)),
     );
-
-    const checkboxAnnounce = m(Checkbox, {
-      defaultChecked: false,
-      label: 'Advertise in Announce?',
-      value: '100',
-      onChange: (state) => {
-        this.show_announce = state.checked;
-        console.log(this.show_announce);
-      },
-    });
-
-    const checkboxWebsite = m(Checkbox, {
-      defaultChecked: false,
-      label: 'Advertise on Website?',
-      value: '100',
-      onChange: (state) => {
-        this.show_website = state.checked;
-      },
-    });
-
-    const checkboxInfoScreen = m(Checkbox, {
-      defaultChecked: false,
-      label: 'Advertise on Infoscreen?',
-      value: '100',
-      onChange: (state) => {
-        this.show_infoscreen = state.checked;
-      },
-
-    });
-
-    const checkboxAllowMail = m(Checkbox, {
-      defaultChecked: false,
-      label: 'Allow non AMIV Members?',
-      value: '100',
-      onChange: (state) => {
-        this.allow_email_signup = state.checked;
-      },
-      checked: this.allow_email_signup,
-    });
-
-    const addFood = m(Checkbox, {
-      defaultChecked: false,
-      label: 'Food limitations',
-      value: '100',
-      onChange: (state) => {
-        this.food = state.checked;
-        console.log(this.food);
-      },
-      checked: this.food,
-    });
-
-    const addSBB = m(Checkbox, {
-      defaultChecked: false,
-      label: 'SBB ABO',
-      value: '100',
-      onChange: (state) => {
-        this.sbbAbo = state.checked;
-        console.log(this.sbbAbo);
-      },
-      checked: this.sbbAbo,
-    });
 
     const radioButtonSelectionMode = m(RadioGroup, {
       name: 'Selection Mode',
@@ -204,15 +75,16 @@ export default class newEvent extends EditView {
             properties: {},
             required: [],
           };
-          if (this.sbbAbo) {
+          if (this.data.add_fields_sbb) {
             additionalFields.properties.SBB_Abo = {
               type: 'string',
               enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
             };
             additionalFields.required.push('SBB_Abo');
+            delete this.data.add_fields_sbb;
           }
 
-          if (this.food) {
+          if (this.data.add_fields_food) {
             additionalFields.properties.Food = {
               type: 'string',
               enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
@@ -223,6 +95,7 @@ export default class newEvent extends EditView {
               },
             };
             additionalFields.required.push('Food');
+            delete this.data.add_fields_food;
           }
           this.data.additional_fields = additionalFields;
           console.log(this.data.additional_fields);
@@ -246,68 +119,93 @@ export default class newEvent extends EditView {
         style: {
           display: (this.currentpage === 1) ? 'block' : 'none',
         },
-      }, Object.keys(firstTableInputs).map((key) => {
-        const attrs = firstTableInputs[key];
-        const attributes = Object.assign({}, attrs);
-        attributes.name = key;
-        attributes.floatingLabel = true;
-        return m(textInput, this.bind(attributes));
+      }, this.renderPage({
+        title_en: { type: 'text', label: 'English Event Title' },
+        catchphrase_en: { type: 'text', label: 'English Catchphrase' },
+        description_en: {
+          type: 'text',
+          label: 'English Description',
+          multiLine: true,
+          rows: 5,
+        },
+        title_de: { type: 'text', label: 'German Event Title' },
+        catchphrase_de: { type: 'text', label: 'German Catchphrase' },
+        description_de: {
+          type: 'text',
+          label: 'German Description',
+          multiLine: true,
+          rows: 5,
+        },
       })),
       m('div', {
         style: {
           display: (this.currentpage === 2) ? 'block' : 'none',
         },
-      }, [
-        m(datetimeInput, this.bind({
-          name: 'time_start',
-          label: 'Event Start Time',
-        })),
-        m(datetimeInput, this.bind({
-          name: 'time_end',
-          label: 'Event End Time',
-        })),
-        m(textInput, this.bind({
-          name: 'location',
-          label: 'Location',
-          floatingLabel: true,
-        })),
-      ]),
+      }, this.renderPage({
+        time_start: { type: 'datetime', label: 'Event Start Time' },
+        time_end: { type: 'datetime', label: 'Event End Time' },
+        location: { type: 'text', label: 'Location' },
+      })),
       m('div', {
         style: {
           display: (this.currentpage === 3) ? 'block' : 'none',
         },
       }, [
-        Object.keys(thirdTableInputs).map((key) => {
-          const attrs = thirdTableInputs[key];
-          const attributes = Object.assign({}, attrs);
-          attributes.name = key;
-          attributes.floatingLabel = true;
-          return m(textInput, this.bind(attributes));
+        ...this.renderPage({
+          spots: {
+            type: 'text',
+            label: 'Number of Spots',
+            help: '0 for open event',
+            focusHelp: true,
+          },
+          price: { type: 'text', label: 'Price' },
+          time_register_start: {
+            type: 'datetime',
+            label: 'Start of Registration',
+          },
+          time_register_end: {
+            type: 'datetime',
+            label: 'End of Registration',
+          },
+          add_fields_food: { type: 'checkbox', label: 'Food limitations' },
+          add_fields_sbb: { type: 'checkbox', label: 'ABB Abbonement' },
         }),
-        addFood, addSBB, m('br'), checkboxAllowMail, radioButtonSelectionMode,
+        m('br'),
+        ...this.renderPage({
+          allow_email_signup: {
+            type: 'checkbox',
+            label: 'Allow non AMIV Members?',
+          },
+        }),
+        radioButtonSelectionMode,
       ]),
       m('div', {
         style: {
           display: (this.currentpage === 4) ? 'block' : 'none',
         },
       }, [
-        Object.keys(forthTableInputs).map((key) => {
-          const attrs = forthTableInputs[key];
-          const attributes = Object.assign({}, attrs);
-          attributes.name = key;
-          attributes.floatingLabel = true;
-          return m(textInput, this.bind(attributes));
+        ...this.renderPage({
+          time_advertising_start: {
+            type: 'datetime',
+            label: 'Start of Advertisement',
+            required: true,
+          },
+          time_advertising_end: {
+            type: 'datetime',
+            label: 'End of Advertisement',
+            required: true,
+          },
+          priority: { type: 'text', label: 'Priority' },
+          show_website: { type: 'checkbox', label: 'Advertise on Website' },
+          show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
+          show_infoscreen: {
+            type: 'checkbox',
+            label: 'Advertise on Infoscreen',
+          },
         }),
-        checkboxWebsite, checkboxAnnounce, checkboxInfoScreen, m('br'), buttonFinish,
+        m('br'),
+        buttonFinish,
       ]),
-
-      m('div', {
-        style: {
-          display: (this.currentpage === 6) ? 'block' : 'none',
-        },
-      }, ['Event created!',
-      ]),
-
     ]);
   }
 }

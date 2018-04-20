@@ -1,7 +1,8 @@
 import Ajv from 'ajv';
 import ItemView from './itemView';
-import { getSession } from '../auth';
 import { apiUrl } from '../config.json';
+import { Checkbox } from 'polythene-mithril';
+import { textInput, datetimeInput } from './elements';
 
 const m = require('mithril');
 
@@ -54,7 +55,7 @@ export default class EditView extends ItemView {
       });
     }
     // load schema
-    m.request(`${apiUrl}docs/api-docs`).then((schema) => {
+    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
       console.log(objectSchema);
@@ -67,7 +68,7 @@ export default class EditView extends ItemView {
         }
       });
       this.ajv.addSchema(objectSchema, 'schema');
-    });
+    }).catch((error) => { console.log(error); });
   }
 
   // bind form-fields to the object data and validation
@@ -111,6 +112,30 @@ export default class EditView extends ItemView {
     return boundFormelement;
   }
 
+  renderPage(page) {
+    return Object.keys(page).map((key) => {
+      const field = page[key];
+      if (field.type === 'text') {
+        field.name = key;
+        field.floatingLabel = true;
+        delete field.type;
+        return m(textInput, this.bind(field));
+      } else if (field.type === 'checkbox') {
+        field.checked = this.data[key] || false;
+        field.onChange = (state) => {
+          this.data[key] = state.checked;
+        };
+        delete field.type;
+        return m(Checkbox, field);
+      } else if (field.type === 'datetime') {
+        field.name = key;
+        delete field.type;
+        return m(datetimeInput, this.bind(field));
+      }
+      return `key '${key}' not found`;
+    });
+  }
+
   submit(method) {
     return () => {
       if (this.changed) {
@@ -132,9 +157,6 @@ export default class EditView extends ItemView {
               this.errors[field] = [response.data._issues[field]];
             });
             m.redraw();
-          } else if (response.status === 403) {
-            // Unauthorized
-            m.route.set('/login');
           } else {
             console.log(error);
           }
