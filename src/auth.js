@@ -1,8 +1,8 @@
+import m from 'mithril';
 import axios from 'axios';
+import ClientOAuth2 from 'client-oauth2';
 import * as localStorage from './localStorage';
 import config from './config.json';
-
-const m = require('mithril');
 
 // Object which stores the current login-state
 const APISession = {
@@ -10,10 +10,18 @@ const APISession = {
   token: '',
 };
 
+// OAuth Handler
+const oauth = new ClientOAuth2({
+  clientId: 'Local Tool',
+  authorizationUri: `${config.apiUrl}/oauth`,
+  redirectUri: 'http://localhost:9000/oauthcallback',
+});
+
 export function resetSession() {
   APISession.authenticated = false;
   APISession.token = '';
-  m.route.set('/login');
+  localStorage.remove('token');
+  window.location.replace(oauth.token.getUri());
 }
 
 const amivapi = axios.create({
@@ -77,27 +85,11 @@ export function getSession() {
   });
 }
 
-export function login(username, password) {
-  return new Promise((resolve, reject) => {
-    amivapi.post('sessions', { username, password })
-      .then((response) => {
-        if (response.status === 201) {
-          APISession.token = response.data.token;
-          APISession.authenticated = true;
-          localStorage.set('token', response.data.token);
-          resolve();
-        }
-        reject();
-      }).catch(reject);
-  });
-}
-
 export class ResourceHandler {
   constructor(resource, searchKeys = false) {
     this.resource = resource;
     this.searchKeys = searchKeys || config[resource].searchKeys;
     this.patchKeys = config[resource].patchableKeys;
-
     checkAuthenticated();
   }
 
@@ -248,5 +240,17 @@ export class ResourceHandler {
         });
       });
     });
+  }
+}
+
+export class OauthRedirect {
+  view() {
+    oauth.token.getToken(m.route.get()).then((response) => {
+      APISession.authenticated = true;
+      APISession.token = response.accessToken;
+      localStorage.set('token', response.accessToken);
+      m.route.set('/users');
+    });
+    return 'redirecting...';
   }
 }

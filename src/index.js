@@ -1,5 +1,5 @@
 import m from 'mithril';
-import LoginScreen from './login';
+import { OauthRedirect } from './auth';
 import TableView from './views/tableView';
 import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
@@ -13,7 +13,6 @@ import './style';
 
 const root = document.body;
 
-
 function layoutWith(view) {
   return {
     view() {
@@ -22,6 +21,7 @@ function layoutWith(view) {
   };
 }
 
+m.route.prefix('');
 m.route(root, '/users', {
   '/users': layoutWith(UserTable),
   '/users/:id': layoutWith(UserModal),
@@ -40,6 +40,8 @@ m.route(root, '/users', {
       });
     },
   }),
-  '/login': LoginScreen,
+  '/oauthcallback': OauthRedirect,
   // '/announce': layoutWith(AnnounceTool),
 });
+
+m.route.prefix('');

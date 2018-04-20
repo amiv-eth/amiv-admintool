@@ -3,6 +3,7 @@ import '@material/drawer';
 import { List, ListTile, Icon, Toolbar, ToolbarTitle } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
+import { resetSession } from './auth';
 
 const layoutStyle = [
   {
@@ -65,6 +66,7 @@ export default class Layout {
       m('div.wrapper-main.smooth', [
         m(Toolbar, { className: 'main-toolbar' }, [
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
+          m('a', { onclick: resetSession }, 'Logout'),
         ]),
         m(
           'nav.mdc-drawer.mdc-drawer--permanent.mdc-typography.wrapper-sidebar',
@@ -98,14 +100,6 @@ export default class Layout {
         ),
         m('div.wrapper-content', children),
       ]),
-
-    /*return m('div.wrapper-sidebar.smooth', m('div.container-fluid', [
-      m('a[href=/]', { oncreate: m.route.link }, [
-        m('img.sidebar-logo[src="res/logo/main.svg"]'),
-      ]),
-      m('ul.nav.nav-pills.nav-stacked.nav-sidebar', [
-      ]),
-    ]));*/
     ]);
   }
 }
