@@ -73,8 +73,8 @@ export class datetimeInput {
     this.name = name;
     if (getErrors) { this.getErrors = getErrors; }
     this.value = '';
-    this.date = null;
-    this.time = null;
+    this.date = false;
+    this.time = false;
     this.onChangeCallback = onChange;
   }
 
@@ -92,9 +92,12 @@ export class datetimeInput {
     }
   }
 
-  view({ attrs: { label } }) {
+  view({ attrs: { label, value } }) {
     // set display-settings accoridng to error-state
     const errors = this.getErrors();
+    const initialValue = value || 'T';
+    const initialDate = initialValue.split('T')[0];
+    const initialTime = initialValue.split('T')[1].substring(0, 5);
 
     const date = {
       type: 'date',
@@ -110,6 +113,7 @@ export class datetimeInput {
       },
       valid: errors.length === 0,
       error: errors.join(', '),
+      value: this.date || initialDate,
     };
 
     const time = {
@@ -124,6 +128,7 @@ export class datetimeInput {
         }
       },
       valid: errors.length === 0,
+      value: this.time || initialTime,
     };
     return m('div', [
       m(TextField, {
