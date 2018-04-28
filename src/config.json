@@ -36,6 +36,9 @@
             "time_register_end",
             "show_website",
             "priority"
+        ],
+        "notPatchableKeys": [
+            "signup_count"
         ]
     },
     "users": {
@@ -63,13 +66,6 @@
             "nethz",
             "legi",
             "department"
-        ],
-        "patchableKeys": [
-            "firstname",
-            "lastname",
-            "email",
-            "membership",
-            "gender"
         ]
     },
     "groups": {

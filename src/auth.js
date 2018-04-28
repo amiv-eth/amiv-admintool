@@ -89,7 +89,9 @@ export class ResourceHandler {
   constructor(resource, searchKeys = false) {
     this.resource = resource;
     this.searchKeys = searchKeys || config[resource].searchKeys;
-    this.patchKeys = config[resource].patchableKeys;
+    this.noPatchKeys = [
+      '_etag', '_id', '_created', '_links', '_updated',
+      ...(config[resource].notPatchableKeys || [])];
     checkAuthenticated();
   }
 
@@ -199,12 +201,11 @@ export class ResourceHandler {
       getSession().then((api) => {
         // not all fields in the item can be patched. We filter out the fields
         // we are allowed to send
-        const submitData = {};
-        this.patchFields.forEach((key) => { submitData[key] = this.data[key]; });
+        const submitData = Object.assign({}, item);
+        this.noPatchKeys.forEach((key) => { delete submitData[key]; });
 
-        api.patch(`${this.resource}/${item._id}`, {
+        api.patch(`${this.resource}/${item._id}`, submitData, {
           headers: { 'If-Match': item._etag },
-          data: submitData,
         }).then((response) => {
           if (response.status === 422) {
             reject(response.data);
