@@ -20,7 +20,7 @@ export const icons = {
 };
 
 export class textInput {
-  constructor({ attrs: { getErrors, name, label } }) {
+  constructor({ attrs: { getErrors, name } }) {
     // Link the error-getting function from the binding
     this.getErrors = () => [];
     this.name = name;
@@ -47,14 +47,31 @@ export class textInput {
   }
 }
 
+export class numInput extends textInput {
+  view({ attrs }) {
+    // set display-settings accoridng to error-state
+    const errors = this.getErrors();
+
+    const attributes = Object.assign({}, attrs);
+    attributes.type = 'number';
+    attributes.valid = errors.length === 0;
+    attributes.error = errors.join(', ');
+    attributes.onChange = ({ value }) => {
+      if (value !== this.value) {
+        this.value = value;
+        attrs.onChange(this.name, parseInt(value, 10));
+      }
+    };
+    return m(TextField, attributes);
+  }
+}
+
 export class datetimeInput {
   constructor({ attrs: { getErrors, name, onChange } }) {
     // Link the error-getting function from the binding
     this.getErrors = () => [];
     this.name = name;
-    if (getErrors) {
-      this.getErrors = getErrors;
-    }
+    if (getErrors) { this.getErrors = getErrors; }
     this.value = '';
     this.date = null;
     this.time = null;
@@ -68,7 +85,9 @@ export class datetimeInput {
       date.setHours(h_m[0]);
       date.setMinutes(h_m[1]);
       if (this.onChangeCallback) {
-        this.onChangeCallback(this.name, date.toISOString());
+        // the ISO String contains 3 positions for microseconds, this kind of fomrat
+        // is not accepted by the API
+        this.onChangeCallback(this.name, `${date.toISOString().slice(0, -5)}Z`);
       }
     }
   }

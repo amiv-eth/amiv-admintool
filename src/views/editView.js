@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 import ItemView from './itemView';
 import { apiUrl } from '../config.json';
 import { Checkbox } from 'polythene-mithril';
-import { textInput, datetimeInput } from './elements';
+import { textInput, datetimeInput, numInput } from './elements';
 
 const m = require('mithril');
 
@@ -47,8 +47,9 @@ export default class EditView extends ItemView {
   }
 
   oninit() {
+    // if this.id is set, this is an edit view of an existing event.
+    // Therefore, we load the current state of the event from the API.
     if (this.id) {
-      // load data for item
       this.handler.getItem(this.id, this.embedded).then((item) => {
         this.data = item;
         m.redraw();
@@ -58,7 +59,7 @@ export default class EditView extends ItemView {
     m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
-      console.log(objectSchema);
+      // console.log(objectSchema);
       // filter out any field that is of type media and replace with type
       // object
       Object.keys(objectSchema.properties).forEach((property) => {
@@ -67,7 +68,8 @@ export default class EditView extends ItemView {
           objectSchema.properties[property].type = 'object';
         }
       });
-      this.ajv.addSchema(objectSchema, 'schema');
+      // delete objectSchema.properties['_id'];
+      console.log(this.ajv.addSchema(objectSchema, 'schema'));
     }).catch((error) => { console.log(error); });
   }
 
@@ -87,7 +89,6 @@ export default class EditView extends ItemView {
         // validate against schema
         const validate = this.ajv.getSchema('schema');
         this.valid = validate(this.data);
-        console.log(validate.schema);
 
         console.log(validate.errors);
         if (this.valid) {
@@ -120,6 +121,11 @@ export default class EditView extends ItemView {
         field.floatingLabel = true;
         delete field.type;
         return m(textInput, this.bind(field));
+      } else if (field.type === 'number') {
+        field.name = key;
+        field.floatingLabel = true;
+        delete field.type;
+        return m(numInput, this.bind(field));
       } else if (field.type === 'checkbox') {
         field.checked = this.data[key] || false;
         field.onChange = (state) => {
@@ -136,34 +142,33 @@ export default class EditView extends ItemView {
     });
   }
 
-  submit(method) {
-    return () => {
-      if (this.changed) {
-        let request;
-        if (method === 'POST') {
-          request = this.handler.post(this.data);
-        } else if (method === 'PATCH') {
-          request = this.handler.patch(this.data);
-        }
-        request.then((response) => {
-          this.callback(response);
-        }).catch((error) => {
-          console.log(error);
-          // Process the API error
-          const { response } = error;
-          if (response.status === 422) {
-            // there are problems with some fields, display them
-            Object.keys(response.data._issues).forEach((field) => {
-              this.errors[field] = [response.data._issues[field]];
-            });
-            m.redraw();
-          } else {
-            console.log(error);
-          }
-        });
+  submit() {
+    if (Object.keys(this.data).length > 0) {
+      let request;
+      if (this.id) {
+        // if id is known, this is a patch to an existing item
+        request = this.handler.patch(this.data);
       } else {
-        this.callback();
+        request = this.handler.post(this.data);
       }
-    };
-  }
+      request.then((response) => {
+        this.callback(response);
+      }).catch((error) => {
+        console.log(error);
+        // Process the API error
+        const { response } = error;
+        if (response.status === 422) {
+          // there are problems with some fields, display them
+          Object.keys(response.data._issues).forEach((field) => {
+            this.errors[field] = [response.data._issues[field]];
+          });
+          m.redraw();
+        } else {
+          console.log(error);
+        }
+      });
+    } else {
+      this.callback();
+    }
+  };
 }
