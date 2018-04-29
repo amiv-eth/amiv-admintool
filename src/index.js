@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { OauthRedirect } from './auth';
-import TableView from './views/tableView';
+import GroupList from './groups/overview';
+import viewGroup from './groups/viewGroup';
 import { UserModal, UserTable, NewUser } from './userTool';
 import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
@@ -32,14 +33,8 @@ m.route(root, '/users', {
   '/newevent': layoutWith(newEvent),
   '/draftevent': layoutWith(eventDraft),
   '/eventwithexport': layoutWith(eventWithExport),
-  '/groups': layoutWith({
-    view() {
-      return m(TableView, {
-        resource: 'groups',
-        keys: ['name'],
-      });
-    },
-  }),
+  '/groups': layoutWith(GroupList),
+  '/groups/:id': layoutWith(viewGroup),
   '/oauthcallback': OauthRedirect,
   // '/announce': layoutWith(AnnounceTool),
 });
