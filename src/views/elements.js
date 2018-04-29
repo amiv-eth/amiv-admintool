@@ -146,6 +146,55 @@ export class datetimeInput {
 }
 
 
+export class fileInput {
+  constructor({ attrs: { getErrors, name, onChange } }) {
+    // Link the error-getting function from the binding
+    this.getErrors = () => [];
+    this.name = name;
+    if (getErrors) { this.getErrors = getErrors; }
+    this.onChangeCallback = onChange;
+    this.file = null;
+  }
+
+  onChange() {
+    
+  }
+
+  view({ attrs: { label, accept } }) {
+    // set display-settings accoridng to error-state
+    const errors = this.getErrors();
+
+    const image = {
+      type: 'file',
+      accept,
+      onchange: ({ target: { files: [file] } }) => {
+        if (file !== this.file) {
+          // as we only accept one file, it is always the first element
+          // of the list
+          this.file = file;
+          console.log(this.file);
+          this.onChangeCallback(this.name, this.file);
+        }
+      },
+      valid: errors.length === 0,
+      error: errors.join(', '),
+    };
+
+    return m('div', [
+      m(TextField, {
+        label,
+        disabled: true,
+        style: {
+          width: '200px',
+          float: 'left',
+        },
+      }),
+      m('input', image),
+    ]);
+  }
+}
+
+
 // a card that is usually collapsed, but pops out when clicked on the title
 export class DropdownCard {
   constructor() {

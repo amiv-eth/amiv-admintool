@@ -2,6 +2,7 @@ import m from 'mithril';
 import { RaisedButton, RadioGroup, Slider } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
+import { fileInput } from '../views/elements';
 
 const style = [
   {
@@ -24,10 +25,10 @@ export default class newEvent extends EditView {
 
     const buttonRight = m(RaisedButton, {
       label: 'next',
-      disabled: this.currentpage === 4,
+      disabled: this.currentpage === 5,
       events: {
         onclick: () => {
-          this.currentpage = Math.min(this.currentpage + 1, 4);
+          this.currentpage = Math.min(this.currentpage + 1, 5);
         },
       },
     });
@@ -101,13 +102,13 @@ export default class newEvent extends EditView {
             this.data.additional_fields = JSON.stringify(additionalFields);
           }
           console.log(this.data);
-          this.submit('POST');
+          this.submit(true);
         },
       },
     });
 
     const title = [
-      'Create an Event', 'When and Where?', 'Signups', 'Advertisement',
+      'Create an Event', 'When and Where?', 'Signups', 'Advertisement', 'Images',
     ][this.currentpage - 1];
 
     // checks currentPage and selects the fitting page
@@ -212,6 +213,17 @@ export default class newEvent extends EditView {
             label: 'Advertise on Infoscreen',
           },
         }),
+        m('br'),
+        buttonFinish,
+      ]),
+      m('div', {
+        style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+      }, [
+        m(fileInput, this.bind({
+          name: 'img_thumbnail',
+          label: 'Thumbnail',
+          accept: 'image/png, image/jpeg',
+        })),
         m('br'),
         buttonFinish,
       ]),

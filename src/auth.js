@@ -196,13 +196,23 @@ export class ResourceHandler {
     });
   }
 
-  patch(item) {
+  patch(item, formData = false) {
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
         // not all fields in the item can be patched. We filter out the fields
         // we are allowed to send
-        const submitData = Object.assign({}, item);
-        this.noPatchKeys.forEach((key) => { delete submitData[key]; });
+        let submitData;
+        if (formData) {
+          submitData = new FormData();
+          Object.keys(item).forEach((key) => {
+            if (!this.noPatchKeys.includes(key)) {
+              submitData.append(key, item[key]);
+            }
+          });
+        } else {
+          submitData = Object.assign({}, item);
+          this.noPatchKeys.forEach((key) => { delete submitData[key]; });
+        }
 
         api.patch(`${this.resource}/${item._id}`, submitData, {
           headers: { 'If-Match': item._etag },

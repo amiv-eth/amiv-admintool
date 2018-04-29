@@ -1,5 +1,5 @@
 {
-    "apiUrl": "https://api-dev.amiv.ethz.ch",
+    "apiUrl": "https://api-dev.amiv.ethz.ch/",
     "events": {
         "keyDescriptors": {
             "title_de": "German Title",
