@@ -142,12 +142,12 @@ export default class EditView extends ItemView {
     });
   }
 
-  submit() {
+  submit(formData = false) {
     if (Object.keys(this.data).length > 0) {
       let request;
       if (this.id) {
         // if id is known, this is a patch to an existing item
-        request = this.handler.patch(this.data);
+        request = this.handler.patch(this.data, formData);
       } else {
         request = this.handler.post(this.data);
       }
@@ -170,5 +170,5 @@ export default class EditView extends ItemView {
     } else {
       this.callback();
     }
-  };
+  }
 }

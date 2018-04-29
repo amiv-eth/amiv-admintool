@@ -176,11 +176,9 @@ export class fileInput {
           this.onChangeCallback(this.name, this.file);
         }
       },
-      valid: errors.length === 0,
-      error: errors.join(', '),
     };
 
-    return m('div', [
+    return m('div', { style: { display: 'flex' } }, [
       m(TextField, {
         label,
         disabled: true,
@@ -188,6 +186,8 @@ export class fileInput {
           width: '200px',
           float: 'left',
         },
+        valid: errors.length === 0,
+        error: errors.join(', '),
       }),
       m('input', image),
     ]);

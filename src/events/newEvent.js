@@ -3,6 +3,7 @@ import { RaisedButton, RadioGroup, Slider } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import EditView from '../views/editView';
 import { fileInput } from '../views/elements';
+import { apiUrl } from '../config.json';
 
 const style = [
   {
@@ -68,6 +69,17 @@ export default class newEvent extends EditView {
       label: 'Create event',
       events: {
         onclick: () => {
+          // Overwrite existing images with new images
+          ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
+            if (this.data[`new_${key}`]) {
+              this.data[`img_${key}`] = this.data[`new_${key}`];
+              delete this.data[`new_${key}`];
+            } else if (this.data[`img_${key}`]) {
+              delete this.data[`img_${key}`];
+            }
+          });
+
+          // Merge Options for additional fields
           const additionalFields = {
             schema: 'http://json-schema.org/draft-04/schema#',
             additionalProperties: false,
@@ -219,9 +231,40 @@ export default class newEvent extends EditView {
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
+        this.data.img_thumbnail ? m('img', {
+          src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
+          style: { 'max-height': '50px', 'max-width': '100px' },
+        }) : m('div', 'currently no thumbnail set'),
         m(fileInput, this.bind({
-          name: 'img_thumbnail',
-          label: 'Thumbnail',
+          name: 'new_thumbnail',
+          label: 'New Thumbnail',
+          accept: 'image/png, image/jpeg',
+        })),
+        this.data.img_banner ? m('img', {
+          src: `${apiUrl.slice(0, -1)}${this.data.img_banner.file}`,
+          style: { 'max-height': '50px', 'max-width': '100px' },
+        }) : m('div', 'currently no banner set'),
+        m(fileInput, this.bind({
+          name: 'new_banner',
+          label: 'New Banner',
+          accept: 'image/png, image/jpeg',
+        })),
+        this.data.img_poster ? m('img', {
+          src: `${apiUrl.slice(0, -1)}${this.data.img_poster.file}`,
+          style: { 'max-height': '50px', 'max-width': '100px' },
+        }) : m('div', 'currently no poster set'),
+        m(fileInput, this.bind({
+          name: 'new_poster',
+          label: 'New Poster',
+          accept: 'image/png, image/jpeg',
+        })),
+        this.data.img_infoscreen ? m('img', {
+          src: `${apiUrl.slice(0, -1)}${this.data.img_infoscreen.file}`,
+          style: { 'max-height': '50px', 'max-width': '100px' },
+        }) : m('div', 'currently no infoscreen image set'),
+        m(fileInput, this.bind({
+          name: 'new_infoscreen',
+          label: 'New Infoscreen Image',
           accept: 'image/png, image/jpeg',
         })),
         m('br'),
