@@ -231,42 +231,18 @@ export default class newEvent extends EditView {
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
-        this.data.img_thumbnail ? m('img', {
-          src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
-          style: { 'max-height': '50px', 'max-width': '100px' },
-        }) : m('div', 'currently no thumbnail set'),
-        m(fileInput, this.bind({
-          name: 'new_thumbnail',
-          label: 'New Thumbnail',
-          accept: 'image/png, image/jpeg',
-        })),
-        this.data.img_banner ? m('img', {
-          src: `${apiUrl.slice(0, -1)}${this.data.img_banner.file}`,
-          style: { 'max-height': '50px', 'max-width': '100px' },
-        }) : m('div', 'currently no banner set'),
-        m(fileInput, this.bind({
-          name: 'new_banner',
-          label: 'New Banner',
-          accept: 'image/png, image/jpeg',
-        })),
-        this.data.img_poster ? m('img', {
-          src: `${apiUrl.slice(0, -1)}${this.data.img_poster.file}`,
-          style: { 'max-height': '50px', 'max-width': '100px' },
-        }) : m('div', 'currently no poster set'),
-        m(fileInput, this.bind({
-          name: 'new_poster',
-          label: 'New Poster',
-          accept: 'image/png, image/jpeg',
-        })),
-        this.data.img_infoscreen ? m('img', {
-          src: `${apiUrl.slice(0, -1)}${this.data.img_infoscreen.file}`,
-          style: { 'max-height': '50px', 'max-width': '100px' },
-        }) : m('div', 'currently no infoscreen image set'),
-        m(fileInput, this.bind({
-          name: 'new_infoscreen',
-          label: 'New Infoscreen Image',
-          accept: 'image/png, image/jpeg',
-        })),
+        ['thumbnail', 'banner', 'poster', 'infoscreen'].map((key) => {
+          return [
+            this.data[`img_${key}`] ? m('img', {
+              src: `${apiUrl.slice(0, -1)}${this.data[`img_${key}`].file}`,
+              style: { 'max-height': '50px', 'max-width': '100px' },
+            }) : m('div', `currently no ${key} image set`),
+            m(fileInput, this.bind({
+              name: `new_${key}`,
+              label: `New ${key} Image`,
+              accept: 'image/png, image/jpeg',
+            }))];
+        }),
         m('br'),
         buttonFinish,
       ]),
