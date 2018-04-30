@@ -25,11 +25,23 @@ const createSearchField = () => {
     view: ({ state, attrs }) => {
       // incoming value and focus added for result list example:
       const value = attrs.value !== undefined ? attrs.value : state.value();
+      const onCancel = attrs.onCancel !== undefined ? attrs.onCancel : () => {};
+
+      const ExitButton = {
+        view() {
+          return m(Button, {
+            label: 'Cancel',
+            className: 'blue-button',
+            events: { onclick: onCancel },
+          });
+        },
+      };
+
       return m(Search, Object.assign(
         {},
         {
           textfield: {
-            label: 'Search',
+            label: 'type here',
             onChange: (newState) => {
               state.value(newState.value);
               state.setInputState(newState.setInputState);
@@ -42,9 +54,11 @@ const createSearchField = () => {
           buttons: {
             none: {
               before: m(SearchIcon),
+              after: m(ExitButton),
             },
             focus: {
               before: m(BackButton, { leave: state.leave }),
+              after: m(ExitButton),
             },
             focus_dirty: {
               before: m(BackButton, { leave: state.leave }),
@@ -90,15 +104,15 @@ export default class SelectList {
     };
   }
 
-  view({ attrs: { controller, onSubmit = () => {} } }) {
+  view({ attrs: { controller, onSubmit = () => {}, onCancel = () => {}, selectedText } }) {
     return m('div', [
-      this.selected ? m(Toolbar, { compact: true }, [
+      this.selected ? m(Toolbar, { compact: true, style: { background: 'rgb(78, 242, 167)' } }, [
         m(IconButton, {
-          icon: { svg: m.trust(icons.iconClearSVG) },
+          icon: { svg: m.trust(icons.clear) },
           ink: false,
           events: { onclick: () => { this.selected = null; } },
         }),
-        m(ToolbarTitle, { text: this.selected.name }),
+        m(ToolbarTitle, { text: selectedText(this.selected) }),
         m(Button, {
           label: 'Submit',
           className: 'blue-button',
@@ -112,7 +126,7 @@ export default class SelectList {
           },
         }),
       ]) : m(SearchField, Object.assign({}, {
-        label: 'type here',
+        style: { background: 'rgb(78, 242, 167)' },
         onChange: ({ value, focus }) => {
           if (focus) {
             this.showList = true;
@@ -128,9 +142,10 @@ export default class SelectList {
             debounce(() => { controller.refresh(); }, 500);
           }
         },
+        onCancel,
         defaultValue: '',
       })),
-      this.showList ? m(List, {
+      (this.showList && !this.selected) ? m(List, {
         className: 'scrollTable',
         tiles: m(infinite, controller.infiniteScrollParams(this.item())),
       }) : null,
