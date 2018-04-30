@@ -1,14 +1,11 @@
-import ItemView from './views/itemView';
-import EditView from './views/editView';
-import TableView from './views/tableView';
-import { inputGroup, selectGroup, submitButton } from './views/elements';
-import SelectList from './views/selectList';
-import { users as config } from './config.json';
-import DatalistController from './listcontroller';
+import m from 'mithril';
+import ItemView from '../views/itemView';
+import TableView from '../views/tableView';
+import SelectList from '../views/selectList';
+import { users as config } from '../config.json';
+import DatalistController from '../listcontroller';
 
-const m = require('mithril');
-
-class UserView extends ItemView {
+export default class UserView extends ItemView {
   constructor() {
     super('users');
     // a controller to handle the groupmemberships of this user
@@ -98,116 +95,5 @@ class UserView extends ItemView {
         titles: ['event'],
       }),
     ]);
-  }
-}
-
-class UserEdit extends EditView {
-  constructor(vnode) {
-    super(vnode, 'users');
-  }
-
-  getForm() {
-    return m('form', [
-      m('div.row', [
-        m(inputGroup, this.bind({
-          classes: 'col-xs-6', title: 'Last Name', name: 'lastname',
-        })),
-        m(inputGroup, this.bind({
-          classes: 'col-xs-6', title: 'First Name', name: 'firstname',
-        })),
-        m(inputGroup, this.bind({ title: 'Email', name: 'email' })),
-        m(selectGroup, this.bind({
-          classes: 'col-xs-6',
-          title: 'Membership Status',
-          name: 'membership',
-          options: ['regular', 'extraordinary', 'honory'],
-        })),
-        m(selectGroup, this.bind({
-          classes: 'col-xs-6',
-          title: 'Gender',
-          name: 'gender',
-          options: ['male', 'female'],
-        })),
-      ]),
-      m('span', JSON.stringify(this.data)),
-      m('span', JSON.stringify(this.errors)),
-    ]);
-  }
-
-  view() {
-    // do not render anything if there is no data yet
-    if (!this.data) return m.trust('');
-
-    return m('form', [
-      this.getForm(),
-      m(submitButton, {
-        active: this.valid,
-        args: {
-          onclick: this.submit('PATCH', config.patchableKeys),
-          class: 'btn-warning',
-        },
-        text: 'Update',
-      }),
-    ]);
-  }
-}
-
-export class NewUser extends UserEdit {
-  constructor(vnode) {
-    super(vnode);
-    this.data = {
-      gender: 'male',
-      membership: 'regular',
-    };
-    this.valid = false;
-
-    // if the creation is finished, UI should switch to new User
-    this.callback = (response) => { m.route.set(`/users/${response.data._id}`); };
-  }
-
-  view() {
-    return m('form', [
-      this.getForm(),
-      m(submitButton, {
-        active: this.valid,
-        args: {
-          onclick: this.submit('POST', config.patchableKeys),
-          class: 'btn-warning',
-        },
-        text: 'Create',
-      }),
-    ]);
-  }
-}
-
-export class UserModal {
-  constructor() {
-    this.edit = false;
-  }
-
-  view() {
-    if (this.edit) {
-      return m(UserEdit, { onfinish: () => { this.edit = false; m.redraw(); } });
-    }
-    // else
-    return m('div', [
-      m('div.btn.btn-default', { onclick: () => { this.edit = true; } }, 'Edit'),
-      m('br'),
-      m(UserView),
-    ]);
-  }
-}
-
-export class UserTable {
-  constructor() {
-    this.ctrl = new DatalistController('users', {}, config.tableKeys);
-  }
-  view() {
-    return m(TableView, {
-      controller: this.ctrl,
-      keys: config.tableKeys,
-      titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
-      onAdd: () => { m.route.set('/newuser'); },
-    });
   }
 }

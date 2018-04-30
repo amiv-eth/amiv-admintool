@@ -2,7 +2,7 @@ import m from 'mithril';
 import { OauthRedirect } from './auth';
 import GroupList from './groups/overview';
 import viewGroup from './groups/viewGroup';
-import { UserModal, UserTable, NewUser } from './userTool';
+import { UserModal, UserTable, NewUser } from './users/userTool';
 import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
 import newEvent from './events/newEvent';
