@@ -70,7 +70,7 @@ export default class TableView {
         compactFront: true,
         compact: true,
         content: m('div', {
-          onclick() {
+          onclick: () => {
             if (this.clickOnRows) { m.route.set(`/${data._links.self.href}`); }
           },
           className: 'tableTile',
