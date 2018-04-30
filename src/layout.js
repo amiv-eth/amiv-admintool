@@ -89,6 +89,7 @@ export default class Layout {
               }),
               m(Menupoint, {
                 href: '/groups',
+                icon: icons.group,
                 title: 'Groups',
               }),
               m(Menupoint, {
