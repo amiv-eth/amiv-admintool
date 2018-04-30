@@ -267,21 +267,21 @@ export class submitButton {
 
 export const BackButton = {
   view: ({ attrs }) => m(IconButton, {
-    icon: { svg: m.trust(icons.iconBackSVG) },
+    icon: { svg: m.trust(icons.back) },
     ink: false,
     events: { onclick: attrs.leave },
   }),
 };
 export const ClearButton = {
   view: ({ attrs }) => m(IconButton, {
-    icon: { svg: m.trust(icons.iconClearSVG) },
+    icon: { svg: m.trust(icons.clear) },
     ink: false,
     events: { onclick: attrs.clear },
   }),
 };
 export const SearchIcon = {
   view: () => m(IconButton, {
-    icon: { svg: m.trust(icons.iconSearchSVG) },
+    icon: { svg: m.trust(icons.search) },
     inactive: true,
   }),
 };
