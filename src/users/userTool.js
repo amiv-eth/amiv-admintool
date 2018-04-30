@@ -10,27 +10,12 @@ export class NewUser extends UserEdit {
   constructor(vnode) {
     super(vnode);
     this.data = {
-      gender: 'male',
       membership: 'regular',
     };
     this.valid = false;
 
     // if the creation is finished, UI should switch to new User
     this.callback = (response) => { m.route.set(`/users/${response.data._id}`); };
-  }
-
-  view() {
-    return m('form', [
-      this.getForm(),
-      m(submitButton, {
-        active: this.valid,
-        args: {
-          onclick: this.submit('POST', config.patchableKeys),
-          class: 'btn-warning',
-        },
-        text: 'Create',
-      }),
-    ]);
   }
 }
 
