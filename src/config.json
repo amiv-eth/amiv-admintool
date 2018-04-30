@@ -66,6 +66,9 @@
             "nethz",
             "legi",
             "department"
+        ],
+        "notPatchableKeys": [
+            "password_set"
         ]
     },
     "groups": {
