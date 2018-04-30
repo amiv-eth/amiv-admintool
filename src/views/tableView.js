@@ -23,6 +23,7 @@ const tableStyles = [
     '.tableTile': {
       padding: '10px',
       'border-bottom': '1px solid rgba(0, 0, 0, 0.12)',
+      'align-items': 'center',
     },
   },
 ];
@@ -41,10 +42,11 @@ export default class TableView {
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
    */
-  constructor({ attrs: { keys, tileContent } }) {
+  constructor({ attrs: { keys, tileContent, clickOnRows = true } }) {
     this.search = '';
     this.tableKeys = keys;
     this.tileContent = tileContent;
+    this.clickOnRows = clickOnRows;
   }
 
   getItemData(data) {
@@ -62,15 +64,14 @@ export default class TableView {
 
   item() {
     return (data, opts) => {
-      console.log(data);
-      console.log(this.tileContent);
       return m(ListTile, {
         className: 'themed-list-tile',
         hoverable: true,
         compactFront: true,
+        compact: true,
         content: m('div', {
           onclick() {
-            m.route.set(`/${data._links.self.href}`);
+            if (this.clickOnRows) { m.route.set(`/${data._links.self.href}`); }
           },
           className: 'tableTile',
           style: { width: '100%', display: 'flex' },
