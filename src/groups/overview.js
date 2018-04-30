@@ -33,8 +33,15 @@ export default class GroupList {
     if (!this.data) return '';
 
     return m(
-      'div', { style: { display: 'flex' } },
+      'div', { style: { display: 'flex', 'flex-wrap': 'wrap' } },
       this.data.map(item => m(GroupItem, item)),
+      m('div', {
+        style: {
+          padding: '20px',
+          'max-width': '500px',
+        },
+        onclick: () => { m.route.set('/newgroup'); },
+      }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
     );
   }
 }
