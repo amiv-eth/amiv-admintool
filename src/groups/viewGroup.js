@@ -39,8 +39,6 @@ class MembersTable {
         label: 'remove',
         events: {
           onclick: () => {
-            console.log('hallo');
-            console.log(`removing ${data._id}`);
             this.ctrl.handler.delete(data).then(() => {
               this.ctrl.refresh();
             });
