@@ -2,7 +2,6 @@ import m from 'mithril';
 import UserEdit from './editUser';
 import UserView from './viewUser';
 import TableView from '../views/tableView';
-import { submitButton } from '../views/elements';
 import { users as config } from '../config.json';
 import DatalistController from '../listcontroller';
 

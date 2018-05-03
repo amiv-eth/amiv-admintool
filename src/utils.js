@@ -19,14 +19,14 @@ export function debounce(func, wait, immediate) {
 }
 
 export function dateFormatter(datestring) {
-    // converts an API datestring into the standard format 01.01.1990, 10:21
-    if (!datestring) return '';
-    const date = new Date(datestring);
-    return date.toLocaleString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+  // converts an API datestring into the standard format 01.01.1990, 10:21
+  if (!datestring) return '';
+  const date = new Date(datestring);
+  return date.toLocaleString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }

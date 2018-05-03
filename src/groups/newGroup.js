@@ -1,6 +1,6 @@
 import m from 'mithril';
-import EditView from '../views/editView';
 import { RaisedButton } from 'polythene-mithril';
+import EditView from '../views/editView';
 
 
 export default class NewGroup extends EditView {
@@ -19,8 +19,13 @@ export default class NewGroup extends EditView {
     return m('div.mywrapper', [
       m('h3', 'Add a New Group'),
       ...this.renderPage({
-        name: { type: 'text', label: 'Group Name'},
+        name: { type: 'text', label: 'Group Name' },
+        allow_self_enrollment: {
+          type: 'checkbox',
+          label: 'the group can be seen by all users and they can subscribe themselves',
+        },
       }),
+      m('br'),
       submitButton,
     ]);
   }

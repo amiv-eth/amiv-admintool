@@ -8,77 +8,70 @@ import infinite from 'mithril-infinite';
 import { debounce } from '../utils';
 import { icons, BackButton, ClearButton, SearchIcon } from './elements';
 
-const createSearchField = () => {
-  return {
-    oninit: (vnode) => {
-      const value = Stream('');
-      const setInputState = Stream();
 
-      // const clear = () => setInputState()({ value: '', focus: false});
-      const clear = () => value('');
-      const leave = () => value('');
+class SearchField {
+  oninit() {
+    this.value = Stream('');
+    this.setInputState = Stream();
 
-      vnode.state = {
-        value, setInputState, clear, leave,
-      };
-    },
-    view: ({ state, attrs }) => {
-      // incoming value and focus added for result list example:
-      const value = attrs.value !== undefined ? attrs.value : state.value();
-      const onCancel = attrs.onCancel !== undefined ? attrs.onCancel : () => {};
+    // const clear = () => setInputState()({ value: '', focus: false});
+    this.clear = () => this.value('');
+    this.leave = () => this.value('');
+  }
 
-      const ExitButton = {
-        view() {
-          return m(Button, {
-            label: 'Cancel',
-            className: 'blue-button',
-            events: { onclick: onCancel },
-          });
-        },
-      };
+  view({ state, attrs }) {
+    // incoming value and focus added for result list example:
+    const value = attrs.value !== undefined ? attrs.value : state.value();
+    const onCancel = attrs.onCancel !== undefined ? attrs.onCancel : () => {};
 
-      return m(Search, Object.assign(
-        {},
-        {
-          textfield: {
-            label: 'type here',
-            onChange: (newState) => {
-              state.value(newState.value);
-              state.setInputState(newState.setInputState);
-              // onChange callback added for result list example:
-              if (attrs.onChange) attrs.onChange(newState, state.setInputState);
-            },
-            value,
-            defaultValue: attrs.defaultValue,
+    const ExitButton = {
+      view() {
+        return m(Button, {
+          label: 'Cancel',
+          className: 'blue-button',
+          events: { onclick: onCancel },
+        });
+      },
+    };
+
+    return m(Search, Object.assign(
+      {},
+      {
+        textfield: {
+          label: 'type here',
+          onChange: (newState) => {
+            state.value(newState.value);
+            state.setInputState(newState.setInputState);
+            // onChange callback added for result list example:
+            if (attrs.onChange) attrs.onChange(newState, state.setInputState);
           },
-          buttons: {
-            none: {
-              before: m(SearchIcon),
-              after: m(ExitButton),
-            },
-            focus: {
-              before: m(BackButton, { leave: state.leave }),
-              after: m(ExitButton),
-            },
-            focus_dirty: {
-              before: m(BackButton, { leave: state.leave }),
-              after: m(ClearButton, { clear: state.clear }),
-            },
-            dirty: {
-              before: m(BackButton, { leave: state.leave }),
-              after: m(ClearButton, { clear: state.clear }),
-            },
-          },
-          before: m(Shadow),
+          value,
+          defaultValue: attrs.defaultValue,
         },
-        attrs,
-      ));
-    },
-  };
-};
-
-const SearchField = createSearchField();
-
+        buttons: {
+          none: {
+            before: m(SearchIcon),
+            after: m(ExitButton),
+          },
+          focus: {
+            before: m(BackButton, { leave: state.leave }),
+            after: m(ExitButton),
+          },
+          focus_dirty: {
+            before: m(BackButton, { leave: state.leave }),
+            after: m(ClearButton, { clear: state.clear }),
+          },
+          dirty: {
+            before: m(BackButton, { leave: state.leave }),
+            after: m(ClearButton, { clear: state.clear }),
+          },
+        },
+        before: m(Shadow),
+      },
+      attrs,
+    ));
+  }
+}
 
 export default class SelectList {
   constructor({ attrs: { listTileAttrs } }) {
@@ -104,7 +97,14 @@ export default class SelectList {
     };
   }
 
-  view({ attrs: { controller, onSubmit = () => {}, onCancel = () => {}, selectedText } }) {
+  view({
+    attrs: {
+      controller,
+      onSubmit = () => {},
+      onCancel = () => {},
+      selectedText,
+    },
+  }) {
     return m('div', [
       this.selected ? m(Toolbar, { compact: true, style: { background: 'rgb(78, 242, 167)' } }, [
         m(IconButton, {

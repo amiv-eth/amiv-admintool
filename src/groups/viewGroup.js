@@ -52,7 +52,7 @@ class MembersTable {
       content: m('div', [
         this.addmode ? m(SelectList, {
           controller: this.userController,
-          listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}`}),
+          listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           onSubmit: (user) => {
             this.addmode = false;
             this.ctrl.handler.post({
@@ -83,7 +83,7 @@ class MembersTable {
 
 // Table for list of email adresses, both forward_to and receive
 class EmailTable {
-  constructor({ attrs: { onRemove = () => {} }}) {
+  constructor({ attrs: { onRemove = () => {} } }) {
     this.addmode = false;
     this.dirty = false;
     this.newvalue = '';
@@ -181,14 +181,15 @@ export default class viewGroup extends ItemView {
     }, [
       // this div is the title line
       m('div', [
-        // event image if existing
         m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, this.data.name),
       ]),
       m('div.viewcontainer', [
+        // now-column layout: This first column are the members
         m('div.viewcontainercolumn', [
           m('h4', 'Members'),
           m(MembersTable, { group: this.id }),
         ]),
+        // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {
             list: this.data.receive_from || [],

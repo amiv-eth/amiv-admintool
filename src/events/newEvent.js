@@ -231,18 +231,17 @@ export default class newEvent extends EditView {
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
-        ['thumbnail', 'banner', 'poster', 'infoscreen'].map((key) => {
-          return [
-            this.data[`img_${key}`] ? m('img', {
-              src: `${apiUrl.slice(0, -1)}${this.data[`img_${key}`].file}`,
-              style: { 'max-height': '50px', 'max-width': '100px' },
-            }) : m('div', `currently no ${key} image set`),
-            m(fileInput, this.bind({
-              name: `new_${key}`,
-              label: `New ${key} Image`,
-              accept: 'image/png, image/jpeg',
-            }))];
-        }),
+        ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+          this.data[`img_${key}`] ? m('img', {
+            src: `${apiUrl.slice(0, -1)}${this.data[`img_${key}`].file}`,
+            style: { 'max-height': '50px', 'max-width': '100px' },
+          }) : m('div', `currently no ${key} image set`),
+          m(fileInput, this.bind({
+            name: `new_${key}`,
+            label: `New ${key} Image`,
+            accept: 'image/png, image/jpeg',
+          })),
+        ]),
         m('br'),
         buttonFinish,
       ]),

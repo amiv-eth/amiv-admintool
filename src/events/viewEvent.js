@@ -175,7 +175,7 @@ export default class viewEvent extends ItemView {
           height: '50px',
           style: { float: 'left' },
         }) : '',
-        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
+        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
       ]),
       // below the title, most important details are listed
       this.data.signup_count ? m(Property, {

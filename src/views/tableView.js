@@ -63,21 +63,19 @@ export default class TableView {
   }
 
   item() {
-    return (data, opts) => {
-      return m(ListTile, {
-        className: 'themed-list-tile',
-        hoverable: true,
-        compactFront: true,
-        compact: true,
-        content: m('div', {
-          onclick: () => {
-            if (this.clickOnRows) { m.route.set(`/${data._links.self.href}`); }
-          },
-          className: 'tableTile',
-          style: { width: '100%', display: 'flex' },
-        }, this.tileContent ? this.tileContent(data) : this.getItemData(data)),
-      });
-    };
+    return data => m(ListTile, {
+      className: 'themed-list-tile',
+      hoverable: true,
+      compactFront: true,
+      compact: true,
+      content: m('div', {
+        onclick: () => {
+          if (this.clickOnRows) { m.route.set(`/${data._links.self.href}`); }
+        },
+        className: 'tableTile',
+        style: { width: '100%', display: 'flex' },
+      }, this.tileContent ? this.tileContent(data) : this.getItemData(data)),
+    });
   }
 
 

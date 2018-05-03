@@ -8,7 +8,7 @@ export default class DatalistController {
       this.handler = new ResourceHandler(resource, searchKeys);
     } else {
       this.handler = new ResourceHandler(resource, false);
-      this.clientSearchKeys = searchKeys || [];
+      this.clientSearchKeys = searchKeys || [];
     }
     this.query = query || {};
     this.search = null;
@@ -37,7 +37,7 @@ export default class DatalistController {
     query.max_results = 10;
     query.page = pageNum;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
         // If onlineSearch is false, we filter the page-results at the client
         // because the API would not understand the search pattern, e.g. for

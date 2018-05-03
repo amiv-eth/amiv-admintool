@@ -82,9 +82,9 @@ export class datetimeInput {
   onChange() {
     if (this.date && this.time) {
       const date = new Date(this.date);
-      const h_m = this.time.split(':');
-      date.setHours(h_m[0]);
-      date.setMinutes(h_m[1]);
+      const splitted = this.time.split(':');
+      date.setHours(splitted[0]);
+      date.setMinutes(splitted[1]);
       if (this.onChangeCallback) {
         // the ISO String contains 3 positions for microseconds, this kind of fomrat
         // is not accepted by the API
@@ -106,9 +106,9 @@ export class datetimeInput {
         width: '150px',
         float: 'left',
       },
-      onChange: ({ value }) => {
-        if (value !== this.date) {
-          this.date = value;
+      onChange: ({ value: newDate }) => {
+        if (newDate !== this.date) {
+          this.date = newDate;
           this.onChange();
         }
       },
@@ -122,9 +122,9 @@ export class datetimeInput {
       style: {
         width: '100px',
       },
-      onChange: ({ value }) => {
-        if (value !== this.time) {
-          this.time = value;
+      onChange: ({ value: newTime }) => {
+        if (newTime !== this.time) {
+          this.time = newTime;
           this.onChange();
         }
       },
@@ -155,10 +155,6 @@ export class fileInput {
     if (getErrors) { this.getErrors = getErrors; }
     this.onChangeCallback = onChange;
     this.file = null;
-  }
-
-  onChange() {
-    
   }
 
   view({ attrs: { label, accept } }) {

@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
+import { Checkbox } from 'polythene-mithril';
 import ItemView from './itemView';
 import { apiUrl } from '../config.json';
-import { Checkbox } from 'polythene-mithril';
 import { textInput, datetimeInput, numInput } from './elements';
 
 const m = require('mithril');

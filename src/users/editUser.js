@@ -1,7 +1,6 @@
 import m from 'mithril';
-import EditView from '../views/editView';
 import { RaisedButton, RadioGroup } from 'polythene-mithril';
-import { users as config } from '../config.json';
+import EditView from '../views/editView';
 
 
 export default class UserEdit extends EditView {

@@ -4,7 +4,7 @@ import DatalistController from '../listcontroller';
 
 
 class GroupItem {
-  view({ attrs: { name, _id }}) {
+  view({ attrs: { name, _id } }) {
     return m('div', {
       style: {
         padding: '20px',
