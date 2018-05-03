@@ -1,8 +1,9 @@
 import m from 'mithril';
 import axios from 'axios';
 import ClientOAuth2 from 'client-oauth2';
+import { apiUrl, ownUrl, oAuthID } from 'networkConfig';
 import * as localStorage from './localStorage';
-import config from './config.json';
+import config from './resourceConfig.json';
 
 // Object which stores the current login-state
 const APISession = {
@@ -12,9 +13,9 @@ const APISession = {
 
 // OAuth Handler
 const oauth = new ClientOAuth2({
-  clientId: 'Local Tool',
-  authorizationUri: `${config.apiUrl}/oauth`,
-  redirectUri: 'http://localhost:9000/oauthcallback',
+  clientId: oAuthID,
+  authorizationUri: `${apiUrl}/oauth`,
+  redirectUri: `${ownUrl}/oauthcallback`,
 });
 
 export function resetSession() {
@@ -25,7 +26,7 @@ export function resetSession() {
 }
 
 const amivapi = axios.create({
-  baseURL: config.apiUrl,
+  baseURL: apiUrl,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -73,7 +74,7 @@ export function getSession() {
   return new Promise((resolve) => {
     checkAuthenticated().then(() => {
       const authenticatedSession = axios.create({
-        baseURL: config.apiUrl,
+        baseURL: apiUrl,
         timeout: 10000,
         headers: {
           'Content-Type': 'application/json',

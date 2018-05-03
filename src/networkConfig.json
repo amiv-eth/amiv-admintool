@@ -1,0 +1,5 @@
+{
+  "apiUrl": "https://api-dev.amiv.ethz.ch",
+  "ownUrl": "http://localhost:9000",
+  "oAuthID": "Local Tool"
+}

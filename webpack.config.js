@@ -78,7 +78,13 @@ const config = {
         ],
       },
     ],
+  },
 
+  // Dynamically include config
+  resolve: {
+    alias: {
+      networkConfig: `${__dirname}/src/networkConfig.json`,
+    },
   },
 
   devtool: 'eval-source-map', // Default development sourcemap

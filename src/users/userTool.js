@@ -2,7 +2,7 @@ import m from 'mithril';
 import UserEdit from './editUser';
 import UserView from './viewUser';
 import TableView from '../views/tableView';
-import { users as config } from '../config.json';
+import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
 
 export class NewUser extends UserEdit {

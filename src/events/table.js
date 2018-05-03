@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { events as config } from '../config.json';
+import { events as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';

@@ -2,7 +2,7 @@ import m from 'mithril';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import SelectList from '../views/selectList';
-import { users as config } from '../config.json';
+import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
 
 export default class UserView extends ItemView {

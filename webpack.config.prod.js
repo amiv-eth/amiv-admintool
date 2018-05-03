@@ -21,4 +21,8 @@ config.plugins = [
   }),
 ];
 
+// Replace development with production config
+config.resolve.alias.config = `${__dirname}/config.${process.env.BUILD_CONFIG_POSTFIX}.js`;
+
+
 module.exports = config;

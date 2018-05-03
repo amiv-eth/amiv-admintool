@@ -7,8 +7,9 @@ import {
   Icon,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
+import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
-import { apiUrl, eventsignups as signupConfig } from '../config.json';
+import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
