@@ -2,33 +2,35 @@ stages:
   - build
   - deploy
 
-build_master:
+build_master_prod:
   stage: build
-  
   image: docker:latest
   services:
     - docker:dind
-  
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-
   script:
+    - export BUILD_CONFIG_POSTFIX="prod"
     - docker build --pull -t "$CI_REGISTRY_IMAGE" ./
     - docker push "$CI_REGISTRY_IMAGE"
-  
   only:
+    - master
+
+# On branches except master: verify that build works, do not push to registry
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build --pull ./
+  except:
     - master
 
 deploy:
   stage: deploy
-
-  image: jaromirpufler/docker-openssh-client
-
-  variables:
-    SSH_DEPLOY_KEY: $DEPLOY_PRIVATE_KEY
-
+  image: amiveth/service-update-helper
   script:
-    - ssh -4 $DEPLOY_HOST "docker service update --image $CI_REGISTRY_IMAGE --force $DEPLOY_SERVICE;"
-
+    - /update.py
   only:
     - master
