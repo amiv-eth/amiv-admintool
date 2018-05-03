@@ -2,6 +2,20 @@ stages:
   - build
   - deploy
 
+build_master_dev:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - export BUILD_CONFIG_POSTFIX="dev"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:dev" ./
+    - docker push "$CI_REGISTRY_IMAGE:dev"
+  only:
+    - master
+
 build_master_prod:
   stage: build
   image: docker:latest
@@ -27,10 +41,28 @@ build:
   except:
     - master
 
-deploy:
+deploy_prod:
   stage: deploy
   image: amiveth/service-update-helper
   script:
+    - /update.py
+  only:
+    - master
+
+deploy_dev:
+  stage: deploy
+  image: amiveth/service-update-helper
+  script:
+    - export CI_DEPLOY_SERVICE="$CI_DEPLOY_SERVICE_DEV"
+    - /update.py
+  only:
+    - master
+
+deploy_prod:
+  stage: deploy
+  image: amiveth/service-update-helper
+  script:
+    - export CI_DEPLOY_SERVICE="$CI_DEPLOY_SERVICE_PROD"
     - /update.py
   only:
     - master

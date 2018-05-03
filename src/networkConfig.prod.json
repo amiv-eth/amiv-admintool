@@ -1,5 +1,5 @@
 {
-  "apiUrl": "https://api-dev.amiv.ethz.ch",
-  "ownUrl": "https://amiv-admin.amiv.ethz.ch",
-  "oAuthID": "Admintools Beta"
+  "apiUrl": "https://api.amiv.ethz.ch",
+  "ownUrl": "https://admin.amiv.ethz.ch",
+  "oAuthID": "Admintools"
 }
