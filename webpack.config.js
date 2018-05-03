@@ -1,5 +1,6 @@
 const publicPath = '/dist';
 
+const path = require('path');
 const webpack = require('webpack');
 
 const config = {
@@ -46,7 +47,10 @@ const config = {
       },
       {
         test: /\.js$/, // Check for all js files
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, './src'),
+          path.resolve(__dirname, 'node_modules/@material'),
+        ],
         use: [{
           loader: 'babel-loader',
           options: {
