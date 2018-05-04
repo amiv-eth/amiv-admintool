@@ -6,6 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
     "build": "webpack -p --config webpack.config.prod.js",
+    "build-dev": "webpack -p --config webpack.config.dev.js",
     "lint": "eslint src/**"
   },
   "repository": {

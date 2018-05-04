@@ -22,7 +22,7 @@ config.plugins = [
 ];
 
 // Replace development with production config
-config.resolve.alias.networkConfig = `${__dirname}/src/networkConfig.${process.env.BUILD_CONFIG_POSTFIX}.json`;
+config.resolve.alias.networkConfig = `${__dirname}/src/networkConfig.prod.json`;
 
 
 module.exports = config;

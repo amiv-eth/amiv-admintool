@@ -12,5 +12,6 @@ module.exports = {
         "prefer-destructuring": 1,
         "no-underscore-dangle": 0,
         "linebreak-style": 0,
+        "import/no-unresolved": [ "error", { "ignore": [ 'networkConfig' ] } ], // hack until resolving import properly
     }
 };
