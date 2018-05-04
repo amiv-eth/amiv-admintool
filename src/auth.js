@@ -55,6 +55,7 @@ export function checkAuthenticated() {
   return new Promise((resolve) => {
     if (APISession.authenticated) resolve();
     else {
+      console.log(apiUrl);
       console.log('looking for token');
       // let's see if we have a stored token
       const token = localStorage.get('token');
