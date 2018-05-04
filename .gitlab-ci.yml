@@ -10,8 +10,7 @@ build_master_dev:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - export BUILD_CONFIG_POSTFIX="dev"
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:dev" ./
+    - docker build --build-arg NPM_BUILD_COMMAND=build-dev --pull -t "$CI_REGISTRY_IMAGE:dev" ./
     - docker push "$CI_REGISTRY_IMAGE:dev"
   only:
     - master
@@ -24,7 +23,6 @@ build_master_prod:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - export BUILD_CONFIG_POSTFIX="prod"
     - docker build --pull -t "$CI_REGISTRY_IMAGE" ./
     - docker push "$CI_REGISTRY_IMAGE"
   only:
