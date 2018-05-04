@@ -11,6 +11,8 @@ const APISession = {
   token: '',
 };
 
+console.log(apiUrl);
+
 // OAuth Handler
 const oauth = new ClientOAuth2({
   clientId: oAuthID,
