@@ -233,7 +233,7 @@ export default class newEvent extends EditView {
       }, [
         ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
           this.data[`img_${key}`] ? m('img', {
-            src: `${apiUrl.slice(0, -1)}${this.data[`img_${key}`].file}`,
+            src: `${apiUrl}${this.data[`img_${key}`].file}`,
             style: { 'max-height': '50px', 'max-width': '100px' },
           }) : m('div', `currently no ${key} image set`),
           m(fileInput, this.bind({

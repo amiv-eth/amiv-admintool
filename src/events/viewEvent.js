@@ -172,7 +172,7 @@ export default class viewEvent extends ItemView {
       m('div', [
         // event image if existing
         this.data.img_thumbnail ? m('img', {
-          src: `${apiUrl.slice(0, -1)}${this.data.img_thumbnail.file}`,
+          src: `${apiUrl}${this.data.img_thumbnail.file}`,
           height: '50px',
           style: { float: 'left' },
         }) : '',
