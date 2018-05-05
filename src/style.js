@@ -26,7 +26,7 @@ const style = [
       'flex-wrap': 'wrap',
     },
     '.viewcontainercolumn': {
-      'min-width': '400px',
+      width: '500px',
       'flex-grow': 1,
       padding: '10px',
     },
