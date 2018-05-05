@@ -65,7 +65,7 @@ export default class TableView {
   item() {
     return data => m(ListTile, {
       className: 'themed-list-tile',
-      hoverable: true,
+      hoverable: this.clickOnRows,
       compactFront: true,
       compact: true,
       content: m('div', {
