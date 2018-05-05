@@ -60,12 +60,14 @@ class MembersTable {
               group: this.group_id,
             }).then(() => {
               this.ctrl.refresh();
+              m.redraw();
             });
           },
           onCancel: () => { this.addmode = false; m.redraw(); },
           selectedText: user => `${user.firstname} ${user.lastname}`,
         }) : '',
         m(TableView, {
+          tableHeight: '420px',
           controller: this.ctrl,
           keys: ['user.lastname', 'user.firstname', 'user.email'],
           tileContent: data => this.itemRow(data),

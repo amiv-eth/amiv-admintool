@@ -146,7 +146,7 @@ export default class SelectList {
         defaultValue: '',
       })),
       (this.showList && !this.selected) ? m(List, {
-        className: 'scrollTable',
+        style: { height: '400px' },
         tiles: m(infinite, controller.infiniteScrollParams(this.item())),
       }) : null,
     ]);

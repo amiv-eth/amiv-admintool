@@ -10,7 +10,8 @@ const tableStyles = [
     '.tabletool': {
       display: 'grid',
       height: '100%',
-      'grid-template-rows': '48px calc(100% - 48px)',
+      'grid-template-rows': '48px calc(100% - 78px)',
+      'background-color': 'white',
     },
     '.toolbar': {
       'grid-row': 1,
@@ -18,7 +19,6 @@ const tableStyles = [
     },
     '.scrollTable': {
       'grid-row': 2,
-      'background-color': 'white',
     },
     '.tableTile': {
       padding: '10px',
@@ -84,6 +84,7 @@ export default class TableView {
       controller,
       titles,
       onAdd = () => {},
+      tableHeight = false,
     },
   }) {
     const updateList = debounce(() => {
@@ -115,6 +116,7 @@ export default class TableView {
       }),
       m(List, {
         className: 'scrollTable',
+        style: tableHeight ? { height: tableHeight } : {},
         tiles: [
           m(ListTile, {
             className: 'tableTile',
