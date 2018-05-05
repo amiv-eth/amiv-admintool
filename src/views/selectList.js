@@ -22,17 +22,16 @@ class SearchField {
   view({ state, attrs }) {
     // incoming value and focus added for result list example:
     const value = attrs.value !== undefined ? attrs.value : state.value();
-    const onCancel = attrs.onCancel !== undefined ? attrs.onCancel : () => {};
 
-    const ExitButton = {
+    const ExitButton = attrs.onCancel ? {
       view() {
         return m(Button, {
           label: 'Cancel',
           className: 'blue-button',
-          events: { onclick: onCancel },
+          events: { onclick: attrs.onCancel },
         });
       },
-    };
+    } : 'div';
 
     return m(Search, Object.assign(
       {},
@@ -50,7 +49,6 @@ class SearchField {
         },
         buttons: {
           none: {
-            before: m(SearchIcon),
             after: m(ExitButton),
           },
           focus: {
@@ -74,11 +72,18 @@ class SearchField {
 }
 
 export default class SelectList {
-  constructor({ attrs: { listTileAttrs } }) {
-    this.selected = null;
+  constructor({ attrs: { listTileAttrs, onSelect = false } }) {
     this.showList = false;
     this.searchValue = '';
     this.listTileAttrs = listTileAttrs;
+    this.onSelect = onSelect;
+    // initialize the Selection
+    this.selected = null;
+  }
+
+  onupdate({ attrs: { selection = null } }) {
+    console.log(selection);
+    if (selection) this.selected = selection;
   }
 
   item() {
@@ -88,7 +93,11 @@ export default class SelectList {
         hoverable: true,
         className: 'themed-list-tile',
         events: {
-          onclick: () => { this.selected = data; this.showList = false; },
+          onclick: () => {
+            if (this.onSelect) { this.onSelect(data); }
+            this.selected = data;
+            this.showList = false;
+          },
         },
       };
       // Overwrite default attrs
@@ -100,8 +109,8 @@ export default class SelectList {
   view({
     attrs: {
       controller,
-      onSubmit = () => {},
-      onCancel = () => {},
+      onSubmit = false,
+      onCancel = false,
       selectedText,
     },
   }) {
@@ -110,10 +119,15 @@ export default class SelectList {
         m(IconButton, {
           icon: { svg: m.trust(icons.clear) },
           ink: false,
-          events: { onclick: () => { this.selected = null; } },
+          events: {
+            onclick: () => {
+              if (this.onSelect) { this.onSelect(null); }
+              this.selected = null;
+            },
+          },
         }),
         m(ToolbarTitle, { text: selectedText(this.selected) }),
-        m(Button, {
+        onSubmit ? m(Button, {
           label: 'Submit',
           className: 'blue-button',
           events: {
@@ -124,12 +138,16 @@ export default class SelectList {
               controller.refresh();
             },
           },
-        }),
+        }) : '',
       ]) : m(SearchField, Object.assign({}, {
         style: { background: 'rgb(78, 242, 167)' },
         onChange: ({ value, focus }) => {
           if (focus) {
             this.showList = true;
+          } else if (!focus) {
+            // don't close the list immidiately, as 'out of focus' could 
+            // also mean that the user is clicking on a list item
+            setTimeout(() => { this.showList = false; m.redraw(); }, 50);
           }
           if (value !== this.searchValue) {
             // if we always update the search value, this would also happen
@@ -139,16 +157,15 @@ export default class SelectList {
             // not due to focus change.
             this.searchValue = value;
             controller.setSearch(value);
-            debounce(() => { controller.refresh(); }, 500);
+            setTimeout(() => { controller.refresh(); }, 500);
           }
         },
         onCancel,
-        defaultValue: '',
       })),
       (this.showList && !this.selected) ? m(List, {
-        style: { height: '400px' },
+        style: { height: '400px', 'background-color': 'white' },
         tiles: m(infinite, controller.infiniteScrollParams(this.item())),
-      }) : null,
+      }) : '',
     ]);
   }
 }

@@ -1,6 +1,6 @@
 import m from 'mithril';
-import { Button, Card, Toolbar, ToolbarTitle, TextField, Icon } from 'polythene-mithril';
-import { icons } from '../views/elements';
+import { Button, RaisedButton, Card, Toolbar, ToolbarTitle, TextField, Icon } from 'polythene-mithril';
+import { icons, Property } from '../views/elements';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
@@ -165,7 +165,7 @@ class EmailTable {
 
 export default class viewGroup extends ItemView {
   constructor() {
-    super('groups');
+    super('groups', { moderator: 1 });
   }
 
   oninit() {
@@ -181,9 +181,20 @@ export default class viewGroup extends ItemView {
     return m('div.maincontainer', {
       style: { height: '100%', 'overflow-y': 'scroll' },
     }, [
+      // Button to edit the Group
+      m(RaisedButton, {
+        element: 'div',
+        label: 'Edit Group',
+        border: true,
+        events: { onclick: onEdit },
+      }),
       // this div is the title line
-      m('div', [
+      m('div.maincontainer', [
         m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, this.data.name),
+        this.data.moderator ? m(Property, {
+          title: 'Moderator',
+          onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
+        }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`) : '',
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members

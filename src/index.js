@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { OauthRedirect } from './auth';
 import GroupList from './groups/overview';
-import viewGroup from './groups/viewGroup';
+import GroupView from './groups/groupTool';
 import { UserModal, UserTable, NewUser } from './users/userTool';
 import { MembershipView } from './membershipTool';
 import NewGroup from './groups/newGroup';
@@ -35,7 +35,7 @@ m.route(root, '/users', {
   '/draftevent': layoutWith(eventDraft),
   '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith(GroupList),
-  '/groups/:id': layoutWith(viewGroup),
+  '/groups/:id': layoutWith(GroupView),
   '/newgroup': layoutWith(NewGroup),
   '/oauthcallback': OauthRedirect,
   // '/announce': layoutWith(AnnounceTool),

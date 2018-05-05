@@ -43,7 +43,14 @@ export default class EditView extends ItemView {
     this.data = {};
 
     // callback when edit is finished
-    this.callback = vnode.attrs.onfinish;
+    if (vnode.attrs.onfinish) this.callback = vnode.attrs.onfinish;
+    else {
+      this.callback = (item) => {
+        console.log(item);
+        if (item) m.route.set(`/${resource}/${item._id}`);
+        else m.route.set(`/${resource}`);
+      };
+    }
   }
 
   oninit() {
@@ -60,12 +67,14 @@ export default class EditView extends ItemView {
       const objectSchema = schema.definitions[
         objectNameForResource[this.resource]];
       // console.log(objectSchema);
-      // filter out any field that is of type media and replace with type
-      // object
+      // filter out any field that is not understood by the validator tool
       Object.keys(objectSchema.properties).forEach((property) => {
         if (objectSchema.properties[property].type === 'media' ||
             objectSchema.properties[property].type === 'json_schema_object') {
           objectSchema.properties[property].type = 'object';
+        }
+        if (objectSchema.properties[property].format === 'objectid') {
+          delete objectSchema.properties[property];
         }
       });
       // delete objectSchema.properties['_id'];

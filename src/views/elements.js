@@ -225,8 +225,8 @@ export class DropdownCard {
 // attrs is the title, children the text
 // therefore, you can call it with m(Property, title, text)
 export class Property {
-  view({ attrs: { title, style }, children }) {
-    return m('div', { style }, [
+  view({ attrs: { title, ...restAttrs }, children }) {
+    return m('div', restAttrs, [
       m('span', {
         style: {
           'margin-top': '10px',
