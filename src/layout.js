@@ -93,7 +93,7 @@ export default class Layout {
                 title: 'Groups',
               }),
               m(Menupoint, {
-                href: '/jobs',
+                href: '/joboffers',
                 icon: icons.iconJobsSVG,
                 title: 'Job offers',
               }),

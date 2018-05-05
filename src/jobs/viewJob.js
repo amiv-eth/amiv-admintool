@@ -1,19 +1,10 @@
 import m from 'mithril';
-import {
-  Switch,
-  Button,
-  Card,
-  TextField,
-  Icon,
-} from 'polythene-mithril';
+import { RaisedButton } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
-import TableView from '../views/tableView';
-import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
-import { icons, DropdownCard, Property } from '../views/elements';
-import { ResourceHandler } from '../auth';
+import { Property } from '../views/elements';
 
 const viewLayout = [
   {
@@ -66,59 +57,30 @@ class DuoLangProperty {
 
 export default class viewJob extends ItemView {
   constructor() {
-    super('jobs');
-    this.description = false;
-    this.advertisement = false;
-    this.logo = false;
-  }
-
-  oninit() {
-    this.handler.getItem(this.id, this.embedded).then((item) => {
-      this.data = item;
-      m.redraw();
-    });
+    super('joboffers');
   }
 
   view({ attrs: { onEdit } }) {
     if (!this.data) return '';
 
-    let displaySpots = '-';
-
-    if (this.data.spots !== 0) {
-      displaySpots = this.data.spots;
-    }
-
     return m('div', {
       style: { height: '100%', 'overflow-y': 'scroll', padding: '10px' },
     }, [
-      m(Button, {
-        element: 'div',
-        label: 'Update Event',
-        events: { onclick: onEdit },
-      }),
-
+      m(RaisedButton, { label: 'Edit Joboffer', events: { onclick: onEdit } }),
       // this div is the title line
       m('div', [
         // company logo if existing
         this.data.img_thumbnail ? m('img', {
-          src: `${apiUrl}${this.data.img_thumbnail.file}`,
+          src: `${apiUrl}/${this.data.logo.file}`,
           height: '50px',
           style: { float: 'left' },
         }) : '',
-        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
+        m('h3', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
       ]),
       // below the title, most important details are listed
-      this.data.signup_count ? m(Property, {
-        style: { float: 'left', 'margin-right': '20px' },
-        title: 'Signups',
-      }, `${this.data.signup_count} / ${displaySpots}`) : m.trust('&nbsp;'),
-      this.data.location ? m(Property, {
-        style: { float: 'left', 'margin-right': '20px' },
-        title: 'Location',
-      }, `${this.data.location}`) : m.trust('&nbsp;'),
-      this.data.time_start ? m(Property, {
-        title: 'Time',
-      }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : m.trust('&nbsp;'),
+      this.data.time_end ? m(Property, {
+        title: 'Offer Ends',
+      }, `${dateFormatter(this.data.time_end)}`) : '',
     ]);
   }
 }

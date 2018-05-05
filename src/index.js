@@ -41,9 +41,9 @@ m.route(root, '/users', {
   '/groups/:id': layoutWith(GroupView),
   '/newgroup': layoutWith(NewGroup),
   '/oauthcallback': OauthRedirect,
-  '/jobs': layoutWith(jobTable),
-  '/newjob': layoutWith(newJob),
-  '/jobs/:id': layoutWith(jobModal),
+  '/joboffers': layoutWith(jobTable),
+  '/newjoboffer': layoutWith(newJob),
+  '/joboffers/:id': layoutWith(jobModal),
   // '/announce': layoutWith(AnnounceTool),
 });
 
