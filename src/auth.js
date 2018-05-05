@@ -11,8 +11,6 @@ const APISession = {
   token: '',
 };
 
-console.log(apiUrl);
-
 // OAuth Handler
 const oauth = new ClientOAuth2({
   clientId: oAuthID,
@@ -55,8 +53,6 @@ export function checkAuthenticated() {
   return new Promise((resolve) => {
     if (APISession.authenticated) resolve();
     else {
-      console.log(apiUrl);
-      console.log('looking for token');
       // let's see if we have a stored token
       const token = localStorage.get('token');
       console.log(`found this token: ${token}`);
