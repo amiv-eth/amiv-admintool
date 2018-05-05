@@ -29,5 +29,9 @@ RUN npm install --no-save http-server
 COPY --from=build /index.html /admintool/
 COPY --from=build /dist /admintool/dist
 
+# Serve index.html for every file which is not found on the server
+# Hotfix for direct links
+RUN ln index.html 404.html
+
 # Run server (-g will automatically serve the gzipped files if possible)
 CMD ["/admintool/node_modules/.bin/http-server", "-g", "/admintool"]
