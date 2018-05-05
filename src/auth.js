@@ -158,7 +158,7 @@ export class ResourceHandler {
         // in case embedded is specified, append to url
         if (Object.keys(embedded).length > 0) {
           url += `?${m.buildQueryString({
-            embedded: JSON.stringify(this.embedded),
+            embedded: JSON.stringify(embedded),
           })}`;
         }
         api.get(url).then((response) => {
