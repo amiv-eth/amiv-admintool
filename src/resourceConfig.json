@@ -71,6 +71,26 @@
             "password_set"
         ]
     },
+    "joboffers":{
+        "keyDescriptors": {
+            "company": "Company",
+            "email": "Email",
+            "description_en": "Job description",
+            "description_de": "Job Beschreibung",
+            "logo": "Logo as png",
+            "pdf": "PDF provided by company",
+            "time_end": "Application deadline",
+            "title_de": "Stelle auf Deutsch",
+            "title_de": "Position title in English",
+            "show_website": "Is the job listed on the website?",
+            "_id":"Job ID."
+        },
+        "tableKeys": [
+            "title_de",
+            "time_end",
+            "show_website"
+        ]
+    },
     "groups": {
         "keyDescriptors": {
             "name": "Name"

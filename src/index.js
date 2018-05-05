@@ -10,6 +10,9 @@ import newEvent from './events/newEvent';
 import EventModal from './events/eventModal';
 import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
+import newJob from './jobs/newJob';
+import jobTable from './jobs/jobTable';
+import jobModal from './jobs/jobModal';
 import Layout from './layout';
 import './style';
 
@@ -38,6 +41,9 @@ m.route(root, '/users', {
   '/groups/:id': layoutWith(viewGroup),
   '/newgroup': layoutWith(NewGroup),
   '/oauthcallback': OauthRedirect,
+  '/jobs': layoutWith(jobTable),
+  '/newjob': layoutWith(newJob),
+  '/jobs/:id': layoutWith(jobModal),
   // '/announce': layoutWith(AnnounceTool),
 });
 

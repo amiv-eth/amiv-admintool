@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { events as config } from '../resourceConfig.json';
+import { joboffers as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
@@ -18,8 +18,8 @@ export default class JobTable {
 
   getItemData(data) {
     return [
-      m('div', { style: { width: 'calc(100% - 18em)' } }, data.title_de || data.title_en),
-      m('div', { style: { width: '9em' } }, dateFormatter(data.time_start)),
+      m('div', { style: { width: 'calc(100% - 30em)' } }, data.title_de || data.title_en),
+      m('div', { style: { width: '21em' } }, data.company),
       m('div', { style: { width: '9em' } }, dateFormatter(data.time_end)),
     ];
   }
@@ -30,8 +30,8 @@ export default class JobTable {
       keys: config.tableKeys,
       tileContent: this.getItemData,
       titles: [
-        { text: 'Titel', width: 'calc(100% - 18em)' },
-        { text: 'Start', width: '9em' },
+        { text: 'Titel', width: 'calc(100% - 30em)' },
+        { text: 'Company', width: '21em' },
         { text: 'End', width: '9em' },
       ],
       onAdd: () => { m.route.set('/newjob'); },
