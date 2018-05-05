@@ -9,7 +9,7 @@ export default class EventModal {
 
   view() {
     if (this.edit) {
-      return m(newEvent);
+      return m(newEvent, { onfinish: () => { this.edit = false; m.redraw(); } });
     }
     return m(viewEvent, { onEdit: () => { this.edit = true; } });
   }
