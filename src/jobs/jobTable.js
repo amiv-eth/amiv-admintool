@@ -5,15 +5,15 @@ import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 
 
-/* Table of all Events
+/* Table of all current Jobs
  *
  * Makes use of the standard TableView
  */
 
 
-export default class EventTable {
+export default class JobTable {
   constructor() {
-    this.ctrl = new DatalistController('events', {}, config.tableKeys);
+    this.ctrl = new DatalistController('joboffers', {}, config.tableKeys);
   }
 
   getItemData(data) {
@@ -34,7 +34,7 @@ export default class EventTable {
         { text: 'Start', width: '9em' },
         { text: 'End', width: '9em' },
       ],
-      onAdd: () => { m.route.set('/newevent'); },
+      onAdd: () => { m.route.set('/newjob'); },
     });
   }
 }
