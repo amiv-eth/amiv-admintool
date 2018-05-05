@@ -18,11 +18,6 @@ import { ResourceHandler } from '../auth';
 
 const viewLayout = [
   {
-    '.eventViewContainer': {
-      display: 'grid',
-      'grid-template-columns': '40% 55%',
-      'grid-gap': '50px',
-    },
     '.propertyLangIndicator': {
       width: '30px',
       height: '20px',
@@ -191,8 +186,8 @@ export default class viewEvent extends ItemView {
         title: 'Time',
       }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : m.trust('&nbsp;'),
       // everything else is not listed in DropdownCards, which open only on request
-      m('div.eventViewContainer', { style: { 'margin-top': '50px' } }, [
-        m('div.eventViewLeft', [
+      m('div.viewcontainer', { style: { 'margin-top': '50px' } }, [
+        m('div.viewcontainercolumn', [
           m(DropdownCard, { title: 'description' }, [
             m(DuoLangProperty, {
               title: 'Catchphrase',
@@ -265,8 +260,8 @@ export default class viewEvent extends ItemView {
           ]),
         ]),
 
-        m('div.eventViewRight', [
-          m('h4', 'Accepted Participants'),
+        m('div.viewcontainercolumn', [
+          m('h4', { style: { 'margin-top': '0px' } }, 'Accepted Participants'),
           m(ParticipantsTable, { where: { accepted: true, event: this.data._id } }),
           m('p', ''),
           m('h4', 'Participants on Waiting List'),
