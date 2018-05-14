@@ -49,6 +49,7 @@ class SearchField {
         },
         buttons: {
           none: {
+            before: m.trust(''),
             after: m(ExitButton),
           },
           focus: {
@@ -147,7 +148,7 @@ export default class SelectList {
           } else if (!focus) {
             // don't close the list immidiately, as 'out of focus' could 
             // also mean that the user is clicking on a list item
-            setTimeout(() => { this.showList = false; m.redraw(); }, 50);
+            setTimeout(() => { this.showList = false; m.redraw(); }, 500);
           }
           if (value !== this.searchValue) {
             // if we always update the search value, this would also happen
