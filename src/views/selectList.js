@@ -143,6 +143,14 @@ export default class SelectList {
       ]) : m(SearchField, Object.assign({}, {
         style: { background: 'rgb(78, 242, 167)' },
         onChange: ({ value, focus }) => {
+          // onChange is called either if the value or focus fo the SearchField
+          // changes.
+          // At value change we want to update the search
+          // at focus changt we hie the list of results. As focus change also
+          // happens while clicking on an item in the list of results, the list
+          // is hidden after a short Timeout that has to be sufficiently long
+          // to register the onclick of the listitem. Can be a problem for different
+          // OS and browsers.
           if (focus) {
             this.showList = true;
           } else if (!focus) {
