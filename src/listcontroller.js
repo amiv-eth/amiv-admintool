@@ -90,10 +90,8 @@ export default class DatalistController {
     if (this.onlineSearch) {
       this.search = search;
       this.query.search = search;
-      //this.refresh();
     } else if (this.clientSearchKeys.length > 0) {
       this.search = search;
-      //this.refresh();
     }
   }
 
