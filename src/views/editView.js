@@ -1,8 +1,8 @@
 import Ajv from 'ajv';
-import { Checkbox } from 'polythene-mithril';
+import { Checkbox, IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
-import { textInput, datetimeInput, numInput } from './elements';
+import { textInput, datetimeInput, numInput, icons } from './elements';
 
 const m = require('mithril');
 
@@ -15,7 +15,23 @@ const objectNameForResource = {
   events: 'Event',
 };
 
-export default class EditView extends ItemView {
+export class EditLayout {
+  view({ attrs: { title, onSubmit = () => {}, onCancel = () => {} }, children }) {
+    return m('div', { style: { 'background-color': 'white' } }, [
+      m(Toolbar, [
+        m(IconButton, {
+          icon: { svg: { content: m.trust(icons.clear) } },
+          events: { onclick: onCancel },
+        }),
+        m(ToolbarTitle, title),
+        m(Button, { label: 'submit', events: { onclick: onSubmit } }),
+      ]),
+      children,
+    ]);
+  }
+}
+
+export class EditView extends ItemView {
   /* Extension of ItemView to edit a data item
    *
    * Requires:

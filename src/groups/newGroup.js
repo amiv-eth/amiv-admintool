@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { RaisedButton, TextField } from 'polythene-mithril';
+import { TextField } from 'polythene-mithril';
 import SelectList from '../views/selectList';
 import DatalistController from '../listcontroller';
-import EditView from '../views/editView';
+import { EditView, EditLayout } from '../views/editView';
 
 
 export default class NewGroup extends EditView {
@@ -14,23 +14,18 @@ export default class NewGroup extends EditView {
     );
   }
 
-  view() {
+  view({ attrs: { onCancel = () => {} }}) {
     if (!this.data) return '';
-
-    const submitButton = m(RaisedButton, {
-      disabled: !this.valid,
-      label: 'Submit',
-      events: {
-        onclick: () => {
-          // excahgne moderator object with string of id
-          const { moderator } = this.data;
-          if (moderator) { this.data.moderator = `${moderator._id}`; }
-          this.submit();
-        },
+    return m(EditLayout, {
+      title: 'Edit Group',
+      onSubmit: () => {
+        // excahgne moderator object with string of id
+        const { moderator } = this.data;
+        if (moderator) { this.data.moderator = `${moderator._id}`; }
+        this.submit();
       },
-    });
-
-    return m('div.mywrapper', [
+      onCancel,
+    }, m('div.mywrapper', [
       m('h3', 'Add a New Group'),
       ...this.renderPage({
         name: { type: 'text', label: 'Group Name' },
@@ -55,8 +50,6 @@ export default class NewGroup extends EditView {
           },
         })),
       ]),
-      m('br'),
-      submitButton,
-    ]);
+    ]));
   }
 }

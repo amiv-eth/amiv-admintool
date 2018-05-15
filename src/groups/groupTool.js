@@ -1,16 +1,18 @@
 import m from 'mithril';
 import viewGroup from './viewGroup';
 import newGroup from './newGroup';
+import ItemTool from '../views/itemTool';
 
-export default class GroupView {
+export default class GroupTool extends ItemTool {
   constructor() {
-    this.edit = false;
+    super('groups', { moderator: 1 });
   }
 
-  view() {
-    if (this.edit) {
-      return m(newGroup, { onfinish: () => { this.edit = false; m.redraw(); } });
-    }
-    return m(viewGroup, { onEdit: () => { this.edit = true; } });
+  detailView() {
+    return m(viewGroup, { handler: this.handler, data: this.data });
+  }
+
+  editView() {
+    return m(newGroup, { onCancel: () => { this.modus = 'view'; } });
   }
 }

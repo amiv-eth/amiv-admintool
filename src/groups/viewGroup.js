@@ -163,68 +163,46 @@ class EmailTable {
   }
 }
 
-export default class viewGroup extends ItemView {
-  constructor() {
-    super('groups', { moderator: 1 });
-  }
-
-  oninit() {
-    this.handler.getItem(this.id, this.embedded).then((item) => {
-      this.data = item;
-      m.redraw();
-    });
-  }
-
-  view({ attrs: { onEdit } }) {
-    if (!this.data) return '';
-
-    return m('div.maincontainer', {
-      style: { height: '100%', 'overflow-y': 'scroll' },
-    }, [
-      // Button to edit the Group
-      m(RaisedButton, {
-        element: 'div',
-        label: 'Edit Group',
-        border: true,
-        events: { onclick: onEdit },
-      }),
+export default class viewGroup {
+  view({ attrs: { handler, data } }) {
+    return m('div.maincontainer', [
       // this div is the title line
       m('div.maincontainer', [
-        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, this.data.name),
-        this.data.moderator ? m(Property, {
+        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, data.name),
+        data.moderator ? m(Property, {
           title: 'Moderator',
-          onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
-        }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`) : '',
+          onclick: () => { m.route.set(`/users/${data.moderator._id}`); },
+        }, `${data.moderator.firstname} ${data.moderator.lastname}`) : '',
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
         m('div.viewcontainercolumn', [
           m('h4', 'Members'),
-          m(MembersTable, { group: this.id }),
+          m(MembersTable, { group: data._id }),
         ]),
         // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {
-            list: this.data.receive_from || [],
+            list: data.receive_from || [],
             onSubmit: (newItem) => {
-              const oldList = this.data.receive_from || [];
-              this.handler.patch({
-                _id: this.data._id,
-                _etag: this.data._etag,
+              const oldList = data.receive_from || [];
+              handler.patch({
+                _id: data._id,
+                _etag: data._etag,
                 receive_from: [...oldList, newItem],
-              }).then((newData) => { this.data = newData; });
+              });
             },
             onRemove: (item) => {
-              const oldList = this.data.receive_from;
+              const oldList = data.receive_from;
               // remove the first occurence of the given item-string
               const index = oldList.indexOf(item);
               if (index !== -1) {
                 oldList.splice(index, 1);
-                this.handler.patch({
-                  _id: this.data._id,
-                  _etag: this.data._etag,
+                handler.patch({
+                  _id: data._id,
+                  _etag: data._etag,
                   receive_from: oldList,
-                }).then((newData) => { this.data = newData; });
+                }).then(() => m.redraw());
               }
             },
           }),

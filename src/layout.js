@@ -1,6 +1,6 @@
 import m from 'mithril';
 import '@material/drawer';
-import { List, ListTile, Icon, Toolbar, ToolbarTitle } from 'polythene-mithril';
+import { List, ListTile, Icon, Toolbar, ToolbarTitle, Dialog } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
 import { resetSession } from './auth';
@@ -106,6 +106,8 @@ export default class Layout {
         ),
         m('div.wrapper-content', children),
       ]),
+      // dialog element will show when Dialog.show() is called, this is only a placeholder
+      m(Dialog),
     ]);
   }
 }

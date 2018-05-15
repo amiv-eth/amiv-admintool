@@ -1,9 +1,9 @@
+import m from 'mithril';
 import { ResourceHandler } from '../auth';
-
-const m = require('mithril');
+import { Dialog, Button } from 'polythene-mithril';
 
 export default class ItemView {
-  /* Basic class show a data item
+  /* Basic class to show a data item
    *
    *  Required:
    *  - call constructor with 'resource'

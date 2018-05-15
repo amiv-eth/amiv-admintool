@@ -2,7 +2,7 @@ import m from 'mithril';
 import { RaisedButton, RadioGroup, Slider } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { apiUrl } from 'networkConfig';
-import EditView from '../views/editView';
+import { EditView } from '../views/editView';
 import { fileInput } from '../views/elements';
 
 const style = [
