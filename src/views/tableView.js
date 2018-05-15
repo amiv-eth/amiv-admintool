@@ -3,7 +3,6 @@ import infinite from 'mithril-infinite';
 import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
-import { debounce } from '../utils';
 
 const tableStyles = [
   {
@@ -87,10 +86,6 @@ export default class TableView {
       tableHeight = false,
     },
   }) {
-    const updateList = debounce(() => {
-      controller.refresh();
-    }, 500);
-
     return m('div.tabletool', [
       m(Toolbar, {
         className: 'toolbar',
@@ -99,10 +94,7 @@ export default class TableView {
           m(Search, {
             textfield: {
               label: 'Search',
-              onChange: ({ value }) => {
-                controller.setSearch(value);
-                updateList();
-              },
+              onChange: ({ value }) => { controller.debouncedSearch(value); },
             },
             fullWidth: false,
           }),
