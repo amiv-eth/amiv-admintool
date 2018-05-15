@@ -1,5 +1,7 @@
+import m from 'mithril';
 import Stream from 'mithril/stream';
 import { ResourceHandler } from './auth';
+import { debounce } from './utils';
 
 export default class DatalistController {
   constructor(resource, query = {}, searchKeys = false, onlineSearch = true) {
@@ -16,6 +18,11 @@ export default class DatalistController {
     // we can tell infinite scroll that the data-version has changed.
     this.stateCounter = Stream(0);
     this.refresh();
+    this.debouncedSearch = debounce((search) => {
+      this.setSearch(search);
+      this.refresh();
+      m.redraw();
+    }, 100);
   }
 
   refresh() {
@@ -83,10 +90,10 @@ export default class DatalistController {
     if (this.onlineSearch) {
       this.search = search;
       this.query.search = search;
-      this.refresh();
+      //this.refresh();
     } else if (this.clientSearchKeys.length > 0) {
       this.search = search;
-      this.refresh();
+      //this.refresh();
     }
   }
 

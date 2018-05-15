@@ -26,6 +26,7 @@ class SearchField {
     const ExitButton = attrs.onCancel ? {
       view() {
         return m(Button, {
+          element: 'div',
           label: 'Cancel',
           className: 'blue-button',
           events: { onclick: attrs.onCancel },
@@ -83,7 +84,7 @@ export default class SelectList {
   }
 
   onupdate({ attrs: { selection = null } }) {
-    console.log(selection);
+    //console.log(selection);
     if (selection) this.selected = selection;
   }
 
@@ -142,6 +143,7 @@ export default class SelectList {
         }) : '',
       ]) : m(SearchField, Object.assign({}, {
         style: { background: 'rgb(78, 242, 167)' },
+        onCancel,
         onChange: ({ value, focus }) => {
           // onChange is called either if the value or focus fo the SearchField
           // changes.
@@ -165,11 +167,10 @@ export default class SelectList {
             // So, we make sure this state change is due to value change and
             // not due to focus change.
             this.searchValue = value;
-            controller.setSearch(value);
-            setTimeout(() => { controller.refresh(); }, 500);
+            //controller.setSearch(value);
+            controller.debouncedSearch(value);
           }
         },
-        onCancel,
       })),
       (this.showList && !this.selected) ? m(List, {
         style: { height: '400px', 'background-color': 'white' },
