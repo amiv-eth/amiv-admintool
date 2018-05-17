@@ -75,13 +75,21 @@ class MembersTable {
           onCancel: () => { this.addmode = false; m.redraw(); },
           selectedText: user => `${user.firstname} ${user.lastname}`,
         }) : '',
+        m(Toolbar, { compact: true }, [
+          m(ToolbarTitle, { text: 'Members' }),
+          m(Button, {
+            className: 'blue-button',
+            borders: true,
+            label: 'add',
+            events: { onclick: () => { this.addmode = true; } },
+          }),
+        ]),
         m(TableView, {
-          tableHeight: '420px',
+          tableHeight: '375px',
           controller: this.ctrl,
           keys: ['user.lastname', 'user.firstname', 'user.email'],
           tileContent: data => this.itemRow(data),
           clickOnRows: false,
-          onAdd: () => { this.addmode = true; },
           titles: [
             { text: 'Name', width: '18em' },
             { text: 'Email', width: '9em' },
@@ -214,10 +222,7 @@ export default class viewGroup extends ItemView {
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
-        m('div.viewcontainercolumn', [
-          m('h4', 'Members'),
-          m(MembersTable, { group: this.id }),
-        ]),
+        m('div.viewcontainercolumn', m(MembersTable, { group: this.id })),
         // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {
