@@ -82,7 +82,7 @@ export default class TableView {
     attrs: {
       controller,
       titles,
-      onAdd = () => {},
+      onAdd = false,
       tableHeight = false,
     },
   }) {
@@ -98,12 +98,12 @@ export default class TableView {
             },
             fullWidth: false,
           }),
-          m(Button, {
+          onAdd ? m(Button, {
             className: 'blue-button',
             borders: true,
             label: 'Add',
             events: { onclick: () => { onAdd(); } },
-          }),
+          }) : '',
         ],
       }),
       m(List, {
