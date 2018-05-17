@@ -38,6 +38,10 @@ export default class NewGroup extends EditView {
           type: 'checkbox',
           label: 'the group can be seen by all users and they can subscribe themselves',
         },
+        requires_storage: {
+          type: 'checkbox',
+          label: "the group shares a folder with it's members in the AMIV Cloud",
+        }
       }),
       m('div', { style: { display: 'flex' } }, [
         m(TextField, { label: 'Group Moderator: ', disabled: true, style: { width: '160px' } }),

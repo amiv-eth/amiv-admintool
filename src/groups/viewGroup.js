@@ -1,5 +1,14 @@
 import m from 'mithril';
-import { Button, RaisedButton, Card, Toolbar, ToolbarTitle, TextField, Icon } from 'polythene-mithril';
+import {
+  Button,
+  RaisedButton,
+  Card,
+  Toolbar,
+  ToolbarTitle,
+  TextField,
+  Icon,
+  IconButton
+} from 'polythene-mithril';
 import { icons, Property } from '../views/elements';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
@@ -195,6 +204,13 @@ export default class viewGroup extends ItemView {
           title: 'Moderator',
           onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
         }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`) : '',
+        this.data.requires_storage ? m(IconButton, {
+          label: 'has a folder on the AMIV Cloud',
+          style: { color: '#ffffff', backgroundColor: 'orange' },
+          icon: { svg: { content: m.trust(icons.cloud) } },
+          inactive: true,
+          compact: true,
+        }): '',
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
