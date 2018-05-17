@@ -123,7 +123,10 @@ export class ResourceHandler {
       const searchQuery = {
         $or: this.searchKeys.map((key) => {
           const fieldQuery = {};
-          fieldQuery[key] = query.search;
+          fieldQuery[key] = {
+            $regex: `${query.search}`,
+            $options: 'i'
+          };
           return fieldQuery;
         }),
       };

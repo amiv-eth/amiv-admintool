@@ -51,6 +51,7 @@ export default class DatalistController {
         // embedded keys like user.firstname
         if (!this.onlineSearch && this.clientSearchKeys.length > 0 && this.search) {
           const response = [];
+          const searchRegex = new RegExp(this.search, "i")
           // We go through all response items and will add them to response if
           // they match the query.
           data._items.forEach((item) => {
@@ -63,13 +64,13 @@ export default class DatalistController {
                 key.split('.').forEach((subKey) => {
                   intermediateObject = intermediateObject[subKey];
                 });
-                if (intermediateObject.includes(this.search)) {
+                if (intermediateObject.match(searchRegex)) {
                   response.push(item);
                   // return true to end the search of this object, it is already
                   // matched
                   return true;
                 }
-              } else if (item[key] && item[key].includes(this.search)) {
+              } else if (item[key] && item[key].match(searchRegex)) {
                 response.push(item);
                 // return true to end the search of this object, it is already
                 // matched
