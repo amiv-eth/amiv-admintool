@@ -62,6 +62,7 @@ export default class EditView extends ItemView {
       });
       // delete objectSchema.properties['_id'];
       console.log(this.ajv.addSchema(objectSchema, 'schema'));
+      this.validate();
     }).catch((error) => { console.log(error); });
   }
 
@@ -78,27 +79,7 @@ export default class EditView extends ItemView {
 
         console.log(this.data);
 
-        // validate against schema
-        const validate = this.ajv.getSchema('schema');
-        // sometimes the schema loading does not work or is not finished
-        // before the first edit, this is to prevent crashes
-        if (validate) {
-          this.valid = validate(this.data);
-
-          console.log(validate.errors);
-          if (this.valid) {
-            Object.keys(this.errors).forEach((field) => {
-              this.errors[field] = [];
-            });
-          } else {
-            // get errors for respective fields
-            Object.keys(this.errors).forEach((field) => {
-              const errors = validate.errors.filter(error =>
-                `.${field}` === error.dataPath);
-              this.errors[field] = errors.map(error => error.message);
-            });
-          }
-        }
+        this.validate();
       },
       getErrors: () => this.errors[attrs.name],
       value: this.data[attrs.name],
@@ -107,6 +88,30 @@ export default class EditView extends ItemView {
     Object.keys(attrs).forEach((key) => { boundFormelement[key] = attrs[key]; });
 
     return boundFormelement;
+  }
+
+  validate() {
+    // validate against schema
+    const validate = this.ajv.getSchema('schema');
+    // sometimes the schema loading does not work or is not finished
+    // before the first edit, this is to prevent crashes
+    if (validate) {
+      this.valid = validate(this.data);
+      console.log(validate.errors);
+      if (this.valid) {
+        Object.keys(this.errors).forEach((field) => {
+          this.errors[field] = [];
+        });
+      } else {
+        // get errors for respective fields
+        Object.keys(this.errors).forEach((field) => {
+          const errors = validate.errors.filter(error =>
+            `.${field}` === error.dataPath);
+          this.errors[field] = errors.map(error => error.message);
+        });
+      }
+    }
+    m.redraw();
   }
 
   renderPage(page) {
