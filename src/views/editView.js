@@ -3,6 +3,7 @@ import { Checkbox, IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-m
 import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
 import { textInput, datetimeInput, numInput, icons } from './elements';
+import { colors } from '../style';
 
 const m = require('mithril');
 
@@ -206,7 +207,7 @@ export default class EditView extends ItemView {
 
   layout(children) {
     return m('div', { style: { 'background-color': 'white' } }, [
-      m(Toolbar, { style: { 'background-color': 'orange' } }, [
+      m(Toolbar, { style: { 'background-color': colors.orange } }, [
         m(IconButton, {
           icon: { svg: { content: m.trust(icons.clear) } },
           events: { onclick: () => { this.controller.cancel(); } },
@@ -214,6 +215,7 @@ export default class EditView extends ItemView {
         m(ToolbarTitle, ((this.controller.modus === 'new') ? 'New' : 'Edit') +
           ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
         m(Button, {
+          className: 'blue-button-filled',
           label: 'submit',
           disabled: !this.valid,
           events: { onclick: () => { this.beforeSubmit(); } },

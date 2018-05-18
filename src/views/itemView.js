@@ -1,5 +1,17 @@
 import m from 'mithril';
-import { Dialog, Button, RaisedButton } from 'polythene-mithril';
+import { Toolbar, Dialog, Button } from 'polythene-mithril';
+import { ButtonCSS } from 'polythene-css';
+import { colors } from '../style';
+
+ButtonCSS.addStyle('.itemView-edit-button', {
+  color_light_background: colors.light_blue,
+  color_light_text: 'white',
+});
+
+ButtonCSS.addStyle('.itemView-delete-button', {
+  color_light_text: colors.amiv_red,
+  color_light_border: colors.amiv_red,
+});
 
 export default class ItemView {
   /* Basic class to show a data item
@@ -40,20 +52,20 @@ export default class ItemView {
   layout(children) {
     if (!this.controller || !this.controller.data) return '';
     return m('div', { style: { height: '100%', 'overflow-y': 'scroll' } }, [
-      m('div', { style: { display: 'flex' } }, [
-        m(RaisedButton, {
+      m(Toolbar, m('div.pe-button-row', [
+        m(Button, {
           element: 'div',
-          label: 'Edit',
-          border: true,
+          className: 'itemView-edit-button',
+          label: `Edit ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
           events: { onclick: () => { this.controller.changeModus('edit'); } },
         }),
-        m(RaisedButton, {
-          className: 'red-row-button',
-          label: 'Delete',
+        m(Button, {
+          label: `Delete ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
+          className: 'itemView-delete-button',
           border: true,
           events: { onclick: () => this.delete() },
         }),
-      ]),
+      ])),
       children,
     ]);
   }
