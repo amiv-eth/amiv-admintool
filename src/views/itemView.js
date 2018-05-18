@@ -1,26 +1,60 @@
 import m from 'mithril';
-import { ResourceHandler } from '../auth';
-import { Dialog, Button } from 'polythene-mithril';
+import { Dialog, Button, RaisedButton } from 'polythene-mithril';
 
 export default class ItemView {
   /* Basic class to show a data item
    *
    *  Required:
-   *  - call constructor with 'resource'
-   *  - either make sure m.route.params('id') exists or set this.id in
-   *    constructor
+   *  - gets attribute 'controller' when rendered
    */
-  constructor(resource, embedded) {
-    this.data = null;
-    this.id = m.route.param('id');
-    this.handler = new ResourceHandler(resource);
-    this.embedded = embedded || {};
+  constructor({ attrs: { controller, onDelete } }) {
+    this.controller = controller;
+    this.data = this.controller.data;
+    this.handler = this.controller.handler;
+    this.resource = this.controller.resource;
+    if (!onDelete) this.onDelete = () => { m.route.set(`/${controller.resource}`); };
+    else this.onDelete = onDelete;
   }
 
-  oninit() {
-    this.handler.getItem(this.id, this.embedded).then((item) => {
-      this.data = item;
-      m.redraw();
+  delete() {
+    Dialog.show({
+      body: 'Are you sure you want to delete this item?',
+      backdrop: true,
+      footerButtons: [
+        m(Button, {
+          label: 'Cancel',
+          events: { onclick: () => Dialog.hide() },
+        }),
+        m(Button, {
+          label: 'Delete',
+          events: {
+            onclick: () => {
+              Dialog.hide();
+              this.controller.handler.delete(this.data).then(this.onDelete);
+            },
+          },
+        })],
     });
+  }
+
+  layout(children) {
+    if (!this.controller || !this.controller.data) return '';
+    return m('div', { style: { height: '100%', 'overflow-y': 'scroll' } }, [
+      m('div', { style: { display: 'flex' } }, [
+        m(RaisedButton, {
+          element: 'div',
+          label: 'Edit',
+          border: true,
+          events: { onclick: () => { this.controller.changeModus('edit'); } },
+        }),
+        m(RaisedButton, {
+          className: 'red-row-button',
+          label: 'Delete',
+          border: true,
+          events: { onclick: () => this.delete() },
+        }),
+      ]),
+      children,
+    ]);
   }
 }

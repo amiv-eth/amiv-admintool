@@ -2,31 +2,28 @@ import m from 'mithril';
 import { TextField } from 'polythene-mithril';
 import SelectList from '../views/selectList';
 import DatalistController from '../listcontroller';
-import { EditView, EditLayout } from '../views/editView';
+import EditView from '../views/editView';
 
 
 export default class NewGroup extends EditView {
   constructor(vnode) {
-    super(vnode, 'groups', { moderator: 1 });
+    super(vnode);
     this.userController = new DatalistController(
       'users', {},
       ['firstname', 'lastname', 'email', 'nethz'],
     );
+    console.log(this.data);
   }
 
-  view({ attrs: { onCancel = () => {} }}) {
-    if (!this.data) return '';
-    return m(EditLayout, {
-      title: 'Edit Group',
-      onSubmit: () => {
-        // excahgne moderator object with string of id
-        const { moderator } = this.data;
-        if (moderator) { this.data.moderator = `${moderator._id}`; }
-        this.submit();
-      },
-      onCancel,
-    }, m('div.mywrapper', [
-      m('h3', 'Add a New Group'),
+  beforeSubmit() {
+    // exchange moderator object with string of id
+    const { moderator } = this.data;
+    if (moderator) { this.data.moderator = `${moderator._id}`; }
+    this.submit();
+  }
+
+  view() {
+    return this.layout([
       ...this.renderPage({
         name: { type: 'text', label: 'Group Name' },
         allow_self_enrollment: {
@@ -50,6 +47,6 @@ export default class NewGroup extends EditView {
           },
         })),
       ]),
-    ]));
+    ]);
   }
 }

@@ -3,7 +3,7 @@ import { Card } from 'polythene-mithril';
 import DatalistController from '../listcontroller';
 
 
-class GroupItem {
+class GroupListItem {
   view({ attrs: { name, _id } }) {
     return m('div', {
       style: {
@@ -34,7 +34,7 @@ export default class GroupList {
 
     return m(
       'div', { style: { display: 'flex', 'flex-wrap': 'wrap' } },
-      this.data.map(item => m(GroupItem, item)),
+      this.data.map(item => m(GroupListItem, item)),
       m('div', {
         style: {
           padding: '20px',

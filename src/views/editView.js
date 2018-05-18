@@ -15,23 +15,7 @@ const objectNameForResource = {
   events: 'Event',
 };
 
-export class EditLayout {
-  view({ attrs: { title, onSubmit = () => {}, onCancel = () => {} }, children }) {
-    return m('div', { style: { 'background-color': 'white' } }, [
-      m(Toolbar, [
-        m(IconButton, {
-          icon: { svg: { content: m.trust(icons.clear) } },
-          events: { onclick: onCancel },
-        }),
-        m(ToolbarTitle, title),
-        m(Button, { label: 'submit', events: { onclick: onSubmit } }),
-      ]),
-      children,
-    ]);
-  }
-}
-
-export class EditView extends ItemView {
+export default class EditView extends ItemView {
   /* Extension of ItemView to edit a data item
    *
    * Requires:
@@ -43,10 +27,9 @@ export class EditView extends ItemView {
    * - bind(attrs): binds a form-field against this.data
    * - submit
    */
-  constructor(vnode, resource, embedded, valid = true) {
-    super(resource, embedded);
+  constructor(vnode, valid = true) {
+    super(vnode);
     this.changed = false;
-    this.resource = resource;
 
     // state for validation
     this.valid = valid;
@@ -56,28 +39,12 @@ export class EditView extends ItemView {
       allErrors: true,
     });
     this.errors = {};
-    this.data = {};
-
-    // callback when edit is finished
-    if (vnode.attrs.onfinish) this.callback = vnode.attrs.onfinish;
-    else {
-      this.callback = (item) => {
-        console.log(item);
-        if (item) m.route.set(`/${resource}/${item._id}`);
-        else m.route.set(`/${resource}`);
-      };
-    }
+    // copy a local version of the controller data to manipulate before submission
+    // (changes will therefore not be applied if edit is cancelled)
+    this.data = Object.assign({}, this.controller.data);
   }
 
   oninit() {
-    // if this.id is set, this is an edit view of an existing event.
-    // Therefore, we load the current state of the event from the API.
-    if (this.id) {
-      this.handler.getItem(this.id, this.embedded).then((item) => {
-        this.data = item;
-        m.redraw();
-      });
-    }
     // load schema
     m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
       const objectSchema = schema.definitions[
@@ -170,15 +137,13 @@ export class EditView extends ItemView {
   submit(formData = false) {
     if (Object.keys(this.data).length > 0) {
       let request;
-      if (this.id) {
+      if (this.controller.modus === 'edit') {
         // if id is known, this is a patch to an existing item
-        request = this.handler.patch(this.data, formData);
+        request = this.controller.patch(this.data, formData);
       } else {
-        request = this.handler.post(this.data);
+        request = this.controller.post(this.data);
       }
-      request.then((response) => {
-        this.callback(response);
-      }).catch((error) => {
+      request.catch((error) => {
         console.log(error);
         // Process the API error
         const { response } = error;
@@ -193,7 +158,26 @@ export class EditView extends ItemView {
         }
       });
     } else {
-      this.callback();
+      this.controller.changeModus('view');
     }
+  }
+
+  beforeSubmit() {
+    this.submit();
+  }
+
+  layout(children) {
+    return m('div', { style: { 'background-color': 'white' } }, [
+      m(Toolbar, { style: { 'background-color': 'orange' } }, [
+        m(IconButton, {
+          icon: { svg: { content: m.trust(icons.clear) } },
+          events: { onclick: () => { this.controller.cancel(); } },
+        }),
+        m(ToolbarTitle, ((this.controller.modus === 'new') ? 'New' : 'Edit') +
+          ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
+        m(Button, { label: 'submit', events: { onclick: () => { this.beforeSubmit(); } } }),
+      ]),
+      m('div.maincontainer', children),
+    ]);
   }
 }

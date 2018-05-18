@@ -1,10 +1,9 @@
 import m from 'mithril';
 import { OauthRedirect } from './auth';
-import GroupList from './groups/overview';
-import GroupView from './groups/groupTool';
+import GroupList from './groups/list';
+import GroupItem from './groups/item';
 import { UserModal, UserTable, NewUser } from './users/userTool';
 import { MembershipView } from './membershipTool';
-import NewGroup from './groups/newGroup';
 import EventTable from './events/table';
 import newEvent from './events/newEvent';
 import EventModal from './events/eventModal';
@@ -38,8 +37,8 @@ m.route(root, '/users', {
   '/draftevent': layoutWith(eventDraft),
   '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith(GroupList),
-  '/groups/:id': layoutWith(GroupView),
-  '/newgroup': layoutWith(NewGroup),
+  '/groups/:id': layoutWith(GroupItem),
+  '/newgroup': layoutWith(GroupItem),
   '/oauthcallback': OauthRedirect,
   '/joboffers': layoutWith(jobTable),
   '/newjoboffer': layoutWith(newJob),
