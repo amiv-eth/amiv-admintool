@@ -80,20 +80,24 @@ export default class EditView extends ItemView {
 
         // validate against schema
         const validate = this.ajv.getSchema('schema');
-        this.valid = validate(this.data);
+        // sometimes the schema loading does not work or is not finished
+        // before the first edit, this is to prevent crashes
+        if (validate) {
+          this.valid = validate(this.data);
 
-        console.log(validate.errors);
-        if (this.valid) {
-          Object.keys(this.errors).forEach((field) => {
-            this.errors[field] = [];
-          });
-        } else {
-          // get errors for respective fields
-          Object.keys(this.errors).forEach((field) => {
-            const errors = validate.errors.filter(error =>
-              `.${field}` === error.dataPath);
-            this.errors[field] = errors.map(error => error.message);
-          });
+          console.log(validate.errors);
+          if (this.valid) {
+            Object.keys(this.errors).forEach((field) => {
+              this.errors[field] = [];
+            });
+          } else {
+            // get errors for respective fields
+            Object.keys(this.errors).forEach((field) => {
+              const errors = validate.errors.filter(error =>
+                `.${field}` === error.dataPath);
+              this.errors[field] = errors.map(error => error.message);
+            });
+          }
         }
       },
       getErrors: () => this.errors[attrs.name],
@@ -175,7 +179,11 @@ export default class EditView extends ItemView {
         }),
         m(ToolbarTitle, ((this.controller.modus === 'new') ? 'New' : 'Edit') +
           ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
-        m(Button, { label: 'submit', events: { onclick: () => { this.beforeSubmit(); } } }),
+        m(Button, {
+          label: 'submit',
+          disabled: !this.valid,
+          events: { onclick: () => { this.beforeSubmit(); } },
+        }),
       ]),
       m('div.maincontainer', children),
     ]);

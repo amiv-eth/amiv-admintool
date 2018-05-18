@@ -2,7 +2,7 @@ import m from 'mithril';
 import { RaisedButton, RadioGroup, Slider } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { apiUrl } from 'networkConfig';
-import { EditView } from '../views/editView';
+import EditView from '../views/editView';
 import { fileInput } from '../views/elements';
 
 const style = [
@@ -16,14 +16,68 @@ styler.add('event-add', style);
 
 export default class newEvent extends EditView {
   constructor(vnode) {
-    super(vnode, 'events', {});
+    super(vnode);
     this.currentpage = 1;
-    this.data = { priority: 1 };
+    if (!this.data.priority) this.data.priority = 1;
+  }
+
+  beforeSubmit() {
+    // Overwrite existing images with new images
+    ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
+      if (this.data[`new_${key}`]) {
+        this.data[`img_${key}`] = this.data[`new_${key}`];
+        delete this.data[`new_${key}`];
+      } else if (this.data[`img_${key}`]) {
+        delete this.data[`img_${key}`];
+      }
+    });
+
+    // Merge Options for additional fields
+    const additionalFields = {
+      schema: 'http://json-schema.org/draft-04/schema#',
+      additionalProperties: false,
+      title: 'Additional Fields',
+      type: 'object',
+      properties: {},
+      required: [],
+    };
+    if (this.data.add_fields_sbb) {
+      additionalFields.properties.SBB_Abo = {
+        type: 'string',
+        enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
+      };
+      additionalFields.required.push('SBB_Abo');
+      delete this.data.add_fields_sbb;
+    }
+
+    if (this.data.add_fields_food) {
+      additionalFields.properties.Food = {
+        type: 'string',
+        enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
+      };
+      additionalFields.properties.specialFood = {
+        'Special Food Requirements': {
+          type: 'string',
+        },
+      };
+      additionalFields.required.push('Food');
+      delete this.data.add_fields_food;
+    }
+    if (this.data.add_fields_food || this.data.add_fields_sbb) {
+      this.data.additional_fields = JSON.stringify(additionalFields);
+    }
+
+    // if spots is not set, also remove 'allow_email_signup'
+    if (!('spots' in this.data) && 'allow_email_signup' in this.data
+        && !this.data.allow_email_signup) {
+      delete this.data.allow_email_signup;
+    }
+
+    console.log(this.data);
+    this.submit(true);
   }
 
   view() {
-    if (!this.currentpage) return '';
-
     const buttonRight = m(RaisedButton, {
       label: 'next',
       disabled: this.currentpage === 5,
@@ -64,67 +118,12 @@ export default class newEvent extends EditView {
       value: this.selection_strategy,
     });
 
-    const buttonFinish = m(RaisedButton, {
-      disabled: !this.valid,
-      label: 'Create event',
-      events: {
-        onclick: () => {
-          // Overwrite existing images with new images
-          ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
-            if (this.data[`new_${key}`]) {
-              this.data[`img_${key}`] = this.data[`new_${key}`];
-              delete this.data[`new_${key}`];
-            } else if (this.data[`img_${key}`]) {
-              delete this.data[`img_${key}`];
-            }
-          });
-
-          // Merge Options for additional fields
-          const additionalFields = {
-            schema: 'http://json-schema.org/draft-04/schema#',
-            additionalProperties: false,
-            title: 'Additional Fields',
-            type: 'object',
-            properties: {},
-            required: [],
-          };
-          if (this.data.add_fields_sbb) {
-            additionalFields.properties.SBB_Abo = {
-              type: 'string',
-              enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
-            };
-            additionalFields.required.push('SBB_Abo');
-            delete this.data.add_fields_sbb;
-          }
-
-          if (this.data.add_fields_food) {
-            additionalFields.properties.Food = {
-              type: 'string',
-              enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
-            };
-            additionalFields.properties.specialFood = {
-              'Special Food Requirements': {
-                type: 'string',
-              },
-            };
-            additionalFields.required.push('Food');
-            delete this.data.add_fields_food;
-          }
-          if (this.data.add_fields_food || this.data.add_fields_sbb) {
-            this.data.additional_fields = JSON.stringify(additionalFields);
-          }
-          console.log(this.data);
-          this.submit(true);
-        },
-      },
-    });
-
     const title = [
-      'Create an Event', 'When and Where?', 'Signups', 'Advertisement', 'Images',
+      'Event Description', 'When and Where?', 'Signups', 'Advertisement', 'Images',
     ][this.currentpage - 1];
 
     // checks currentPage and selects the fitting page
-    return m('div.mywrapper', [
+    return this.layout([
       m('h3', title),
       buttonLeft,
       m.trust('&nbsp;'),
@@ -225,8 +224,6 @@ export default class newEvent extends EditView {
             label: 'Advertise on Infoscreen',
           },
         }),
-        m('br'),
-        buttonFinish,
       ]),
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
@@ -242,8 +239,6 @@ export default class newEvent extends EditView {
             accept: 'image/png, image/jpeg',
           })),
         ]),
-        m('br'),
-        buttonFinish,
       ]),
     ]);
   }

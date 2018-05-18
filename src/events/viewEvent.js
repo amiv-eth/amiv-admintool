@@ -113,8 +113,8 @@ class EmailList {
 }
 
 export default class viewEvent extends ItemView {
-  constructor() {
-    super('events');
+  constructor(vnode) {
+    super(vnode);
     this.signupHandler = new ResourceHandler('eventsignups');
     this.description = false;
     this.advertisement = false;
@@ -125,10 +125,6 @@ export default class viewEvent extends ItemView {
   }
 
   oninit() {
-    this.handler.getItem(this.id, this.embedded).then((item) => {
-      this.data = item;
-      m.redraw();
-    });
     this.setUpEmailList(this.showAllEmails);
   }
 
@@ -145,24 +141,14 @@ export default class viewEvent extends ItemView {
     });
   }
 
-  view({ attrs: { onEdit } }) {
-    if (!this.data) return '';
-
+  view() {
     let displaySpots = '-';
 
     if (this.data.spots !== 0) {
       displaySpots = this.data.spots;
     }
 
-    return m('div', {
-      style: { height: '100%', 'overflow-y': 'scroll', padding: '10px' },
-    }, [
-      m(Button, {
-        element: 'div',
-        label: 'Update Event',
-        events: { onclick: onEdit },
-      }),
-
+    return this.layout([
       // this div is the title line
       m('div', [
         // event image if existing
