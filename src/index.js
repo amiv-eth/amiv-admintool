@@ -8,9 +8,8 @@ import EventTable from './events/table';
 import EventItem from './events/item';
 import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
-import newJob from './jobs/newJob';
-import jobTable from './jobs/jobTable';
-import jobModal from './jobs/jobModal';
+import JobTable from './jobs/table';
+import JobItem from './jobs/item';
 import Layout from './layout';
 import './style';
 
@@ -39,10 +38,9 @@ m.route(root, '/users', {
   '/groups/:id': layoutWith(GroupItem),
   '/newgroup': layoutWith(GroupItem),
   '/oauthcallback': OauthRedirect,
-  '/joboffers': layoutWith(jobTable),
-  '/newjoboffer': layoutWith(newJob),
-  '/joboffers/:id': layoutWith(jobModal),
-  // '/announce': layoutWith(AnnounceTool),
+  '/joboffers': layoutWith(JobTable),
+  '/newjoboffer': layoutWith(JobItem),
+  '/joboffers/:id': layoutWith(JobItem),
 });
 
 m.route.prefix('');

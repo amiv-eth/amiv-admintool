@@ -34,7 +34,7 @@ export default class JobTable {
         { text: 'Company', width: '21em' },
         { text: 'End', width: '9em' },
       ],
-      onAdd: () => { m.route.set('/newjob'); },
+      onAdd: () => { m.route.set('/newjoboffer'); },
     });
   }
 }
