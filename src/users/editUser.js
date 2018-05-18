@@ -1,24 +1,11 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup } from 'polythene-mithril';
-import { EditView } from '../views/editView';
+import { RadioGroup } from 'polythene-mithril';
+import EditView from '../views/editView';
 
 
 export default class UserEdit extends EditView {
-  constructor(vnode) {
-    super(vnode, 'users', {});
-  }
-
   view() {
-    // do not render anything if there is no data yet
-    if (!this.data) return m.trust('');
-
-    const submitButton = m(RaisedButton, {
-      disabled: !this.valid,
-      label: 'Submit',
-      events: { onclick: () => { this.submit(); } },
-    });
-
-    return m('form', [
+    return this.layout([
       ...this.renderPage({
         lastname: { type: 'text', label: 'Last Name' },
         firstname: { type: 'text', label: 'First Name' },
@@ -63,7 +50,6 @@ export default class UserEdit extends EditView {
         ],
         onChange: ({ value }) => { this.data.department = value; },
       }),
-      submitButton,
     ]);
   }
 }

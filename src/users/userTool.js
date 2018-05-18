@@ -1,38 +1,20 @@
 import m from 'mithril';
-import UserEdit from './editUser';
-import UserView from './viewUser';
+import EditUser from './editUser';
+import ViewUser from './viewUser';
 import TableView from '../views/tableView';
 import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
+import ItemController from '../itemcontroller'
 
-export class NewUser extends UserEdit {
-  constructor(vnode) {
-    super(vnode);
-    this.data = {
-      membership: 'regular',
-    };
-    this.valid = false;
-
-    // if the creation is finished, UI should switch to new User
-    this.callback = (response) => { m.route.set(`/users/${response.data._id}`); };
-  }
-}
-
-export class UserModal {
+export class UserItem {
   constructor() {
-    this.edit = false;
+    this.controller = new ItemController('users');
   }
 
   view() {
-    if (this.edit) {
-      return m(UserEdit, { onfinish: () => { this.edit = false; m.redraw(); } });
-    }
-    // else
-    return m('div', [
-      m('div.btn.btn-default', { onclick: () => { this.edit = true; } }, 'Edit'),
-      m('br'),
-      m(UserView),
-    ]);
+    if (!this.controller || !this.controller.data) return '';
+    if (this.controller.modus !== 'view') return m(EditUser, { controller: this.controller });
+    return m(ViewUser, { controller: this.controller });
   }
 }
 

@@ -6,8 +6,8 @@ import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
 
 export default class UserView extends ItemView {
-  constructor() {
-    super('users');
+  constructor(vnode) {
+    super(vnode);
     // a controller to handle the groupmemberships of this user
     this.groupmemberships = new DatalistController('groupmemberships', {
       where: { user: this.id },
@@ -34,17 +34,10 @@ export default class UserView extends ItemView {
   }
 
   oninit() {
-    this.handler.getItem(this.id, this.embedded).then((item) => {
-      this.data = item;
-      m.redraw();
-    });
     this.groupmemberships.refresh();
   }
 
   view() {
-    // do not render anything if there is no data yet
-    if (!this.data) return m.trust('');
-
     let membershipBadge = m('span.label.label-important', 'No Member');
     if (this.data.membership === 'regular') {
       membershipBadge = m('span.label.label-success', 'Member');
@@ -73,7 +66,7 @@ export default class UserView extends ItemView {
       },
     });
 
-    return m('div', [
+    return this.layout([
       m('h1', `${this.data.firstname} ${this.data.lastname}`),
       membershipBadge,
       m('table', detailKeys.map(key => m('tr', [

@@ -2,7 +2,7 @@ import m from 'mithril';
 import { OauthRedirect } from './auth';
 import GroupList from './groups/list';
 import GroupItem from './groups/item';
-import { UserModal, UserTable, NewUser } from './users/userTool';
+import { UserItem, UserTable } from './users/userTool';
 import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
 import EventItem from './events/item';
@@ -27,8 +27,8 @@ function layoutWith(view) {
 m.route.prefix('');
 m.route(root, '/users', {
   '/users': layoutWith(UserTable),
-  '/users/:id': layoutWith(UserModal),
-  '/newuser': layoutWith(NewUser),
+  '/users/:id': layoutWith(UserItem),
+  '/newuser': layoutWith(UserItem),
   '/groupmemberships/:id': layoutWith(MembershipView),
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(EventItem),
