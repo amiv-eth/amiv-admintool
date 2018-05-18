@@ -92,14 +92,10 @@ export class ResourceHandler {
    * searchKeys: keys in the resource item on which to perform search, i.e.
    *   when search is set, any of these keys may match the search pattern
    *   E.g. for an event, this may be ['title_de', 'title_en', 'location']
-   * updateCallback: method with argument of newData
-   *   is called additionally to the promise resolve at any time that data of an item is
-   *   changed
    */
-  constructor(resource, searchKeys = false, updateCallback = () => {}) {
+  constructor(resource, searchKeys = false) {
     this.resource = resource;
     this.searchKeys = searchKeys || config[resource].searchKeys;
-    this.updateCallback = updateCallback;
     this.noPatchKeys = [
       '_etag', '_id', '_created', '_links', '_updated',
       ...(config[resource].notPatchableKeys || [])];
@@ -199,7 +195,6 @@ export class ResourceHandler {
             resetSession();
             reject();
           } else {
-            this.updateCallback(response.data);
             resolve(response.data);
           }
         }).catch((e) => {
@@ -237,7 +232,6 @@ export class ResourceHandler {
             resetSession();
             reject();
           } else {
-            this.updateCallback(response.data);
             resolve(response.data);
           }
         }).catch((e) => {
