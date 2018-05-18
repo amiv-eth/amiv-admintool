@@ -47,14 +47,8 @@ styler.add('layout', layoutStyle);
 class Menupoint {
   view({ attrs: { title, href, icon = null } }) {
     return m(ListTile, {
-      url: {
-        href,
-        oncreate: m.route.link,
-      },
-      front: icon ? m(Icon, {
-        avatar: true,
-        svg: m.trust(icon),
-      }) : '',
+      url: { href, oncreate: m.route.link },
+      front: icon ? m(Icon, { svg: m.trust(icon) }) : '',
       title,
     });
   }

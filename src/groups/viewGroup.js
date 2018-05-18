@@ -1,5 +1,14 @@
 import m from 'mithril';
-import { Button, RaisedButton, Card, Toolbar, ToolbarTitle, TextField, Icon } from 'polythene-mithril';
+import {
+  Button,
+  RaisedButton,
+  Card,
+  Toolbar,
+  ToolbarTitle,
+  TextField,
+  Icon,
+  IconButton
+} from 'polythene-mithril';
 import { icons, Property } from '../views/elements';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
@@ -66,13 +75,21 @@ class MembersTable {
           onCancel: () => { this.addmode = false; m.redraw(); },
           selectedText: user => `${user.firstname} ${user.lastname}`,
         }) : '',
+        m(Toolbar, { compact: true }, [
+          m(ToolbarTitle, { text: 'Members' }),
+          m(Button, {
+            className: 'blue-button',
+            borders: true,
+            label: 'add',
+            events: { onclick: () => { this.addmode = true; } },
+          }),
+        ]),
         m(TableView, {
-          tableHeight: '420px',
+          tableHeight: '375px',
           controller: this.ctrl,
           keys: ['user.lastname', 'user.firstname', 'user.email'],
           tileContent: data => this.itemRow(data),
           clickOnRows: false,
-          onAdd: () => { this.addmode = true; },
           titles: [
             { text: 'Name', width: '18em' },
             { text: 'Email', width: '9em' },
@@ -173,13 +190,17 @@ export default class viewGroup extends ItemView {
           title: 'Moderator',
           onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
         }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`) : '',
+        this.data.requires_storage ? m(IconButton, {
+          label: 'has a folder on the AMIV Cloud',
+          style: { color: '#ffffff', backgroundColor: 'orange' },
+          icon: { svg: { content: m.trust(icons.cloud) } },
+          inactive: true,
+          compact: true,
+        }): '',
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
-        m('div.viewcontainercolumn', [
-          m('h4', 'Members'),
-          m(MembersTable, { group: this.data._id }),
-        ]),
+        m('div.viewcontainercolumn', m(MembersTable, { group: this.data._id })),
         // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {

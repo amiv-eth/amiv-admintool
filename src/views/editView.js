@@ -16,16 +16,19 @@ const objectNameForResource = {
 };
 
 export default class EditView extends ItemView {
-  /* Extension of ItemView to edit a data item
+  /**
+   * Extension of ItemView to edit a data item
    *
    * Requires:
    * - call constructor with vnode, resource, (valid, true by default)
    * - vnode.attrs.onfinish has to be a callback function that is called after
    *   the edit is finished
-   *
-   * Provides Methods:
-   * - bind(attrs): binds a form-field against this.data
-   * - submit
+   * @param  {object} vnode   [as provided by mithril]
+   * @param  {string} resource  [the API resource of this view, e.g. 'events']
+   * @param  {object} embedded  [any embedding query that should be added
+   *                             to API requests for this resource]
+   * @param  {Boolean} valid    [whether the view should be valid before the
+   *                             first validation]
    */
   constructor(vnode, valid = true) {
     super(vnode);
@@ -66,7 +69,15 @@ export default class EditView extends ItemView {
     }).catch((error) => { console.log(error); });
   }
 
-  // bind form-fields to the object data and validation
+  /**
+   * bind form-fields to the object data and validation
+   *
+   * A binded form-field automatically updates this.data and calls validation
+   * on the current data state with every change.
+   *
+   * @param  {object} options for the input element
+   * @return {object} modified options passed to the input element
+   */
   bind(attrs) {
     // initialize error-list for every bound field
     if (!this.errors[attrs.name]) this.errors[attrs.name] = [];
@@ -114,6 +125,17 @@ export default class EditView extends ItemView {
     m.redraw();
   }
 
+  /**
+   * Rendering Function to make form descriptions shorter
+   *
+   * @param  {object} Collection of descriptions for input form fields
+   *                  {key: description}
+   *                  with key matching the field in this.data
+   *                  description containing type in ['text', 'number',
+   *                  'checkbox', 'datetime'] and any attributes passed to the
+   *                  input element
+   * @return {string} mithril rendered output
+   */
   renderPage(page) {
     return Object.keys(page).map((key) => {
       const field = page[key];
@@ -143,6 +165,13 @@ export default class EditView extends ItemView {
     });
   }
 
+  /**
+   * Submit the changed version of this.data
+   *
+   * @param  {Boolean} true if the data should be send as FormData instead of
+   *                   JSON. Necessary in cases where files are included in the
+   *                   changes.
+   */
   submit(formData = false) {
     if (Object.keys(this.data).length > 0) {
       let request;

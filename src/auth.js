@@ -102,7 +102,12 @@ export class ResourceHandler {
     checkAuthenticated();
   }
 
-  // definitions of query parameters in addition to API go here
+  /*
+   * query is a dictionary of different queries
+   * Additional to anything specified from eve
+   * (http://python-eve.org/features.html#filtering)
+   * we support the key `search`, which is translated into a `where` filter
+   */
   buildQuerystring(query) {
     const queryKeys = Object.keys(query);
 
@@ -112,10 +117,15 @@ export class ResourceHandler {
 
     if ('search' in query && query.search.length > 0) {
       // translate search into where, we just look if any field contains search
+      // The search-string may match any of the keys in the object specified in the
+      // constructor
       const searchQuery = {
         $or: this.searchKeys.map((key) => {
           const fieldQuery = {};
-          fieldQuery[key] = query.search;
+          fieldQuery[key] = {
+            $regex: `${query.search}`,
+            $options: 'i'
+          };
           return fieldQuery;
         }),
       };
