@@ -40,6 +40,10 @@ export class textInput {
     const attributes = Object.assign({}, attrs);
     attributes.valid = errors.length === 0;
     attributes.error = errors.join(', ');
+    attributes.style = Object.assign({
+      'margin-top': '-10px',
+      'margin-bottom': '-10px',
+    }, attributes.style);
     attributes.onChange = ({ value }) => {
       if (value !== this.value) {
         this.value = value;
@@ -59,6 +63,10 @@ export class numInput extends textInput {
     attributes.type = 'number';
     attributes.valid = errors.length === 0;
     attributes.error = errors.join(', ');
+    attributes.style = Object.assign({
+      'margin-top': '-10px',
+      'margin-bottom': '-10px',
+    }, attributes.style);
     attributes.onChange = ({ value }) => {
       if (value !== this.value) {
         this.value = value;
