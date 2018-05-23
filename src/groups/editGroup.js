@@ -1,8 +1,76 @@
 import m from 'mithril';
-import { TextField } from 'polythene-mithril';
+import { TextField, List, ListTile } from 'polythene-mithril';
 import SelectList from '../views/selectList';
+import { SelectOptions, MDCSelect } from '../views/selectOption';
 import DatalistController from '../listcontroller';
 import EditView from '../views/editView';
+import { apiUrl } from 'networkConfig';
+
+/**
+ * Table of all possible permissions to edit
+ *
+ * @class      PermissionEditor (name)
+ */
+class PermissionEditor {
+  oninit() {
+    // load all possible API endpoints, as permissions are defined at endpoint/resource level
+    m.request(apiUrl).then((response) => {
+      this.apiEndpoints = response._links.child;
+    });
+  }
+
+  /**
+   *
+   * @attr       {object}  permissions the permissions as defined so far for the group
+   * @attr       {function}  onChange  is called with the changed permissions any timne the
+   *                                   permissions are changed in this editor.
+   */
+  view({ attrs: { permissions, onChange } }) {
+    // make a local copy of permissions to edit
+    const internalPerm = Object.assign({}, permissions);
+
+    if (!this.apiEndpoints) return '';
+    return m('div', [
+      m('span', {
+        style: {
+          color: 'rgba(0, 0, 0, 0.54)',
+          'font-size': '10pt',
+        },
+      }, 'Permissions granted by membership in this group'),
+      m('div', {
+        style: {
+          padding: '10px',
+          border: '1px solid rgba(0, 0, 0, 0.54)',
+          'border-radius': '10px',
+        },
+      }, m('div', {
+        style: { display: 'flex', width: '100%', 'flex-flow': 'row wrap' },
+      }, this.apiEndpoints.map(apiEndpoint => m('div', {
+        style: { display: 'flex', width: '330px', 'padding-right': '20px' },
+      }, [
+        m(TextField, {
+          label: apiEndpoint.title,
+          disabled: true,
+          style: { width: '60%' },
+        }),
+        m('div', { style: { width: '40%' } }, m(MDCSelect, {
+          name: apiEndpoint.href,
+          options: ['no permission', 'read', 'readwrite'],
+          onchange: (newVal) => {
+            if (newVal === 'no permission') {
+              // the api equivalent to no permission if to delete the key out of the dict
+              if (internalPerm[apiEndpoint.href]) delete internalPerm[apiEndpoint.href];
+            } else {
+              internalPerm[apiEndpoint.href] = newVal;
+            }
+            onChange(internalPerm);
+          },
+          value: internalPerm[apiEndpoint.href],
+        })),
+      ])))),
+    ]);
+  }
+}
 
 
 export default class NewGroup extends EditView {
@@ -33,7 +101,7 @@ export default class NewGroup extends EditView {
         requires_storage: {
           type: 'checkbox',
           label: "the group shares a folder with it's members in the AMIV Cloud",
-        }
+        },
       }),
       m('div', { style: { display: 'flex' } }, [
         m(TextField, { label: 'Group Moderator: ', disabled: true, style: { width: '160px' } }),
@@ -51,6 +119,10 @@ export default class NewGroup extends EditView {
           },
         })),
       ]),
+      m(PermissionEditor, {
+        permissions: this.data.permissions,
+        onChange: (newPermissions) => { this.data.permissions = newPermissions; },
+      }),
     ]);
   }
 }
