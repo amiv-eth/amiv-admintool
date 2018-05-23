@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Slider } from 'polythene-mithril';
+import { RaisedButton, RadioGroup, Slider, Switch } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
@@ -19,6 +19,8 @@ export default class newEvent extends EditView {
     super(vnode);
     this.currentpage = 1;
     if (!this.data.priority) this.data.priority = 1;
+    this.hasregistration = false;
+    this.hasprice = false;
   }
 
   beforeSubmit() {
@@ -159,7 +161,34 @@ export default class newEvent extends EditView {
       m('div', {
         style: { display: (this.currentpage === 3) ? 'block' : 'none' },
       }, [
-        ...this.renderPage({
+        m(Switch, {
+          label: 'people have to pay something to attend this event',
+          style: { 'margin-bottom': '5px' },
+          onChange: ({ checked }) => {
+            this.hasprice = checked;
+            if (!checked) delete this.data.price;
+          },
+        }),
+        ...this.hasprice && this.renderPage({
+          price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
+        }),
+        m('br'),
+        m(Switch, {
+          label: 'people have to register to attend this event',
+          onChange: ({ checked }) => {
+            this.hasregistration = checked;
+            if (!checked) {
+              delete this.data.spots;
+              delete this.data.time_register_start;
+              delete this.data.time_register_end;
+              delete this.data.add_fields_sbb;
+              delete this.data.add_fields_food;
+              delete this.data.allow_email_signup;
+              delete this.data.selection_strategy;
+            }
+          },
+        }),
+        ...this.hasregistration && this.renderPage({
           spots: {
             type: 'number',
             label: 'Number of Spots',
@@ -167,31 +196,16 @@ export default class newEvent extends EditView {
             focusHelp: true,
             min: 0,
           },
-          price: {
-            type: 'number',
-            label: 'Price',
-            min: 0,
-            step: 0.01,
-          },
-          time_register_start: {
-            type: 'datetime',
-            label: 'Start of Registration',
-          },
-          time_register_end: {
-            type: 'datetime',
-            label: 'End of Registration',
-          },
+          time_register_start: { type: 'datetime', label: 'Start of Registration' },
+          time_register_end: { type: 'datetime', label: 'End of Registration' },
           add_fields_food: { type: 'checkbox', label: 'Food limitations' },
           add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
         }),
         m('br'),
-        ...this.renderPage({
-          allow_email_signup: {
-            type: 'checkbox',
-            label: 'Allow Email Signup',
-          },
+        ...this.hasregistration && this.renderPage({
+          allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
         }),
-        radioButtonSelectionMode,
+        this.hasregistration && radioButtonSelectionMode,
       ]),
       m('div', {
         style: { display: (this.currentpage === 4) ? 'block' : 'none' },
