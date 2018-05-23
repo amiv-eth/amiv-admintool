@@ -182,13 +182,13 @@ export default class newEvent extends EditView {
             label: 'End of Registration',
           },
           add_fields_food: { type: 'checkbox', label: 'Food limitations' },
-          add_fields_sbb: { type: 'checkbox', label: 'ABB Abbonement' },
+          add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
         }),
         m('br'),
         ...this.renderPage({
           allow_email_signup: {
             type: 'checkbox',
-            label: 'Allow non AMIV Members?',
+            label: 'Allow Email Signup',
           },
         }),
         radioButtonSelectionMode,
