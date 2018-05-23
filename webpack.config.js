@@ -71,7 +71,7 @@ const config = {
         ],
       },
       {
-        test: /node_modules\/announcetool.*\.(html|css)$/,
+        test: /\.(html)$/,
         use: [
           {
             loader: 'file-loader',
@@ -80,6 +80,10 @@ const config = {
             },
           },
         ],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
