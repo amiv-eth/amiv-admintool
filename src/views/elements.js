@@ -200,7 +200,7 @@ export class DropdownCard {
     this.expand = false;
   }
 
-  view({ attrs: { title }, children }) {
+  view({ attrs: { title, ...kwargs }, children }) {
     const toolbar = m(Toolbar, {
       compact: true,
       events: { onclick: () => { this.expand = !this.expand; } },
@@ -213,12 +213,20 @@ export class DropdownCard {
       m(ToolbarTitle, { text: title }),
     ]);
 
-    const card = m(Card, {
-      style: { padding: '10px', 'font-size': '15sp' },
-      content: children.map(child => ({ any: { content: child } })),
-    });
+    const content = [{ any: { content: toolbar } }];
+    if (this.expand) {
+      content.push(...children.map(child => ({
+        any: {
+          style: {
+            'padding-left': '10px',
+            'padding-right': '10px',
+          },
+          content: child,
+        },
+      })));
+    }
 
-    return m('div', [toolbar, this.expand ? card : '']);
+    return m(Card, { content, ...kwargs });
   }
 }
 

@@ -9,7 +9,7 @@ import {
   Icon,
   IconButton
 } from 'polythene-mithril';
-import { icons, Property } from '../views/elements';
+import { icons, Property, DropdownCard } from '../views/elements';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
@@ -196,11 +196,19 @@ export default class viewGroup extends ItemView {
           icon: { svg: { content: m.trust(icons.cloud) } },
           inactive: true,
           compact: true,
-        }): '',
+        }) : '',
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
-        m('div.viewcontainercolumn', m(MembersTable, { group: this.data._id })),
+        m('div.viewcontainercolumn', [
+          this.data.permissions ? m(
+            DropdownCard,
+            { title: 'Permissions', style: { 'margin-bottom': '20px' } },
+            Object.keys(this.data.permissions)
+              .map(key => m(Property, { title: key }, this.data.permissions[key])),
+          ) : '',
+          m(MembersTable, { group: this.data._id }),
+        ]),
         // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {
