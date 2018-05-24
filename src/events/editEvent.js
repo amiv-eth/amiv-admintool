@@ -164,6 +164,7 @@ export default class newEvent extends EditView {
         m(Switch, {
           label: 'people have to pay something to attend this event',
           style: { 'margin-bottom': '5px' },
+          checked: this.hasprice,
           onChange: ({ checked }) => {
             this.hasprice = checked;
             if (!checked) delete this.data.price;
@@ -175,6 +176,7 @@ export default class newEvent extends EditView {
         m('br'),
         m(Switch, {
           label: 'people have to register to attend this event',
+          checked: this.hasregistration,
           onChange: ({ checked }) => {
             this.hasregistration = checked;
             if (!checked) {
