@@ -34,7 +34,7 @@ export default class newEvent extends EditView {
 
     // Merge Options for additional fields
     const additionalFields = {
-      schema: 'http://json-schema.org/draft-04/schema#',
+      $schema: 'http://json-schema.org/draft-04/schema#',
       additionalProperties: false,
       title: 'Additional Fields',
       type: 'object',
@@ -47,7 +47,6 @@ export default class newEvent extends EditView {
         enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
       };
       additionalFields.required.push('SBB_Abo');
-      delete this.data.add_fields_sbb;
     }
 
     if (this.data.add_fields_food) {
@@ -61,10 +60,11 @@ export default class newEvent extends EditView {
         },
       };
       additionalFields.required.push('Food');
-      delete this.data.add_fields_food;
     }
     if (this.data.add_fields_food || this.data.add_fields_sbb) {
       this.data.additional_fields = JSON.stringify(additionalFields);
+      if (this.data.add_fields_sbb) delete this.data.add_fields_sbb;
+      if (this.data.add_fields_food) delete this.data.add_fields_food;
     }
 
     // if spots is not set, also remove 'allow_email_signup'
