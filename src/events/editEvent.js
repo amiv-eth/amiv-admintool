@@ -19,15 +19,28 @@ export default class newEvent extends EditView {
     super(vnode);
     this.currentpage = 1;
     if (!this.data.priority) this.data.priority = 1;
+
+    // read additional_fields to make it editable
+    if (this.data.additional_fields) {
+      const copy = JSON.parse(this.data.additional_fields);
+      this.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
+      this.data.add_fields_food = 'Food' in copy.properties;
+      this.data.additional_fields = {};
+    }
+
+    this.hasprice = 'price' in this.data;
+    this.hasregistration = 'time_advertising_start' in this.data;
   }
 
   beforeSubmit() {
-    // Overwrite existing images with new images
+    // Collect images seperate from everything else
+    const images = {};
     ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
       if (this.data[`new_${key}`]) {
-        this.data[`img_${key}`] = this.data[`new_${key}`];
+        images[`img_${key}`] = this.data[`new_${key}`];
         delete this.data[`new_${key}`];
-      } else if (this.data[`img_${key}`]) {
+      }
+      if (this.data[`img_${key}`]) {
         delete this.data[`img_${key}`];
       }
     });
@@ -61,11 +74,17 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('Food');
     }
-    if (this.data.add_fields_food || this.data.add_fields_sbb) {
+    if ('add_fields_sbb' in this.data) delete this.data.add_fields_sbb;
+    if ('add_fields_food' in this.data) delete this.data.add_fields_food;
+
+    // if the properties are empty, we null the whole field, otherwise we send a json string
+    // of the additional fields object
+    if (Object.keys(additionalFields.properties).length > 0) {
       this.data.additional_fields = JSON.stringify(additionalFields);
-      if (this.data.add_fields_sbb) delete this.data.add_fields_sbb;
-      if (this.data.add_fields_food) delete this.data.add_fields_food;
+    } else {
+      this.data.additional_fields = null;
     }
+
 
     // if spots is not set, also remove 'allow_email_signup'
     if (!('spots' in this.data) && 'allow_email_signup' in this.data
@@ -74,13 +93,20 @@ export default class newEvent extends EditView {
     }
 
     console.log(this.data);
-    this.submit(true);
+    if (Object.keys(images).length > 0) {
+      images._id = this.data._id;
+      images._etag = this.data._etag;
+      // first upload the images as formData, then the rest as JSON
+      this.controller.handler.patch(images, true).then(({ _etag }) => {
+        this.data._etag = _etag;
+        this.submit();
+      });
+    } else {
+      this.submit();
+    }
   }
 
   view() {
-    this.hasprice = 'price' in this.data;
-    this.hasregistration = 'time_advertising_start' in this.data;
-
     const buttonRight = m(RaisedButton, {
       label: 'next',
       disabled: this.currentpage === 5,
