@@ -46,6 +46,7 @@ export default class TableView {
     this.tableKeys = keys;
     this.tileContent = tileContent;
     this.clickOnRows = clickOnRows;
+    this.searchValue = '';
   }
 
   getItemData(data) {
@@ -94,7 +95,13 @@ export default class TableView {
           m(Search, {
             textfield: {
               label: 'Search',
-              onChange: ({ value }) => { controller.debouncedSearch(value); },
+              onChange: ({ value }) => {
+                // this is called not only if the value changes, but also the focus.
+                // we only want to change the search of the value is changed, therefore we
+                // have to track changes in the search value
+                if (value !== this.searchValue) controller.debouncedSearch(value);
+                this.searchValue = value;
+              },
             },
             fullWidth: false,
           }),
