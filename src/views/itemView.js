@@ -51,7 +51,7 @@ export default class ItemView {
 
   layout(children) {
     if (!this.controller || !this.controller.data) return '';
-    return m('div', { style: { height: '100%', 'overflow-y': 'scroll' } }, [
+    return m('div', [
       m(Toolbar, m('div.pe-button-row', [
         m(Button, {
           element: 'div',
@@ -66,7 +66,9 @@ export default class ItemView {
           events: { onclick: () => this.delete() },
         }),
       ])),
-      children,
+      m('div', {
+        style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll' },
+      }, children),
     ]);
   }
 }

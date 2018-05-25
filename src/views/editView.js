@@ -229,7 +229,9 @@ export default class EditView extends ItemView {
           events: { onclick: () => { this.beforeSubmit(); } },
         }),
       ]),
-      m('div.maincontainer', children),
+      m('div.maincontainer', {
+        style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll' },
+      }, children),
     ]);
   }
 }
