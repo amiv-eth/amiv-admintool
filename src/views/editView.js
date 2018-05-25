@@ -63,6 +63,14 @@ export default class EditView extends ItemView {
         if (objectSchema.properties[property].format === 'objectid') {
           delete objectSchema.properties[property];
         }
+        // translate nullable field from OpenAPI specification to
+        // possible type null in jsonschema
+        if (objectSchema.properties[property].nullable) {
+          objectSchema.properties[property].type = [
+            'null',
+            objectSchema.properties[property].type,
+          ];
+        }
       });
       // delete objectSchema.properties['_id'];
       console.log(this.ajv.addSchema(objectSchema, 'schema'));
@@ -152,8 +160,8 @@ export default class EditView extends ItemView {
         return m(numInput, this.bind(field));
       } else if (field.type === 'checkbox') {
         field.checked = this.data[key] || false;
-        field.onChange = (state) => {
-          this.data[key] = state.checked;
+        field.onChange = ({ checked }) => {
+          this.data[key] = checked;
         };
         delete field.type;
         return m(Checkbox, field);
