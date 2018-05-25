@@ -19,8 +19,6 @@ export default class newEvent extends EditView {
     super(vnode);
     this.currentpage = 1;
     if (!this.data.priority) this.data.priority = 1;
-    this.hasregistration = false;
-    this.hasprice = false;
   }
 
   beforeSubmit() {
@@ -80,6 +78,9 @@ export default class newEvent extends EditView {
   }
 
   view() {
+    this.hasprice = 'price' in this.data;
+    this.hasregistration = 'time_advertising_start' in this.data;
+
     const buttonRight = m(RaisedButton, {
       label: 'next',
       disabled: this.currentpage === 5,
