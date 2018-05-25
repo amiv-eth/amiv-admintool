@@ -229,7 +229,12 @@ export default class viewEvent extends ItemView {
               { title: 'Selection Mode' },
               m.trust(this.data.selection_strategy),
             ) : '',
-            this.data.allow_email_signup ? m(Property, 'non AMIV-Members allowed') : '',
+            this.data.allow_email_signup && m(Property, 'non AMIV-Members allowed'),
+            this.data.additional_fields && m(
+              Property,
+              { title: 'Registration Form' },
+              this.data.additional_fields,
+            ),
           ]),
 
           // a list of email adresses of all participants, easy to copy-paste
