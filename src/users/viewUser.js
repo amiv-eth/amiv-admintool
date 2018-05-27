@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import SelectList from '../views/selectList';
@@ -73,20 +74,40 @@ export default class UserView extends ItemView {
         m('td.detail-descriptor', config.keyDescriptors[key]),
         m('td', this.data[key] ? this.data[key] : ''),
       ]))),
-      m('h2', 'Memberships'), m('br'),
-      this.groupchoice ? groupSelect : '',
-      m(TableView, {
-        controller: this.groupmemberships,
-        keys: ['group.name', 'expiry'],
-        titles: ['groupname', 'expiry'],
-        onAdd: () => { this.groupchoice = true; },
-      }),
-      m('h2', 'Signups'), m('br'),
-      m(TableView, {
-        controller: this.eventsignups,
-        keys: ['event.title_de'],
-        titles: ['event'],
-      }),
+      m('div.viewcontainer', [
+        m('div.viewcontainercolumn', m(Card, {
+          style: { height: '300px', 'margin-bottom': '20px' },
+          content: m('div', [
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'Event Signups' }),
+            ]),
+            m(TableView, {
+              controller: this.eventsignups,
+              keys: ['event.title_de'],
+              titles: ['event'],
+            }),
+          ]),
+        })),
+        m('div.viewcontainercolumn', m(Card, {
+          style: { height: '300px', 'margin-bottom': '10px' },
+          content: m('div', [
+            this.groupchoice ? groupSelect : '',
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'Group Memberships' }),
+              m(Button, {
+                className: 'blue-button',
+                label: 'add',
+                events: { onclick: () => { this.groupchoice = true; } },
+              }),
+            ]),
+            m(TableView, {
+              controller: this.groupmemberships,
+              keys: ['group.name', 'expiry'],
+              titles: ['groupname', 'expiry'],
+            }),
+          ]),
+        })),
+      ]),
     ]);
   }
 }
