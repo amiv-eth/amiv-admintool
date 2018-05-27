@@ -78,7 +78,7 @@ export default class UserView extends ItemView {
       ]),
       m('div.viewcontainer', [
         m('div.viewcontainercolumn', m(Card, {
-          style: { height: '300px', 'margin-bottom': '20px' },
+          style: { height: '300px' },
           content: m('div', [
             m(Toolbar, { compact: true }, [
               m(ToolbarTitle, { text: 'Event Signups' }),
@@ -91,7 +91,7 @@ export default class UserView extends ItemView {
           ]),
         })),
         m('div.viewcontainercolumn', m(Card, {
-          style: { height: '300px', 'margin-bottom': '10px' },
+          style: { height: '300px' },
           content: m('div', [
             this.groupchoice ? groupSelect : '',
             m(Toolbar, { compact: true }, [
