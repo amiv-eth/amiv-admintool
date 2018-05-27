@@ -27,7 +27,6 @@ export function resetSession() {
 
 const amivapi = axios.create({
   baseURL: apiUrl,
-  timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -35,12 +34,8 @@ function checkToken(token) {
   // check if a token is still valid
   return new Promise((resolve, reject) => {
     amivapi.get('users', {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
+      headers: { 'Content-Type': 'application/json', Authorization: token },
     }).then((response) => {
-      console.log(response.data);
       if (response.status === 200) resolve();
       else reject();
     }).catch(reject);
@@ -74,7 +69,6 @@ export function getSession() {
     checkAuthenticated().then(() => {
       const authenticatedSession = axios.create({
         baseURL: apiUrl,
-        timeout: 10000,
         headers: {
           'Content-Type': 'application/json',
           Authorization: APISession.token,
