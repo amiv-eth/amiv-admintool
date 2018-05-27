@@ -43,6 +43,10 @@ const style = [
       'flex-grow': 1,
       padding: '10px',
     },
+    h1: {
+      'margin-top': '0px',
+      'margin-bottom': '0px',
+    },
   },
 ];
 styler.add('containers', style);

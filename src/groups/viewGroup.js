@@ -185,7 +185,7 @@ export default class viewGroup extends ItemView {
     return this.layout([
       // this div is the title line
       m('div.maincontainer', [
-        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, this.data.name),
+        m('h1', this.data.name),
         this.data.moderator ? m(Property, {
           title: 'Moderator',
           onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
