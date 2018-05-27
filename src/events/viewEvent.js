@@ -1,7 +1,8 @@
 import m from 'mithril';
 import {
   Switch,
-  Button,
+  Toolbar,
+  ToolbarTitle,
   Card,
   TextField,
   Icon,
@@ -85,20 +86,25 @@ class ParticipantsTable {
     ];
   }
 
-  view() {
+  view({ attrs: { title } }) {
     return m(Card, {
-      style: { height: '300px' },
-      content: m(TableView, {
-        controller: this.ctrl,
-        keys: signupConfig.tableKeys,
-        tileContent: this.getItemData,
-        titles: [
-          { text: 'Date of Signup', width: '9em' },
-          { text: 'Name', width: '9em' },
-          { text: 'First Name', width: '9em' },
-          { text: 'Email', width: '9em' },
-        ],
-      }),
+      style: { height: '300px', 'margin-bottom': '20px' },
+      content: m('div', [
+        m(Toolbar, { compact: true }, [
+          m(ToolbarTitle, { text: title }),
+        ]),
+        m(TableView, {
+          controller: this.ctrl,
+          keys: signupConfig.tableKeys,
+          tileContent: this.getItemData,
+          titles: [
+            { text: 'Date of Signup', width: '9em' },
+            { text: 'Name', width: '9em' },
+            { text: 'First Name', width: '9em' },
+            { text: 'Email', width: '9em' },
+          ],
+        }),
+      ]),
     });
   }
 }
@@ -258,11 +264,14 @@ export default class viewEvent extends ItemView {
         ]),
 
         m('div.viewcontainercolumn', [
-          m('h4', { style: { 'margin-top': '0px' } }, 'Accepted Participants'),
-          m(ParticipantsTable, { where: { accepted: true, event: this.data._id } }),
-          m('p', ''),
-          m('h4', 'Participants on Waiting List'),
-          m(ParticipantsTable, { where: { accepted: false, event: this.data._id } }),
+          this.data.time_register_start ? m(ParticipantsTable, {
+            where: { accepted: true, event: this.data._id },
+            title: 'Accepted Participants',
+          }) : '',
+          this.data.time_register_start ? m(ParticipantsTable, {
+            where: { accepted: false, event: this.data._id },
+            title: 'Participants on Waiting List',
+          }) : '',
         ]),
       ]),
 
