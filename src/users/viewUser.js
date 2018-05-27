@@ -13,12 +13,12 @@ export default class UserView extends ItemView {
     this.groupmemberships = new DatalistController('groupmemberships', {
       where: { user: this.data._id },
       embedded: { group: 1 },
-    });
+    }, ['group.name'], false);
     // a controller to handle the eventsignups of this user
     this.eventsignups = new DatalistController('eventsignups', {
       where: { user: this.data._id },
       embedded: { event: 1 },
-    });
+    }, ['event.title_de', 'event.title_en'], false);
     // initially, don't display the choice field for a new group
     // (this will be displayed once the user clicks on 'new')
     this.groupchoice = false;
