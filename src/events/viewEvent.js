@@ -150,29 +150,35 @@ export default class viewEvent extends ItemView {
 
     return this.layout([
       // this div is the title line
-      m('div', [
+      m('div.maincontainer', [
         // event image if existing
         this.data.img_thumbnail ? m('img', {
           src: `${apiUrl}${this.data.img_thumbnail.file}`,
           height: '50px',
           style: { float: 'left' },
         }) : '',
-        m('h1', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
+        m(
+          'h1',
+          { style: { 'margin-top': '0px', 'margin-bottom': '0px' } },
+          this.data.title_de || this.data.title_en,
+        ),
       ]),
       // below the title, most important details are listed
-      this.data.signup_count ? m(Property, {
-        style: { float: 'left', 'margin-right': '20px' },
-        title: 'Signups',
-      }, `${this.data.signup_count} / ${displaySpots}`) : m.trust('&nbsp;'),
-      this.data.location ? m(Property, {
-        style: { float: 'left', 'margin-right': '20px' },
-        title: 'Location',
-      }, `${this.data.location}`) : m.trust('&nbsp;'),
-      this.data.time_start ? m(Property, {
-        title: 'Time',
-      }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : m.trust('&nbsp;'),
+      m('div.maincontainer', { style: { display: 'flex' } }, [
+        this.data.signup_count ? m(Property, {
+          style: { 'margin-right': '20px' },
+          title: 'Signups',
+        }, `${this.data.signup_count} / ${displaySpots}`) : '',
+        this.data.location ? m(Property, {
+          style: { 'margin-right': '20px' },
+          title: 'Location',
+        }, `${this.data.location}`) : '',
+        this.data.time_start ? m(Property, {
+          title: 'Time',
+        }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : '',
+      ]),
       // everything else is not listed in DropdownCards, which open only on request
-      m('div.viewcontainer', { style: { 'margin-top': '50px' } }, [
+      m('div.viewcontainer', [
         m('div.viewcontainercolumn', [
           m(DropdownCard, { title: 'description' }, [
             m(DuoLangProperty, {
