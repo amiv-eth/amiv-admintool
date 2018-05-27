@@ -68,12 +68,14 @@ export default class UserView extends ItemView {
     });
 
     return this.layout([
-      m('h1', `${this.data.firstname} ${this.data.lastname}`),
-      membershipBadge,
-      m('table', detailKeys.map(key => m('tr', [
-        m('td.detail-descriptor', config.keyDescriptors[key]),
-        m('td', this.data[key] ? this.data[key] : ''),
-      ]))),
+      m('div.maincontainer', [
+        m('h1', `${this.data.firstname} ${this.data.lastname}`),
+        membershipBadge,
+        m('table', detailKeys.map(key => m('tr', [
+          m('td.detail-descriptor', config.keyDescriptors[key]),
+          m('td', this.data[key] ? this.data[key] : ''),
+        ]))),
+      ]),
       m('div.viewcontainer', [
         m('div.viewcontainercolumn', m(Card, {
           style: { height: '300px', 'margin-bottom': '20px' },
