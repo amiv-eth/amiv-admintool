@@ -10,12 +10,12 @@ export default class UserView extends ItemView {
     super(vnode);
     // a controller to handle the groupmemberships of this user
     this.groupmemberships = new DatalistController('groupmemberships', {
-      where: { user: this.id },
+      where: { user: this.data._id },
       embedded: { group: 1 },
     });
     // a controller to handle the eventsignups of this user
     this.eventsignups = new DatalistController('eventsignups', {
-      where: { user: this.id },
+      where: { user: this.data._id },
       embedded: { event: 1 },
     });
     // initially, don't display the choice field for a new group
