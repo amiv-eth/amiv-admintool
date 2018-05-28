@@ -24,7 +24,7 @@ function layoutWith(view) {
 }
 
 m.route.prefix('');
-m.route(root, '/users', {
+m.route(root, '/events', {
   '/users': layoutWith(UserTable),
   '/users/:id': layoutWith(UserItem),
   '/newuser': layoutWith(UserItem),
