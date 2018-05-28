@@ -41,7 +41,13 @@ export default class TableView {
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
    */
-  constructor({ attrs: { keys, tileContent, clickOnRows = true } }) {
+  constructor({
+    attrs: {
+      keys,
+      tileContent,
+      clickOnRows = (data) => { m.route.set(`/${data._links.self.href}`); },
+    },
+  }) {
     this.search = '';
     this.tableKeys = keys;
     this.tileContent = tileContent;
@@ -70,7 +76,7 @@ export default class TableView {
       compact: true,
       content: m('div', {
         onclick: () => {
-          if (this.clickOnRows) { m.route.set(`/${data._links.self.href}`); }
+          if (this.clickOnRows) this.clickOnRows(data);
         },
         className: 'tableTile',
         style: { width: '100%', display: 'flex' },
