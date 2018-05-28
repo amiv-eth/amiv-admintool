@@ -9,6 +9,9 @@ import config from './resourceConfig.json';
 const APISession = {
   authenticated: false,
   token: '',
+  // user admins are a very special case as the permissions on the resource can only
+  // be seen by requesting users and check whether you see their membership
+  isUserAdmin: false
 };
 
 // OAuth Handler
@@ -36,7 +39,7 @@ function checkToken(token) {
     amivapi.get('users', {
       headers: { 'Content-Type': 'application/json', Authorization: token },
     }).then((response) => {
-      if (response.status === 200) resolve();
+      if (response.status === 200) resolve(response.data);
       else reject();
     }).catch(reject);
   });
@@ -53,9 +56,15 @@ export function checkAuthenticated() {
       console.log(`found this token: ${token}`);
       if (token !== '') {
         // check of token is valid
-        checkToken(token).then(() => {
+        checkToken(token).then((users) => {
           APISession.token = token;
           APISession.authenticated = true;
+          // if we see the membership of more than 1 person in the response, we
+          // have admin rights on users
+          if (users._items[0].membership && users._items[1].membership) {
+            APISession.isUserAdmin = true;
+          }
+          console.log(APISession);
           resolve();
         }).catch(resetSession);
       } else resetSession();
@@ -89,11 +98,18 @@ export class ResourceHandler {
    */
   constructor(resource, searchKeys = false) {
     this.resource = resource;
-    this.searchKeys = searchKeys || config[resource].searchKeys;
+    // special case for users
+    if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
+    else this.searchKeys = searchKeys || config[resource].searchKeys;
     this.noPatchKeys = [
       '_etag', '_id', '_created', '_links', '_updated',
       ...(config[resource].notPatchableKeys || [])];
-    checkAuthenticated();
+    checkAuthenticated().then(() => {
+      // again special case for users
+      if (resource === 'users' && APISession.isUserAdmin) {
+        this.searchKeys = searchKeys || config[resource].searchKeys;
+      }
+    });
   }
 
   /*

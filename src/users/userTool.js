@@ -4,7 +4,7 @@ import ViewUser from './viewUser';
 import TableView from '../views/tableView';
 import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
-import ItemController from '../itemcontroller'
+import ItemController from '../itemcontroller';
 
 export class UserItem {
   constructor() {
@@ -20,7 +20,7 @@ export class UserItem {
 
 export class UserTable {
   constructor() {
-    this.ctrl = new DatalistController('users', {}, config.tableKeys);
+    this.ctrl = new DatalistController('users');
   }
   view() {
     return m(TableView, {

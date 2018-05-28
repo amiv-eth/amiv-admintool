@@ -65,7 +65,7 @@
             "lastname",
             "nethz",
             "legi",
-            "department"
+            "email"
         ],
         "notPatchableKeys": [
             "password_set"
