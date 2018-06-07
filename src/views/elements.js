@@ -5,6 +5,7 @@ import {
   Toolbar,
   ToolbarTitle,
   Card,
+  Icon,
 } from 'polythene-mithril';
 
 export const icons = {
@@ -266,6 +267,33 @@ export class selectGroup {
         { value: vnode.attrs.value, onchange: vnode.attrs.onchange },
         vnode.attrs.options.map(option => m('option', option)),
       ),
+    ]);
+  }
+}
+
+export class chip {
+  view({ attrs: { svg, color = '#000000', background = '#dddddd', ...styleAttrs }, children }) {
+    return m('div', {
+      style: {
+        height: '32px',
+        'background-color': '#ffffff',
+        'border-radius': '16px',
+        padding: '4px 8px',
+        display: 'inline-flex',
+        ...styleAttrs,
+      },
+    }, [
+      svg && m('div', {
+        style: {
+          'background-color': background,
+          'border-radius': '12px',
+          margin: '0px 4px 0px -2px',
+          height: '24px',
+          width: '24px',
+          padding: '2px 2px 2px 4px',
+        },
+      }, m(Icon, { svg: { content: m.trust(svg) }, size: 'small', style: { color } })),
+      m('div', { style: { 'line-height': '24px' } }, children),
     ]);
   }
 }
