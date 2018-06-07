@@ -5,6 +5,8 @@ import TableView from '../views/tableView';
 import SelectList from '../views/selectList';
 import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
+import { chip, icons, Property } from '../views/elements';
+import { colors } from '../style';
 
 export default class UserView extends ItemView {
   constructor(vnode) {
@@ -39,17 +41,21 @@ export default class UserView extends ItemView {
   }
 
   view() {
-    let membershipBadge = m('span.label.label-important', 'No Member');
+    let membership = m(chip, { svg: icons.clear, background: colors.amiv_red }, 'No Member');
     if (this.data.membership === 'regular') {
-      membershipBadge = m('span.label.label-success', 'Member');
+      membership = m(chip, { svg: icons.checked, background: colors.green }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
-      membershipBadge = m('span.label.label-success', 'Extraordinary Member');
+      membership = m(
+        chip,
+        { svg: icons.checked, background: colors.green },
+        'Extraordinary Member',
+      );
     } else if (this.data.membership === 'honorary') {
-      membershipBadge = m('span.label.label-warning', 'Honorary Member');
+      membership = m(chip, { svg: icons.star, background: colors.orange }, 'Honorary Member');
     }
 
     const detailKeys = [
-      'email', 'phone', 'nethz', 'legi', 'rfid', 'department', 'gender'];
+      'phone', 'department', 'gender'];
 
     // Selector that is only displayed if "new" is clicked in the
     // groupmemberships. Selects a group to request membership for.
@@ -70,11 +76,35 @@ export default class UserView extends ItemView {
     return this.layout([
       m('div.maincontainer', [
         m('h1', `${this.data.firstname} ${this.data.lastname}`),
-        membershipBadge,
-        m('table', detailKeys.map(key => m('tr', [
-          m('td.detail-descriptor', config.keyDescriptors[key]),
-          m('td', this.data[key] ? this.data[key] : ''),
-        ]))),
+        membership,
+        this.data.department && m(
+          chip,
+          { svg: icons.department, 'margin-left': '10px' },
+          this.data.department,
+        ),
+        this.data.gender && m(chip, { 'margin-left': '10px' }, this.data.gender),
+        m('div', { style: { display: 'flex', 'margin-top': '10px' } }, [
+          this.data.nethz && m(Property, {
+            title: 'NETHZ',
+            style: { 'margin-right': '10px' },
+          }, this.data.nethz),
+          this.data.email && m(Property, {
+            title: 'Email',
+            style: { 'margin-right': '10px' },
+          }, this.data.email),
+          this.data.legi && m(Property, {
+            title: 'Legi',
+            style: { 'margin-right': '10px' },
+          }, this.data.legi),
+          this.data.rfid && m(Property, {
+            title: 'RFID',
+            style: { 'margin-right': '10px' },
+          }, this.data.rfid),
+          this.data.phone && m(Property, {
+            title: 'Phone',
+            style: { 'margin-right': '10px' },
+          }, this.data.phone),
+        ]),
       ]),
       m('div.viewcontainer', [
         m('div.viewcontainercolumn', m(Card, {
