@@ -14,7 +14,7 @@ import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
-import { icons, DropdownCard, Property } from '../views/elements';
+import { icons, DropdownCard, Property, chip } from '../views/elements';
 import { ResourceHandler } from '../auth';
 
 const viewLayout = [
@@ -88,7 +88,7 @@ class ParticipantsTable {
 
   view({ attrs: { title } }) {
     return m(Card, {
-      style: { height: '300px', 'margin-bottom': '20px' },
+      style: { height: '300px', 'margin-bottom': '10px' },
       content: m('div', [
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: title }),
@@ -149,6 +149,7 @@ export default class viewEvent extends ItemView {
 
   view() {
     let displaySpots = '-';
+    const stdMargin = { margin: '5px' };
 
     if (this.data.spots !== 0) {
       displaySpots = this.data.spots;
@@ -161,27 +162,24 @@ export default class viewEvent extends ItemView {
         this.data.img_thumbnail ? m('img', {
           src: `${apiUrl}${this.data.img_thumbnail.file}`,
           height: '50px',
-          style: { float: 'left' },
+          style: { float: 'left', margin: '0 5px' },
         }) : '',
-        m(
-          'h1',
-          { style: { 'margin-top': '0px', 'margin-bottom': '0px' } },
-          this.data.title_de || this.data.title_en,
-        ),
+        m('h1', this.data.title_de || this.data.title_en ),
       ]),
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
-        this.data.signup_count ? m(Property, {
-          style: { 'margin-right': '20px' },
+        this.data.signup_count && m(Property, {
+          style: stdMargin,
           title: 'Signups',
-        }, `${this.data.signup_count} / ${displaySpots}`) : '',
-        this.data.location ? m(Property, {
-          style: { 'margin-right': '20px' },
+        }, `${this.data.signup_count} / ${displaySpots}`),
+        this.data.location && m(Property, {
+          style: stdMargin,
           title: 'Location',
-        }, `${this.data.location}`) : '',
-        this.data.time_start ? m(Property, {
+        }, `${this.data.location}`),
+        this.data.time_start && m(Property, {
           title: 'Time',
-        }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`) : '',
+          style: stdMargin,
+        }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`),
       ]),
       // everything else is not listed in DropdownCards, which open only on request
       m('div.viewcontainer', [
@@ -199,27 +197,25 @@ export default class viewEvent extends ItemView {
             }),
           ]),
 
-          m(DropdownCard, { title: 'advertisement' }, [
+          m(DropdownCard, { title: 'advertisement', style: { margin: '10px 0' } }, [
             [
-              m(Icon, {
-                style: { float: 'left' },
-                svg: m.trust(this.data.show_annonce ? icons.checked : icons.clear),
-              }),
-              m('span', { style: { float: 'left' } }, 'annonce'),
-              m(Icon, {
-                style: { float: 'left' },
-                svg: m.trust(this.data.show_infoscreen ? icons.checked : icons.clear),
-              }),
-              m('span', { style: { float: 'left' } }, 'infoscreen'),
-              m(Icon, {
-                style: { float: 'left' },
-                svg: m.trust(this.data.show_website ? icons.checked : icons.clear),
-              }),
-              m('span', { style: { float: 'left' } }, 'website'),
+              m(chip, {
+                svg: this.data.show_annonce ? icons.checked : icons.clear,
+                border: '1px #aaaaaa solid',
+              }, 'announce'),
+              m(chip, {
+                svg: this.data.show_infoscreen ? icons.checked : icons.clear,
+                border: '1px #aaaaaa solid',
+                margin: '4px',
+              }, 'infoscreen'),
+              m(chip, {
+                svg: this.data.show_website ? icons.checked : icons.clear,
+                border: '1px #aaaaaa solid',
+              }, 'website'),
             ],
             this.data.time_advertising_start ? m(
               Property,
-              'Advertising Time',
+              { title: 'Advertising Time' },
               `${dateFormatter(this.data.time_advertising_start)} - ${dateFormatter(this.data.time_advertising_end)}`,
             ) : '',
             this.data.priority ? m(
@@ -229,8 +225,8 @@ export default class viewEvent extends ItemView {
             ) : '',
           ]),
 
-          m(DropdownCard, { title: 'Registration' }, [
-            this.data.price ? m(Property, 'Price', `${this.data.price}`) : '',
+          m(DropdownCard, { title: 'Registration', style: { margin: '10px 0' } }, [
+            this.data.price ? m(Property, { title: 'Price' }, `${this.data.price}`) : '',
             this.data.time_register_start ? m(
               Property,
               { title: 'Registration Time' },

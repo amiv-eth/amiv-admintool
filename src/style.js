@@ -44,21 +44,24 @@ ShadowCSS.addStyle('.pe-shadow', {
 const style = [
   {
     '.maincontainer': {
-      padding: '10px',
+      padding: '0 5px',
     },
     '.viewcontainer': {
       display: 'flex',
       'flex-wrap': 'wrap',
+      padding: '0 5px',
     },
     '.viewcontainercolumn': {
       width: '500px',
       'flex-grow': 1,
-      padding: '10px',
+      margin: '5px',
     },
     h1: {
-      'margin-top': '0px',
-      'margin-bottom': '0px',
+      margin: '0 5px',
     },
+    p: {
+      margin: '0',
+    }
   },
 ];
 styler.add('containers', style);

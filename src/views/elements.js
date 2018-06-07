@@ -218,9 +218,7 @@ export class DropdownCard {
       events: { onclick: () => { this.expand = !this.expand; } },
     }, [
       m(IconButton, {
-        icon: {
-          svg: m.trust(this.expand ? icons.ArrowDown : icons.ArrowRight),
-        },
+        icon: { svg: m.trust(this.expand ? icons.ArrowDown : icons.ArrowRight)},
       }),
       m(ToolbarTitle, { text: title }),
     ]);
@@ -230,8 +228,7 @@ export class DropdownCard {
       content.push(...children.map(child => ({
         any: {
           style: {
-            'padding-left': '10px',
-            'padding-right': '10px',
+            padding: '0 10px 10px 10px',
           },
           content: child,
         },
@@ -281,7 +278,8 @@ export class chip {
         height: '32px',
         'background-color': '#ffffff',
         'border-radius': '16px',
-        padding: '4px 8px',
+        // if there is a border, things are weirdly shifted
+        padding: styleAttrs.border ? '3px 8px 4px 6px' : '4px 8px',
         display: 'inline-flex',
         ...styleAttrs,
       },

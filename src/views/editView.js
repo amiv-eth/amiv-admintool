@@ -230,7 +230,7 @@ export default class EditView extends ItemView {
         }),
       ]),
       m('div.maincontainer', {
-        style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll' },
+        style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll', padding: '10px' },
       }, children),
     ]);
   }

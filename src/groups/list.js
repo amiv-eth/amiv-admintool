@@ -6,10 +6,7 @@ import DatalistController from '../listcontroller';
 class GroupListItem {
   view({ attrs: { name, _id } }) {
     return m('div', {
-      style: {
-        padding: '20px',
-        'max-width': '500px',
-      },
+      style: { 'max-width': '500px', margin: '5px' },
       onclick: () => {
         m.route.set(`/groups/${_id}`);
       },
@@ -33,13 +30,10 @@ export default class GroupList {
     if (!this.data) return '';
 
     return m(
-      'div', { style: { display: 'flex', 'flex-wrap': 'wrap' } },
+      'div.maincontainer', { style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-top': '5px' } },
       this.data.map(item => m(GroupListItem, item)),
       m('div', {
-        style: {
-          padding: '20px',
-          'max-width': '500px',
-        },
+        style: { 'max-width': '500px', margin: '5px' },
         onclick: () => { m.route.set('/newgroup'); },
       }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
     );

@@ -41,21 +41,32 @@ export default class UserView extends ItemView {
   }
 
   view() {
-    let membership = m(chip, { svg: icons.clear, background: colors.amiv_red }, 'No Member');
+    const stdMargin = { margin: '5px' };
+
+    let membership = m(chip, {
+      svg: icons.clear,
+      background: colors.amiv_red,
+      ...stdMargin,
+    }, 'No Member');
     if (this.data.membership === 'regular') {
-      membership = m(chip, { svg: icons.checked, background: colors.green }, 'Regular Member');
+      membership = m(chip, {
+        svg: icons.checked,
+        background: colors.green,
+        ...stdMargin,
+      }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
       membership = m(
         chip,
-        { svg: icons.checked, background: colors.green },
+        { svg: icons.checked, background: colors.green, ...stdMargin },
         'Extraordinary Member',
       );
     } else if (this.data.membership === 'honorary') {
-      membership = m(chip, { svg: icons.star, background: colors.orange }, 'Honorary Member');
+      membership = m(
+        chip,
+        { svg: icons.star, background: colors.orange, ...stdMargin },
+        'Honorary Member',
+      );
     }
-
-    const detailKeys = [
-      'phone', 'department', 'gender'];
 
     // Selector that is only displayed if "new" is clicked in the
     // groupmemberships. Selects a group to request membership for.
@@ -79,31 +90,16 @@ export default class UserView extends ItemView {
         membership,
         this.data.department && m(
           chip,
-          { svg: icons.department, 'margin-left': '10px' },
+          { svg: icons.department, ...stdMargin },
           this.data.department,
         ),
-        this.data.gender && m(chip, { 'margin-left': '10px' }, this.data.gender),
-        m('div', { style: { display: 'flex', 'margin-top': '10px' } }, [
-          this.data.nethz && m(Property, {
-            title: 'NETHZ',
-            style: { 'margin-right': '10px' },
-          }, this.data.nethz),
-          this.data.email && m(Property, {
-            title: 'Email',
-            style: { 'margin-right': '10px' },
-          }, this.data.email),
-          this.data.legi && m(Property, {
-            title: 'Legi',
-            style: { 'margin-right': '10px' },
-          }, this.data.legi),
-          this.data.rfid && m(Property, {
-            title: 'RFID',
-            style: { 'margin-right': '10px' },
-          }, this.data.rfid),
-          this.data.phone && m(Property, {
-            title: 'Phone',
-            style: { 'margin-right': '10px' },
-          }, this.data.phone),
+        this.data.gender && m(chip, { margin: '5px' }, this.data.gender),
+        m('div', { style: { display: 'flex' } }, [
+          this.data.nethz && m(Property, { title: 'NETHZ', style: stdMargin }, this.data.nethz),
+          this.data.email && m(Property, { title: 'Email', style: stdMargin }, this.data.email),
+          this.data.legi && m(Property, { title: 'Legi', style: stdMargin }, this.data.legi),
+          this.data.rfid && m(Property, { title: 'RFID', style: stdMargin }, this.data.rfid),
+          this.data.phone && m(Property, { title: 'Phone', style: stdMargin }, this.data.phone),
         ]),
       ]),
       m('div.viewcontainer', [
