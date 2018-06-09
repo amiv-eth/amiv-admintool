@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import { Checkbox, IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
+// eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
 import { textInput, datetimeInput, numInput, icons } from './elements';
@@ -220,7 +221,7 @@ export default class EditView extends ItemView {
           icon: { svg: { content: m.trust(icons.clear) } },
           events: { onclick: () => { this.controller.cancel(); } },
         }),
-        m(ToolbarTitle, ((this.controller.modus === 'new') ? 'New' : 'Edit') +
+        m(ToolbarTitle, `${((this.controller.modus === 'new') ? 'New' : 'Edit')}` +
           ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
         m(Button, {
           className: 'blue-button-filled',

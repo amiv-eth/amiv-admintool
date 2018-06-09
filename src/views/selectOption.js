@@ -1,7 +1,6 @@
 import m from 'mithril';
 import '@material/select/dist/mdc.select.css';
 import '@material/select/dist/mdc.select';
-//@import 'material/select/dist/mdc.select.css';
 import stream from 'mithril/stream';
 import { Menu, List, ListTile } from 'polythene-mithril';
 
@@ -62,8 +61,7 @@ export class MDCSelect {
         style: { 'padding-top': '10px' },
         onchange: ({ target: { value } }) => { onchange(value); },
         ...kwargs,
-      }, options.map(option => m('option', { value: option }, option)),
-      ),
+      }, options.map(option => m('option', { value: option }, option))),
       m('label.mdc-floating-label', ''),
       m('div.mdc-line-ripple'),
     ]);

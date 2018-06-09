@@ -5,9 +5,9 @@ import {
   ToolbarTitle,
   Card,
   TextField,
-  Icon,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
+// eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { eventsignups as signupConfig } from '../resourceConfig.json';
@@ -164,7 +164,7 @@ export default class viewEvent extends ItemView {
           height: '50px',
           style: { float: 'left', margin: '0 5px' },
         }) : '',
-        m('h1', this.data.title_de || this.data.title_en ),
+        m('h1', this.data.title_de || this.data.title_en),
       ]),
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
@@ -215,8 +215,9 @@ export default class viewEvent extends ItemView {
             ],
             this.data.time_advertising_start ? m(
               Property,
-              { title: 'Advertising Time' },
-              `${dateFormatter(this.data.time_advertising_start)} - ${dateFormatter(this.data.time_advertising_end)}`,
+              { title: 'Advertising Time' },
+              `${dateFormatter(this.data.time_advertising_start)} - ` +
+              `${dateFormatter(this.data.time_advertising_end)}`,
             ) : '',
             this.data.priority ? m(
               Property,
@@ -230,7 +231,8 @@ export default class viewEvent extends ItemView {
             this.data.time_register_start ? m(
               Property,
               { title: 'Registration Time' },
-              `${dateFormatter(this.data.time_register_start)} - ${dateFormatter(this.data.time_register_end)}`,
+              `${dateFormatter(this.data.time_register_start)} - ` +
+              `${dateFormatter(this.data.time_register_end)}`,
             ) : '',
             this.data.selection_strategy ? m(
               Property,

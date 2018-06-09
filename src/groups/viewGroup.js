@@ -1,13 +1,12 @@
 import m from 'mithril';
 import {
   Button,
-  RaisedButton,
   Card,
   Toolbar,
   ToolbarTitle,
   TextField,
   Icon,
-  IconButton
+  IconButton,
 } from 'polythene-mithril';
 import { icons, Property, DropdownCard } from '../views/elements';
 import ItemView from '../views/itemView';

@@ -3,7 +3,8 @@ import { styler } from 'polythene-core-css';
 
 addTypography();
 
-// https://material.io/tools/color/#!/?view.left=0&view.right=1&secondary.color=e8462b&primary.color=274284
+// https://material.io/tools/color/#!/?view.left=0&view.right=1
+// &secondary.color=e8462b&primary.color=274284
 export const colors = {
   amiv_blue: '#1F2D54',
   amiv_red: '#e8462b',
@@ -61,7 +62,7 @@ const style = [
     },
     p: {
       margin: '0',
-    }
+    },
   },
 ];
 styler.add('containers', style);

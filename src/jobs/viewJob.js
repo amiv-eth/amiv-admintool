@@ -1,4 +1,5 @@
 import m from 'mithril';
+// eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
@@ -35,7 +36,9 @@ export default class viewJob extends ItemView {
           height: '50px',
           style: { float: 'left' },
         }) : '',
-        m('h3', { style: { 'margin-top': '0px', 'margin-bottom': '0px' } }, [this.data.title_de || this.data.title_en]),
+        m('h3', {
+          style: { 'margin-top': '0px', 'margin-bottom': '0px' },
+        }, [this.data.title_de || this.data.title_en]),
       ]),
       // below the title, most important details are listed
       this.data.time_end ? m(Property, {

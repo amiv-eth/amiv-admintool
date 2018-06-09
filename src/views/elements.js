@@ -218,7 +218,7 @@ export class DropdownCard {
       events: { onclick: () => { this.expand = !this.expand; } },
     }, [
       m(IconButton, {
-        icon: { svg: m.trust(this.expand ? icons.ArrowDown : icons.ArrowRight)},
+        icon: { svg: m.trust(this.expand ? icons.ArrowDown : icons.ArrowRight) },
       }),
       m(ToolbarTitle, { text: title }),
     ]);
@@ -272,7 +272,15 @@ export class selectGroup {
 }
 
 export class chip {
-  view({ attrs: { svg, color = '#000000', background = '#dddddd', ...styleAttrs }, children }) {
+  view({
+    attrs: {
+      svg,
+      color = '#000000',
+      background = '#dddddd',
+      ...styleAttrs
+    },
+    children,
+  }) {
     return m('div', {
       style: {
         height: '32px',

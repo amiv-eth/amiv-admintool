@@ -1,9 +1,8 @@
 import m from 'mithril';
-import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
+import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import SelectList from '../views/selectList';
-import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';

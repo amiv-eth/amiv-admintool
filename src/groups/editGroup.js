@@ -1,10 +1,12 @@
 import m from 'mithril';
-import { TextField, List, ListTile } from 'polythene-mithril';
+import { TextField } from 'polythene-mithril';
+// eslint-disable-next-line import/extensions
+import { apiUrl } from 'networkConfig';
 import SelectList from '../views/selectList';
-import { SelectOptions, MDCSelect } from '../views/selectOption';
+import { MDCSelect } from '../views/selectOption';
 import DatalistController from '../listcontroller';
 import EditView from '../views/editView';
-import { apiUrl } from 'networkConfig';
+
 
 /**
  * Table of all possible permissions to edit
