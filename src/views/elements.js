@@ -125,7 +125,6 @@ export class datetimeInput {
       initialDate = `${locale.year}-${locale.month}-${locale.day}`;
       initialTime = `${locale.hour}:${locale.minute}`;
     }
-    console.log({initialDate, initialTime});
 
     const date = {
       type: 'date',
