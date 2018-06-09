@@ -110,9 +110,22 @@ export class datetimeInput {
   view({ attrs: { label, value } }) {
     // set display-settings accoridng to error-state
     const errors = this.getErrors();
-    const initialValue = value || 'T';
-    const initialDate = initialValue.split('T')[0];
-    const initialTime = initialValue.split('T')[1].substring(0, 5);
+    let initialDate;
+    let initialTime;
+    if (value) {
+      const parsed = new Date(value);
+      // convert to locale timezone
+      const locale = {
+        year: parsed.getFullYear(),
+        month: `${parsed.getMonth()}`.padStart(2, '0'),
+        day: `${parsed.getDay()}`.padStart(2, '0'),
+        hour: `${parsed.getHours()}`.padStart(2, '0'),
+        minute: `${parsed.getMinutes()}`.padStart(2, '0'),
+      };
+      initialDate = `${locale.year}-${locale.month}-${locale.day}`;
+      initialTime = `${locale.hour}:${locale.minute}`;
+    }
+    console.log({initialDate, initialTime});
 
     const date = {
       type: 'date',
