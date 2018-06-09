@@ -118,11 +118,11 @@ export class datetimeInput {
       const locale = {
         year: parsed.getFullYear(),
         month: `${parsed.getMonth()}`.padStart(2, '0'),
-        day: `${parsed.getDay()}`.padStart(2, '0'),
+        date: `${parsed.getDate()}`.padStart(2, '0'),
         hour: `${parsed.getHours()}`.padStart(2, '0'),
         minute: `${parsed.getMinutes()}`.padStart(2, '0'),
       };
-      initialDate = `${locale.year}-${locale.month}-${locale.day}`;
+      initialDate = `${locale.year}-${locale.month}-${locale.date}`;
       initialTime = `${locale.hour}:${locale.minute}`;
     }
 
