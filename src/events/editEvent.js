@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { RaisedButton, RadioGroup, Slider, Switch } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
+// eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
 import { fileInput } from '../views/elements';
@@ -28,7 +29,7 @@ export default class newEvent extends EditView {
       this.data.additional_fields = {};
     }
 
-    this.hasprice = 'price' in this.data;
+    this.hasprice = 'price' in this.data && this.data.price !== null;
     this.hasregistration = 'time_advertising_start' in this.data;
   }
 
@@ -194,7 +195,11 @@ export default class newEvent extends EditView {
           checked: this.hasprice,
           onChange: ({ checked }) => {
             this.hasprice = checked;
-            if (!checked) delete this.data.price;
+            if (!checked) {
+              // if it originally had a price, set to null, otherwise delete
+              if (this.controller.data.price) this.data.price = null;
+              else delete this.data.price;
+            }
           },
         }),
         ...this.hasprice && this.renderPage({
