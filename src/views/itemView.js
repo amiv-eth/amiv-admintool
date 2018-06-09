@@ -21,8 +21,8 @@ export default class ItemView {
    */
   constructor({ attrs: { controller, onDelete } }) {
     this.controller = controller;
-    this.data = this.controller.data;
     this.handler = this.controller.handler;
+    this.data = this.controller.data;
     this.resource = this.controller.resource;
     if (!onDelete) this.onDelete = () => { m.route.set(`/${controller.resource}`); };
     else this.onDelete = onDelete;
@@ -51,6 +51,9 @@ export default class ItemView {
 
   layout(children) {
     if (!this.controller || !this.controller.data) return '';
+    // update the reference to the controller data, as this may be refreshed
+    // in between
+    this.data = this.controller.data;
     return m('div', [
       m(Toolbar, m('div.pe-button-row', [
         m(Button, {

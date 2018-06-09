@@ -44,7 +44,7 @@ export default class ItemController {
 
   changeModus(newModus) {
     this.modus = newModus;
-    if (this.modus === 'view') {
+    if (newModus === 'view') {
       // reload item to current state, patches do not return embeddinds...
       this.handler.getItem(this.id, this.embedded).then((item) => {
         this.data = item;
