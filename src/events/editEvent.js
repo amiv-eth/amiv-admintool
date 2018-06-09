@@ -29,6 +29,9 @@ export default class newEvent extends EditView {
       this.data.additional_fields = {};
     }
 
+    // price can either not be set or set to null
+    // if it is 0 however, that would mean that there actually is a price that
+    // you can edit
     this.hasprice = 'price' in this.data && this.data.price !== null;
     this.hasregistration = 'time_advertising_start' in this.data;
   }
