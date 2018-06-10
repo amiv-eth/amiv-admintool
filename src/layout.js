@@ -1,6 +1,6 @@
 import m from 'mithril';
 import '@material/drawer';
-import { List, ListTile, Icon, Toolbar, ToolbarTitle, Dialog } from 'polythene-mithril';
+import { List, ListTile, Icon, Toolbar, ToolbarTitle, Dialog, SVG } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
 import { resetSession } from './auth';
@@ -54,7 +54,7 @@ class Menupoint {
   }
 }
 
-export default class Layout {
+export class Layout {
   view({ children }) {
     return m('div', [
       m('div.wrapper-main.smooth', [
@@ -103,5 +103,34 @@ export default class Layout {
       // dialog element will show when Dialog.show() is called, this is only a placeholder
       m(Dialog),
     ]);
+  }
+}
+
+export class loadingScreen {
+  view() {
+    return m('div', {
+      style: {
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        'flex-direction': 'column',
+        'justify-content': 'center',
+        'align-items': 'center',
+      },
+    }, m('div', { style: { height: '5vh', 'font-size': '4em' } }, 'Loading...'), m('div', {
+      style: {
+        height: '20vh',
+        width: '20vh',
+        'animation-name': 'spin',
+        'animation-duration': '2500ms',
+        'animation-iteration-count': 'infinite',
+        'animation-timing-function': 'linear',
+      },
+    }, m('div', {
+      style: { height: '20vh', width: '20vh', display: 'inline-block' },
+    }, m(SVG, {
+      style: { width: 'inherit', height: 'inherit' },
+      content: m.trust(icons.amivWheel),
+    }))));
   }
 }

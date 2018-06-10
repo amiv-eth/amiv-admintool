@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { Card } from 'polythene-mithril';
 import DatalistController from '../listcontroller';
+import { loadingScreen } from '../layout';
 
 
 class GroupListItem {
@@ -27,7 +28,7 @@ export default class GroupList {
   }
 
   view() {
-    if (!this.data) return '';
+    if (!this.data) return m(loadingScreen);
 
     return m(
       'div.maincontainer', { style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-top': '5px' } },

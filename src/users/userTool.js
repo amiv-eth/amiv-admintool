@@ -5,6 +5,7 @@ import TableView from '../views/tableView';
 import { users as config } from '../resourceConfig.json';
 import DatalistController from '../listcontroller';
 import ItemController from '../itemcontroller';
+import { loadingScreen } from '../layout';
 
 export class UserItem {
   constructor() {
@@ -12,7 +13,7 @@ export class UserItem {
   }
 
   view() {
-    if (!this.controller || !this.controller.data) return '';
+    if (!this.controller || !this.controller.data) return m(loadingScreen);
     if (this.controller.modus !== 'view') return m(EditUser, { controller: this.controller });
     return m(ViewUser, { controller: this.controller });
   }

@@ -10,7 +10,7 @@ import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
 import JobTable from './jobs/table';
 import JobItem from './jobs/item';
-import Layout from './layout';
+import { Layout } from './layout';
 import './style';
 
 const root = document.body;

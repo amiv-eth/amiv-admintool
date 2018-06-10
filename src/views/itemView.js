@@ -2,6 +2,7 @@ import m from 'mithril';
 import { Toolbar, Dialog, Button } from 'polythene-mithril';
 import { ButtonCSS } from 'polythene-css';
 import { colors } from '../style';
+import { loadingScreen } from '../layout';
 
 ButtonCSS.addStyle('.itemView-edit-button', {
   color_light_background: colors.light_blue,
@@ -50,7 +51,7 @@ export default class ItemView {
   }
 
   layout(children) {
-    if (!this.controller || !this.controller.data) return '';
+    if (!this.controller || !this.controller.data) return m(loadingScreen);
     // update the reference to the controller data, as this may be refreshed
     // in between
     this.data = this.controller.data;

@@ -61,6 +61,7 @@ class MembersTable {
         this.addmode ? m(SelectList, {
           controller: this.userController,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
+          selectedText: user => `${user.firstname} ${user.lastname}`,
           onSubmit: (user) => {
             this.addmode = false;
             this.ctrl.handler.post({
@@ -72,7 +73,6 @@ class MembersTable {
             });
           },
           onCancel: () => { this.addmode = false; m.redraw(); },
-          selectedText: user => `${user.firstname} ${user.lastname}`,
         }) : '',
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: 'Members' }),
