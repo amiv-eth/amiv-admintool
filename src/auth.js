@@ -125,7 +125,7 @@ export class ResourceHandler {
 
     const fullQuery = {};
 
-    if ('search' in query && query.search.length > 0) {
+    if ('search' in query && query.search && query.search.length > 0) {
       // translate search into where, we just look if any field contains search
       // The search-string may match any of the keys in the object specified in the
       // constructor
@@ -134,7 +134,7 @@ export class ResourceHandler {
           const fieldQuery = {};
           fieldQuery[key] = {
             $regex: `${query.search}`,
-            $options: 'i'
+            $options: 'i',
           };
           return fieldQuery;
         }),
@@ -146,7 +146,7 @@ export class ResourceHandler {
       } else {
         fullQuery.where = JSON.stringify(searchQuery);
       }
-    } else if (query.where) {
+    } else if ('where' in query) {
       fullQuery.where = JSON.stringify(query.where);
     }
 

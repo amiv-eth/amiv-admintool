@@ -26,7 +26,7 @@ export default class UserView extends ItemView {
     // a controller to handle the list of possible groups to join
     this.groupcontroller = new DatalistController('groups', {}, ['name']);
     // exclude the groups where the user is already a member
-    this.groupmemberships.handler.get({ where: { user: this.id } })
+    this.groupmemberships.handler.get({ where: { user: this.data._id } })
       .then((data) => {
         const groupIds = data._items.map(item => item.group);
         this.groupcontroller.setQuery({
@@ -71,7 +71,8 @@ export default class UserView extends ItemView {
     // groupmemberships. Selects a group to request membership for.
     const groupSelect = m(SelectList, {
       controller: this.groupcontroller,
-      listTileAttrs: data => Object.assign({}, { title: data.name }),
+      listTileAttrs: group => Object.assign({}, { title: group.name }),
+      selectedText: group => group.name,
       onSubmit: (group) => {
         this.groupchoice = false;
         this.groupmemberships.handler.post({
@@ -81,6 +82,7 @@ export default class UserView extends ItemView {
           this.groupmemberships.refresh();
         });
       },
+      onCancel: () => { this.groupchoice = false; m.redraw(); },
     });
 
     return this.layout([
@@ -119,7 +121,7 @@ export default class UserView extends ItemView {
         m('div.viewcontainercolumn', m(Card, {
           style: { height: '300px' },
           content: m('div', [
-            this.groupchoice ? groupSelect : '',
+            this.groupchoice && groupSelect,
             m(Toolbar, { compact: true }, [
               m(ToolbarTitle, { text: 'Group Memberships' }),
               m(Button, {
