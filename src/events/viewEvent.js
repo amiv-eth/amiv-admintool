@@ -168,7 +168,7 @@ export default class viewEvent extends ItemView {
       ]),
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
-        this.data.signup_count && m(Property, {
+        ('signup_count' in this.data && this.data.signup_count !== null) && m(Property, {
           style: stdMargin,
           title: 'Signups',
         }, `${this.data.signup_count} / ${displaySpots}`),
