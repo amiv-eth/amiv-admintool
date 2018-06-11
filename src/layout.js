@@ -32,7 +32,7 @@ const layoutStyle = [
       color: 'white',
     },
     '.wrapper-content': {
-      height: 'calc(100vh - 72px)',
+      height: 'calc(100vh - 64px)',
       'grid-column': 2,
       'grid-row': 2,
       background: '#eee',
