@@ -4,6 +4,7 @@ import { List, ListTile, Icon, Toolbar, ToolbarTitle, Dialog, SVG } from 'polyth
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
 import { resetSession } from './auth';
+import { colors } from './style'
 
 const layoutStyle = [
   {
@@ -12,9 +13,6 @@ const layoutStyle = [
       margin: 0,
     },
     '.main-toolbar': {
-      backgroundColor: '#1f2d54',
-      color: '#fff',
-      height: '72px',
       'grid-column': '1 / span 2',
       'grid-row': 1,
     },
@@ -23,7 +21,7 @@ const layoutStyle = [
       width: '100%',
       display: 'grid',
       'grid-template-columns': '200px auto',
-      'grid-template-rows': '72px auto',
+      'grid-template-rows': '64px auto',
     },
     '.wrapper-sidebar': {
       'grid-column': 1,
@@ -58,7 +56,10 @@ export class Layout {
   view({ children }) {
     return m('div', [
       m('div.wrapper-main.smooth', [
-        m(Toolbar, { className: 'main-toolbar' }, [
+        m(Toolbar, {
+          className: 'main-toolbar',
+          style: { backgroundColor: colors.amiv_blue, color: '#ffffff' },
+        }, [
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
           m('a', { onclick: resetSession }, 'Logout'),
         ]),
