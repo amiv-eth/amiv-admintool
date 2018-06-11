@@ -117,6 +117,8 @@ export class loadingScreen {
         'flex-direction': 'column',
         'justify-content': 'center',
         'align-items': 'center',
+        'animation-name': 'popup',
+        'animation-duration': '2000ms',
       },
     }, m('div', { style: { height: '5vh', 'font-size': '4em' } }, 'Loading...'), m('div', {
       style: {
