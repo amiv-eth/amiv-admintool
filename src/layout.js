@@ -1,17 +1,26 @@
 import m from 'mithril';
-import '@material/drawer';
-import { List, ListTile, Icon, Toolbar, ToolbarTitle, Dialog, SVG } from 'polythene-mithril';
+//import * as mdc from 'material-components-web';
+//import "@material/drawer";
+import { MDCTemporaryDrawer } from '@material/drawer';
+import {
+  List,
+  ListTile,
+  Icon,
+  Toolbar,
+  ToolbarTitle,
+  Dialog,
+  SVG,
+  IconButton,
+} from 'polythene-mithril';
+import { IconButtonCSS } from 'polythene-css';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
 import { resetSession } from './auth';
-import { colors } from './style'
+import { colors } from './style';
 
 const layoutStyle = [
   {
-    body: {
-      padding: 0,
-      margin: 0,
-    },
+    body: { padding: 0, margin: 0, overflow: 'hidden' },
     '.main-toolbar': {
       'grid-column': '1 / span 2',
       'grid-row': 1,
@@ -24,23 +33,44 @@ const layoutStyle = [
       'grid-template-rows': '64px auto',
     },
     '.wrapper-sidebar': {
-      'grid-column': 1,
-      'grid-row': 2,
+      '@media (min-width:1200px)': { 'grid-column': 1 },
+      '@media (max-width:1200px)': {
+        position: 'absolute',
+        top: '64px',
+        left: '-200px',
+        width: '200px',
+        'z-index': 100000,
+      },
       height: '100%',
+      'grid-row': 2,
       'overflow-y': 'auto',
       background: '#cccccc',
       color: 'white',
     },
     '.wrapper-content': {
+      '@media (min-width:1200px)': { 'grid-column': 2 },
+      '@media (max-width:1200px)': { 'grid-column': '1 / span 2' },
       height: 'calc(100vh - 64px)',
-      'grid-column': 2,
       'grid-row': 2,
       background: '#eee',
       overflow: 'hidden',
     },
+    '.menu-button': {
+      '@media (min-width:1200px)': { display: 'none' },
+      '@media (max-width:1200px)': { display: 'inline' },
+    },
   },
 ];
 styler.add('layout', layoutStyle);
+
+function toggleDrawer() {
+  const drawer = document.querySelector('.wrapper-sidebar');
+  if (drawer.style.left === '0px') {
+    drawer.style.left = '-200px';
+  } else {
+    drawer.style.left = '0px';
+  }
+}
 
 class Menupoint {
   view({ attrs: { title, href, icon = null } }) {
@@ -60,17 +90,22 @@ export class Layout {
           className: 'main-toolbar',
           style: { backgroundColor: colors.amiv_blue, color: '#ffffff' },
         }, [
+          m('div.menu-button', m(IconButton, {
+            className: 'menu-button',
+            icon: { svg: { content: m.trust(icons.menu) } },
+            events: { onclick: () => { toggleDrawer(); } },
+            style: { color: '#ffffff' },
+          })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
           m('a', { onclick: resetSession }, 'Logout'),
         ]),
         m(
-          'nav.mdc-drawer.mdc-drawer--permanent.mdc-typography.wrapper-sidebar',
+          'div.mdc-typography.wrapper-sidebar',
           { style: { width: '200px' } },
           m(List, {
             className: 'drawer-menu',
-            header: {
-              title: 'Menu',
-            },
+            header: { title: 'Menu' },
+            hover: true,
             tiles: [
               m(Menupoint, {
                 href: '/users',

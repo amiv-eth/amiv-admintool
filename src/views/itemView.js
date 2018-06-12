@@ -52,8 +52,7 @@ export default class ItemView {
 
   layout(children) {
     if (!this.controller || !this.controller.data) return m(loadingScreen);
-    // update the reference to the controller data, as this may be refreshed
-    // in between
+    // update the reference to the controller data, as this may be refreshed in between
     this.data = this.controller.data;
     return m('div', [
       m(Toolbar, m('div.pe-button-row', [
