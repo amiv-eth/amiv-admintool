@@ -1,7 +1,6 @@
 import m from 'mithril';
 //import * as mdc from 'material-components-web';
 //import "@material/drawer";
-import { MDCTemporaryDrawer } from '@material/drawer';
 import {
   List,
   ListTile,
@@ -12,7 +11,6 @@ import {
   SVG,
   IconButton,
 } from 'polythene-mithril';
-import { IconButtonCSS } from 'polythene-css';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
 import { resetSession } from './auth';
@@ -59,16 +57,29 @@ const layoutStyle = [
       '@media (min-width:1200px)': { display: 'none' },
       '@media (max-width:1200px)': { display: 'inline' },
     },
+    '.content-hider': {
+      display: 'none',
+      position: 'absolute',
+      top: '64px',
+      left: '200px',
+      width: '100%',
+      height: '100%',
+      background: '#000000aa',
+      'z-index': 100000000
+    },
   },
 ];
 styler.add('layout', layoutStyle);
 
 function toggleDrawer() {
   const drawer = document.querySelector('.wrapper-sidebar');
+  const shadow = document.querySelector('.content-hider');
   if (drawer.style.left === '0px') {
     drawer.style.left = '-200px';
+    shadow.style.display = 'none';
   } else {
     drawer.style.left = '0px';
+    shadow.style.display = 'block';
   }
 }
 
@@ -77,6 +88,7 @@ class Menupoint {
     return m(ListTile, {
       url: { href, oncreate: m.route.link },
       front: icon ? m(Icon, { svg: m.trust(icon) }) : '',
+      ink: true,
       title,
     });
   }
@@ -103,9 +115,8 @@ export class Layout {
           'div.mdc-typography.wrapper-sidebar',
           { style: { width: '200px' } },
           m(List, {
-            className: 'drawer-menu',
             header: { title: 'Menu' },
-            hover: true,
+            hoverable: true,
             tiles: [
               m(Menupoint, {
                 href: '/users',
@@ -135,6 +146,8 @@ export class Layout {
           }),
         ),
         m('div.wrapper-content', children),
+        // shadow over content in case drawer is out
+        m('div.content-hider'),
       ]),
       // dialog element will show when Dialog.show() is called, this is only a placeholder
       m(Dialog),
