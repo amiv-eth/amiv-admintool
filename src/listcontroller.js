@@ -23,6 +23,8 @@ export default class DatalistController {
       this.refresh();
       m.redraw();
     }, 100);
+    // keep track of the total number of pages
+    this.totalPages = null;
   }
 
   refresh() {
@@ -46,6 +48,8 @@ export default class DatalistController {
 
     return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
+        // update total number of pages
+        this.totalPages = Math.ceil(data._meta.total / 10);
         // If onlineSearch is false, we filter the page-results at the client
         // because the API would not understand the search pattern, e.g. for
         // embedded keys like user.firstname
