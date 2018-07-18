@@ -129,9 +129,9 @@ class EmailTable {
     ]);
   }
 
-  view({ attrs: { list, onSubmit = () => {} } }) {
+  view({ attrs: { list, title, style = {}, onSubmit = () => {} } }) {
     return m(Card, {
-      style: { height: '200px' },
+      style: { height: '200px', ...style },
       content: m('div', [
         this.addmode ? m(Toolbar, {
           compact: true,
@@ -163,7 +163,7 @@ class EmailTable {
           }),
         ]) : '',
         m(Toolbar, { compact: true }, [
-          m(ToolbarTitle, { text: 'Receiving Email Adresses' }),
+          m(ToolbarTitle, { text: title }),
           m(Button, {
             className: 'blue-button',
             borders: true,
@@ -214,6 +214,7 @@ export default class viewGroup extends ItemView {
         m('div.viewcontainercolumn', [
           m(EmailTable, {
             list: this.data.receive_from || [],
+            title: 'Receiving Email Adresses',
             onSubmit: (newItem) => {
               const oldList = this.data.receive_from || [];
               this.controller.patch({
@@ -232,6 +233,32 @@ export default class viewGroup extends ItemView {
                   _id: this.data._id,
                   _etag: this.data._etag,
                   receive_from: oldList,
+                });
+              }
+            },
+          }),
+          m(EmailTable, {
+            list: this.data.forward_to || [],
+            title: 'Forwards to Email Adresses',
+            style: { 'margin-top': '10px' },
+            onSubmit: (newItem) => {
+              const oldList = this.data.forward_to || [];
+              this.controller.patch({
+                _id: this.data._id,
+                _etag: this.data._etag,
+                forward_to: [...oldList, newItem],
+              });
+            },
+            onRemove: (item) => {
+              const oldList = this.data.forward_to;
+              // remove the first occurence of the given item-string
+              const index = oldList.indexOf(item);
+              if (index !== -1) {
+                oldList.splice(index, 1);
+                this.controller.patch({
+                  _id: this.data._id,
+                  _etag: this.data._etag,
+                  forward_to: oldList,
                 });
               }
             },
