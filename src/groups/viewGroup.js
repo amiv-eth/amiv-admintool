@@ -181,6 +181,8 @@ class EmailTable {
 
 export default class viewGroup extends ItemView {
   view() {
+    // update the reference to the controller data, as this may be refreshed in between
+    this.data = this.controller.data;
     return this.layout([
       // this div is the title line
       m('div.maincontainer', [
@@ -214,7 +216,7 @@ export default class viewGroup extends ItemView {
             list: this.data.receive_from || [],
             onSubmit: (newItem) => {
               const oldList = this.data.receive_from || [];
-              this.handler.patch({
+              this.controller.patch({
                 _id: this.data._id,
                 _etag: this.data._etag,
                 receive_from: [...oldList, newItem],
@@ -226,11 +228,11 @@ export default class viewGroup extends ItemView {
               const index = oldList.indexOf(item);
               if (index !== -1) {
                 oldList.splice(index, 1);
-                this.handler.patch({
+                this.controller.patch({
                   _id: this.data._id,
                   _etag: this.data._etag,
                   receive_from: oldList,
-                }).then(() => m.redraw());
+                });
               }
             },
           }),
