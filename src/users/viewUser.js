@@ -111,6 +111,7 @@ export default class UserView extends ItemView {
               m(ToolbarTitle, { text: 'Event Signups' }),
             ]),
             m(TableView, {
+              tableHeight: '175px',
               controller: this.eventsignups,
               keys: ['event.title_de'],
               titles: ['event'],
@@ -131,6 +132,7 @@ export default class UserView extends ItemView {
               }),
             ]),
             m(TableView, {
+              tableHeight: '175px',
               controller: this.groupmemberships,
               keys: ['group.name', 'expiry'],
               titles: ['groupname', 'expiry'],

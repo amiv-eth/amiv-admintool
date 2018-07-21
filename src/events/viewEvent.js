@@ -88,12 +88,13 @@ class ParticipantsTable {
 
   view({ attrs: { title } }) {
     return m(Card, {
-      style: { height: '300px', 'margin-bottom': '10px' },
+      style: { height: '400px', 'margin-bottom': '10px' },
       content: m('div', [
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: title }),
         ]),
         m(TableView, {
+          tableHeight: '275px',
           controller: this.ctrl,
           keys: signupConfig.tableKeys,
           tileContent: this.getItemData,
