@@ -6,13 +6,14 @@ import {
   ToolbarTitle,
   TextField,
   Icon,
-  IconButton,
 } from 'polythene-mithril';
-import { icons, Property, DropdownCard } from '../views/elements';
+import { icons, Property, DropdownCard, chip } from '../views/elements';
+import { colors } from '../style';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
 import SelectList from '../views/selectList';
+import { ResourceHandler } from '../auth';
 
 
 // Helper class to either display the signed up participants or those on the
@@ -180,24 +181,40 @@ class EmailTable {
 }
 
 export default class viewGroup extends ItemView {
+
+  oninit() {
+    // load the number of members in this group
+    const handler = new ResourceHandler('groupmemberships');
+    handler.get({ where: { group: this.data._id } }).then((memberships) => {
+      this.numMembers = memberships._meta.total;
+      m.redraw();
+    });
+  }
+
   view() {
     // update the reference to the controller data, as this may be refreshed in between
     this.data = this.controller.data;
+
+    const stdMargin = { margin: '5px' };
+
     return this.layout([
       // this div is the title line
       m('div.maincontainer', [
         m('h1', this.data.name),
-        this.data.moderator ? m(Property, {
-          title: 'Moderator',
-          onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
-        }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`) : '',
-        this.data.requires_storage ? m(IconButton, {
-          label: 'has a folder on the AMIV Cloud',
-          style: { color: '#ffffff', backgroundColor: 'orange' },
-          icon: { svg: { content: m.trust(icons.cloud) } },
-          inactive: true,
-          compact: true,
-        }) : '',
+        this.data.requires_storage && m(chip, {
+          svg: icons.cloud,
+          color: '#ffffff',
+          background: colors.orange,
+          ...stdMargin,
+        }, 'has a folder on the AMIV Cloud'),
+        m('div', { style: { display: 'flex' } }, [
+          this.numMembers && m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
+          this.data.moderator && m(Property, {
+            title: 'Moderator',
+            onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
+            style: stdMargin,
+          }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}`),
+        ]),
       ]),
       m('div.viewcontainer', [
         // now-column layout: This first column are the members
