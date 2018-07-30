@@ -80,8 +80,11 @@ class ParticipantsTable {
     // TODO list should not have hardcoded size outside of stylesheet
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
-      m('div', { style: { width: '9em' } }, data.user.lastname),
-      m('div', { style: { width: '9em' } }, data.user.firstname),
+      m(
+        'div',
+        { style: { width: '18em' } },
+        data.user ? `${data.user.firstname} ${data.user.lastname}` : '',
+      ),
       m('div', { style: { width: '9em' } }, data.email),
     ];
   }
@@ -100,8 +103,7 @@ class ParticipantsTable {
           tileContent: this.getItemData,
           titles: [
             { text: 'Date of Signup', width: '9em' },
-            { text: 'Name', width: '9em' },
-            { text: 'First Name', width: '9em' },
+            { text: 'Name', width: '18em' },
             { text: 'Email', width: '9em' },
           ],
         }),
@@ -137,7 +139,7 @@ export default class viewEvent extends ItemView {
 
   setUpEmailList(showAll) {
     // setup where query
-    const where = { event: this.id };
+    const where = { event: this.data._id };
     if (!showAll) {
       // only show accepted
       where.accepted = true;
