@@ -289,33 +289,37 @@ export class chip {
   view({
     attrs: {
       svg,
-      color = '#000000',
-      background = '#dddddd',
-      ...styleAttrs
+      background = '#ffffff',
+      textColor = '#000000',
+      svgColor = '#000000',
+      svgBackground = '#dddddd',
+      ...attrs
     },
     children,
   }) {
     return m('div', {
       style: {
         height: '32px',
-        'background-color': '#ffffff',
+        'background-color': background,
+        color: textColor,
         'border-radius': '16px',
         // if there is a border, things are weirdly shifted
-        padding: styleAttrs.border ? '3px 8px 4px 6px' : '4px 8px',
+        padding: attrs.border ? '3px 8px 4px 6px' : '4px 8px',
         display: 'inline-flex',
-        ...styleAttrs,
+        ...attrs,
       },
+      ...attrs.onclick ? { onclick: attrs.onclick } : {},
     }, [
       svg && m('div', {
         style: {
-          'background-color': background,
+          'background-color': svgBackground,
           'border-radius': '12px',
           margin: '0px 4px 0px -2px',
           height: '24px',
           width: '24px',
           padding: '2px 2px 2px 4px',
         },
-      }, m(Icon, { svg: { content: m.trust(svg) }, size: 'small', style: { color } })),
+      }, m(Icon, { svg: { content: m.trust(svg) }, size: 'small', style: { svgColor } })),
       m('div', { style: { 'line-height': '24px' } }, children),
     ]);
   }

@@ -14,6 +14,7 @@ export default class DatalistController {
     }
     this.query = query || {};
     this.search = null;
+    this.filter = null;
     // state pointer that is counted up every time the table is refreshed so
     // we can tell infinite scroll that the data-version has changed.
     this.stateCounter = Stream(0);
@@ -45,6 +46,7 @@ export default class DatalistController {
     const query = Object.assign({}, this.query);
     query.max_results = 10;
     query.page = pageNum;
+    query.where = { ...this.filter, ...this.query.where };
 
     return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
@@ -98,6 +100,11 @@ export default class DatalistController {
     } else if (this.clientSearchKeys.length > 0) {
       this.search = search;
     }
+  }
+
+  setFilter(filter) {
+    this.filter = filter;
+    this.refresh();
   }
 
   setQuery(query) {

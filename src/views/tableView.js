@@ -3,21 +3,13 @@ import infinite from 'mithril-infinite';
 import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
+import { chip, icons } from './elements';
 
 const tableStyles = [
   {
-    '.tabletool': {
-      display: 'grid',
-      height: '100%',
-      'grid-template-rows': '48px calc(100% - 78px)',
-      'background-color': 'white',
-    },
     '.toolbar': {
       'grid-row': 1,
       display: 'flex',
-    },
-    '.scrollTable': {
-      'grid-row': 2,
     },
     '.tableTile': {
       padding: '10px',
@@ -28,6 +20,22 @@ const tableStyles = [
 ];
 
 styler.add('tableview', tableStyles);
+
+
+class FilterChip {
+  view({ attrs: { selected = false, onclick = () => {} }, children }) {
+    return m(chip, {
+      'margin-left': '5px',
+      'margin-right': '5px',
+      background: selected ? '#aaaaaa' : '#dddddd',
+      svgBackground: '#aaaaaa',
+      textColor: selected ? '#000000' : '#999999',
+      svgColor: '#000000',
+      svg: selected ? icons.checked : null,
+      onclick,
+    }, children);
+  }
+}
 
 export default class TableView {
   /* Shows a table of objects for a given API resource.
@@ -40,11 +48,16 @@ export default class TableView {
    *       Works with embedded resources, i.e. if you add
    *       { embedded: { event: 1 } } to a list of eventsignups,
    *       you can display event.title_de as a table key
+   *   - filters: list of list of objects, each inner list is a group of mutual exclusive
+   *       filters.
+   *       A filter can have properties 'name', 'query' and optionally 'selected' for
+   *       the initial selection state.
    */
   constructor({
     attrs: {
       keys,
       tileContent,
+      filters = null,
       clickOnRows = (data) => { m.route.set(`/${data._links.self.href}`); },
     },
   }) {
@@ -53,6 +66,9 @@ export default class TableView {
     this.tileContent = tileContent;
     this.clickOnRows = clickOnRows;
     this.searchValue = '';
+    // make a copy of filters so we can toggle the selected status
+    this.filters = filters ? filters.map(filterGroup =>
+      filterGroup.map(filter => Object.assign({}, filter))) : null;
   }
 
   getItemData(data) {
@@ -93,7 +109,15 @@ export default class TableView {
       tableHeight = false,
     },
   }) {
-    return m('div.tabletool', [
+    return m('div.tabletool', {
+      style: {
+        display: 'grid',
+        height: '100%',
+        'grid-template-rows': this.filters ?
+          '48px 40px calc(100% - 78px)' : '48px calc(100% - 78px)',
+        'background-color': 'white',
+      },
+    }, [
       m(Toolbar, {
         className: 'toolbar',
         compact: true,
@@ -119,9 +143,45 @@ export default class TableView {
           }) : '',
         ],
       }),
+      // please beare with this code, it is the only way possible to track the selection
+      // status of all the filters of the same group and make sure that they are really
+      // mutually exclusive (that way when you click on one filter in the group, the other
+      // ones in this group will be deselected)
+      this.filters && m('div', {
+        style: {
+          height: '40px',
+          'overflow-x': 'scroll',
+          'white-space': 'nowrap',
+          padding: '0px 5px',
+        },
+      }, [].concat(['Filters: '], ...[...this.filters.keys()].map(filterGroupIdx =>
+        [...this.filters[filterGroupIdx].keys()].map((filterIdx) => {
+          const thisFilter = this.filters[filterGroupIdx][filterIdx];
+          return m(FilterChip, {
+            selected: thisFilter.selected,
+            onclick: () => {
+              if (!thisFilter.selected) {
+                // set all filters in this group to false
+                [...this.filters[filterGroupIdx].keys()].forEach((i) => {
+                  this.filters[filterGroupIdx][i].selected = false;
+                });
+                // now set this filter to selected
+                this.filters[filterGroupIdx][filterIdx].selected = true;
+                console.log('filter set: ', thisFilter.query);
+                controller.setFilter(thisFilter.query);
+              } else {
+                this.filters[filterGroupIdx][filterIdx].selected = false;
+                controller.setFilter({});
+              }
+            },
+          }, thisFilter.name);
+        })))),
       m(List, {
         className: 'scrollTable',
-        style: tableHeight ? { height: tableHeight } : {},
+        style: {
+          'grid-row': this.filters ? 3 : 2,
+          ...tableHeight ? { height: tableHeight } : {},
+        },
         tiles: [
           m(ListTile, {
             className: 'tableTile',
