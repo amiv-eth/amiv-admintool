@@ -25,6 +25,7 @@ export default class EventTable {
   }
 
   view() {
+    const now = new Date();
     return m(TableView, {
       controller: this.ctrl,
       keys: config.tableKeys,
@@ -34,6 +35,13 @@ export default class EventTable {
         { text: 'Start', width: '9em' },
         { text: 'End', width: '9em' },
       ],
+      filters: [[{
+        name: 'upcoming',
+        query: { time_start: { $gte: `${now.toISOString().slice(0, -5)}Z` } },
+      }, {
+        name: 'past',
+        query: { time_start: { $lt: `${now.toISOString().slice(0, -5)}Z` } },
+      }]],
       onAdd: () => { m.route.set('/newevent'); },
     });
   }

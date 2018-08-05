@@ -28,6 +28,15 @@ export class UserTable {
       controller: this.ctrl,
       keys: config.tableKeys,
       titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
+      filters: [[
+        { name: 'not members', query: { membership: 'none' } },
+        { name: 'regular members', query: { membership: 'regular' } },
+        { name: 'extraordinary members', query: { membership: 'extraordinary' } },
+        { name: 'honorary member', query: { membership: 'honorary' } },
+      ], [
+        { name: 'ITET', query: { department: 'itet' } },
+        { name: 'MAVT', query: { department: 'mavt' } },
+      ]],
       onAdd: () => { m.route.set('/newuser'); },
     });
   }
