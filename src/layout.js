@@ -9,6 +9,7 @@ import {
   ToolbarTitle,
   Dialog,
   SVG,
+  Button,
   IconButton,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
@@ -109,7 +110,11 @@ export class Layout {
             style: { color: '#ffffff' },
           })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
-          m('a', { onclick: deleteSession }, 'Logout'),
+          m(Button, {
+            className: 'red-row-button',
+            label: 'logout',
+            events: { onclick: deleteSession },
+          }),
         ]),
         m(
           'div.mdc-typography.wrapper-sidebar',
