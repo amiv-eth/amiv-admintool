@@ -13,7 +13,7 @@ import {
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
-import { resetSession } from './auth';
+import { deleteSession } from './auth';
 import { colors } from './style';
 
 const layoutStyle = [
@@ -109,7 +109,7 @@ export class Layout {
             style: { color: '#ffffff' },
           })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
-          m('a', { onclick: resetSession }, 'Logout'),
+          m('a', { onclick: deleteSession }, 'Logout'),
         ]),
         m(
           'div.mdc-typography.wrapper-sidebar',

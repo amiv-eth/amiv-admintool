@@ -11,8 +11,13 @@ const APISession = {
   token: '',
   // user admins are a very special case as the permissions on the resource can only
   // be seen by requesting users and check whether you see their membership
-  isUserAdmin: false
+  isUserAdmin: false,
 };
+
+const amivapi = axios.create({
+  baseURL: apiUrl,
+  headers: { 'Content-Type': 'application/json' },
+});
 
 // OAuth Handler
 const oauth = new ClientOAuth2({
@@ -21,17 +26,12 @@ const oauth = new ClientOAuth2({
   redirectUri: `${ownUrl}/oauthcallback`,
 });
 
-export function resetSession() {
+function resetSession() {
   APISession.authenticated = false;
   APISession.token = '';
   localStorage.remove('token');
   window.location.replace(oauth.token.getUri());
 }
-
-const amivapi = axios.create({
-  baseURL: apiUrl,
-  headers: { 'Content-Type': 'application/json' },
-});
 
 function checkToken(token) {
   // check if a token is still valid
@@ -85,6 +85,26 @@ export function getSession() {
       });
       resolve(authenticatedSession);
     }).catch(resetSession);
+  });
+}
+
+export function deleteSession() {
+  return new Promise((resolve, reject) => {
+    getSession().then((api) => {
+      api.get(`sessions/${APISession.token}`).then((response) => {
+        if (response.status === 200) {
+          api.delete(
+            `sessions/${response.data._id}`,
+            { headers: { 'If-Match': response.data._etag } },
+          ).then((deleteResponse) => {
+            if (deleteResponse.status === 204) {
+              resetSession();
+              resolve(deleteResponse.data);
+            } else reject();
+          }).catch(reject);
+        } else reject();
+      }).catch(reject);
+    }).catch(reject);
   });
 }
 
