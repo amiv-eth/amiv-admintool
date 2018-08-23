@@ -42,5 +42,3 @@ m.route(root, '/events', {
   '/newjoboffer': layoutWith(JobItem),
   '/joboffers/:id': layoutWith(JobItem),
 });
-
-m.route.prefix('');
