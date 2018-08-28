@@ -17,6 +17,11 @@ export default class UserEdit extends EditView {
         name: 'Membership',
         buttons: [
           {
+            value: 'none',
+            label: 'No Member',
+            defaultChecked: this.data.membership === 'none',
+          },
+          {
             value: 'regular',
             label: 'Regular AMIV Member',
             defaultChecked: this.data.membership === 'regular',
