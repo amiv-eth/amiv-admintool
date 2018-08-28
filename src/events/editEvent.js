@@ -71,10 +71,8 @@ export default class newEvent extends EditView {
         type: 'string',
         enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
       };
-      additionalFields.properties.specialFood = {
-        'Special Food Requirements': {
-          type: 'string',
-        },
+      additionalFields.properties['Special Food Requirements'] = {
+        type: 'string',
       };
       additionalFields.required.push('Food');
     }
