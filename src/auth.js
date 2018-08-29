@@ -104,7 +104,7 @@ export function deleteSession() {
           }).catch(reject);
         } else reject();
       }).catch(reject);
-    }).catch(reject);
+    });
   });
 }
 
