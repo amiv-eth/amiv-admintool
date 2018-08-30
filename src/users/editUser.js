@@ -32,9 +32,9 @@ export default class UserEdit extends EditView {
             defaultChecked: this.data.membership === 'extraordinary',
           },
           {
-            value: 'honory',
+            value: 'honorary',
             label: 'Honorary Member',
-            defaultChecked: this.data.membership === 'honory',
+            defaultChecked: this.data.membership === 'honorary',
           },
         ],
         onChange: ({ value }) => { this.data.membership = value; },
