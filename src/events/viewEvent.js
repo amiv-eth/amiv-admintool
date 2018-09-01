@@ -12,7 +12,7 @@ import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
-import DatalistController from '../listcontroller';
+import RelationlistController from '../relationlistcontroller';
 import { dateFormatter } from '../utils';
 import { icons, DropdownCard, Property, chip } from '../views/elements';
 import { ResourceHandler } from '../auth';
@@ -70,10 +70,7 @@ class DuoLangProperty {
 // waiting list.
 class ParticipantsTable {
   constructor({ attrs: { where } }) {
-    this.ctrl = new DatalistController('eventsignups', {
-      embedded: { user: 1 },
-      where,
-    }, ['email', 'user.firstname', 'user.lastname'], false);
+    this.ctrl = new RelationlistController('eventsignups', 'users', { where }, ['email']);
   }
 
   getItemData(data) {
