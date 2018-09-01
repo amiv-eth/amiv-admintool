@@ -4,14 +4,8 @@ import { ResourceHandler } from './auth';
 import { debounce } from './utils';
 
 export default class DatalistController {
-  constructor(resource, query = {}, searchKeys = false, onlineSearch = true) {
-    this.onlineSearch = onlineSearch;
-    if (onlineSearch) {
-      this.handler = new ResourceHandler(resource, searchKeys);
-    } else {
-      this.handler = new ResourceHandler(resource, false);
-      this.clientSearchKeys = searchKeys || [];
-    }
+  constructor(resource, query = {}, searchKeys = false) {
+    this.handler = new ResourceHandler(resource, searchKeys);
     this.query = query || {};
     this.search = null;
     this.filter = null;
@@ -47,48 +41,14 @@ export default class DatalistController {
     query.max_results = 10;
     query.page = pageNum;
     query.where = { ...this.filter, ...this.query.where };
+    // remove where again if it is empty
+    if (Object.keys(query.where).length === 0) delete query.where;
 
     return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
         // update total number of pages
         this.totalPages = Math.ceil(data._meta.total / 10);
-        // If onlineSearch is false, we filter the page-results at the client
-        // because the API would not understand the search pattern, e.g. for
-        // embedded keys like user.firstname
-        if (!this.onlineSearch && this.clientSearchKeys.length > 0 && this.search) {
-          const response = [];
-          const searchRegex = new RegExp(this.search, 'i');
-          // We go through all response items and will add them to response if
-          // they match the query.
-          data._items.forEach((item) => {
-            // Try every search Key seperately, such that any match with any
-            // key is sufficient
-            this.clientSearchKeys.some((key) => {
-              if (key.match(/.*\..*/)) {
-                // traverse the key, this is a key pointing to a sub-object
-                let intermediateObject = Object.assign({}, item);
-                key.split('.').forEach((subKey) => {
-                  intermediateObject = intermediateObject[subKey];
-                });
-                if (intermediateObject.match(searchRegex)) {
-                  response.push(item);
-                  // return true to end the search of this object, it is already
-                  // matched
-                  return true;
-                }
-              } else if (item[key] && item[key].match(searchRegex)) {
-                response.push(item);
-                // return true to end the search of this object, it is already
-                // matched
-                return true;
-              }
-              return false;
-            });
-          });
-          resolve(response);
-        } else {
-          resolve(data._items);
-        }
+        resolve(data._items);
       });
     });
   }
