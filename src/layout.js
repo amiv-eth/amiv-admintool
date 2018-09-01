@@ -101,6 +101,7 @@ export class Layout {
       m('div.wrapper-main.smooth', [
         m(Toolbar, {
           className: 'main-toolbar',
+          tone: 'dark',
           style: { backgroundColor: colors.amiv_blue, color: '#ffffff' },
         }, [
           m('div.menu-button', m(IconButton, {
@@ -111,7 +112,7 @@ export class Layout {
           })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
           m(Button, {
-            className: 'red-row-button',
+            //className: 'blue-button',
             label: 'logout',
             events: { onclick: deleteSession },
           }),
