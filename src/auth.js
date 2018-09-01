@@ -125,7 +125,7 @@ export class ResourceHandler {
 
     const fullQuery = {};
 
-    if ('search' in query && query.search && query.search.length > 0) {
+    if ('search' in query && query.search && query.search.length > 0 && this.searchKeys) {
       // translate search into where, we just look if any field contains search
       // The search-string may match any of the keys in the object specified in the
       // constructor
