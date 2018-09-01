@@ -101,7 +101,7 @@ export default class TableView {
   }
 
 
-  getSelectedFilteQuery() {
+  getSelectedFilterQuery() {
     // produce a list of queries from the filters that are currently selected
     const selectedFilters = [].concat(...this.filters.map(filterGroup =>
       filterGroup.filter(filter => filter.selected === true).map(filter => filter.query)));
@@ -180,7 +180,7 @@ export default class TableView {
                 this.filters[filterGroupIdx][filterIdx].selected = false;
               }
               // update filters in controller
-              controller.setFilter(this.getSelectedFilteQuery());
+              controller.setFilter(this.getSelectedFilterQuery());
             },
           }, thisFilter.name);
         })))),
