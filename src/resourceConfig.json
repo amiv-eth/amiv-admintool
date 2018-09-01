@@ -26,8 +26,7 @@
             "time_advertising_end": "Advertisment ends on",
             "time_advertising_start": "Advertisement starts on",
             "selection_strategy": "TODO what is this?",
-            "show_announce": "Does it belong to announce?",
-            "_id": "TODO Event ID how is this generated?"
+            "show_announce": "Does it belong to announce?"
         },
         "tableKeys": [
             "title_de",
@@ -39,6 +38,11 @@
         ],
         "notPatchableKeys": [
             "signup_count"
+        ],
+        "searchKeys": [
+            "title_de",
+            "title_en",
+            "location"
         ]
     },
     "users": {
