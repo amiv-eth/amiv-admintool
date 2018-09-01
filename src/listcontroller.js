@@ -93,6 +93,42 @@ export default class DatalistController {
     });
   }
 
+  /*
+   * Get all available pages
+   */
+  getFullList() {
+    return new Promise((resolve) => {
+      // get first page to refresh total page count
+      this.getPageData(1).then((firstPage) => {
+        const pages = { 1: firstPage };
+        // save totalPages as a constant to avoid race condition with pages added during this
+        // process
+        const { totalPages } = this;
+        console.log(totalPages);
+
+        if (totalPages === 1) {
+          resolve(firstPage);
+        }
+
+        // now fetch all the missing pages
+        Array.from(new Array(totalPages - 1), (x, i) => i + 2).forEach((pageNum) => {
+          this.getPageData(pageNum).then((newPage) => {
+            pages[pageNum] = newPage;
+            // look if all pages were collected
+            const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(i =>
+              !(i in pages));
+            console.log('missingPages', missingPages);
+            if (missingPages.length === 0) {
+              // collect all the so-far loaded pages in order (sorted keys)
+              // and flatten them into 1 array
+              resolve([].concat(...Object.keys(pages).sort().map(key => pages[key])));
+            }
+          });
+        });
+      });
+    });
+  }
+
   setSearch(search) {
     if (this.onlineSearch) {
       this.search = search;

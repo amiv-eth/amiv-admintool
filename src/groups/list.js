@@ -20,24 +20,7 @@ export default class GroupList {
   constructor() {
     this.ctrl = new DatalistController('groups', {}, ['name']);
     this.data = [];
-
-    this.ctrl.getPageData(1).then((firstPage) => {
-      const pages = { 1: firstPage };
-      // now fetch all the missing pages
-      console.log(this.ctrl.totalPages);
-      Array.from(new Array(this.ctrl.totalPages - 1), (x, i) => i + 2).forEach((pageNum) => {
-        this.ctrl.getPageData(pageNum).then((newPage) => {
-          pages[pageNum] = newPage;
-          // collect all the so-far loaded pages in order (sorted keys)
-          // and flatten them into 1 array
-          this.data = [].concat(...Object.keys(pages).sort().map(key => pages[key]));
-          m.redraw();
-        });
-      });
-      // see above
-      this.data = [].concat(...Object.keys(pages).sort().map(key => pages[key]));
-      m.redraw();
-    });
+    this.ctrl.getFullList().then((list) => { this.data = list; m.redraw(); });
   }
 
   view() {
