@@ -106,7 +106,7 @@ export default class UserView extends ItemView {
       ]),
       m('div.viewcontainer', [
         m('div.viewcontainercolumn', m(Card, {
-          style: { height: '300px' },
+          style: { height: '350px' },
           content: m('div', [
             m(Toolbar, { compact: true }, [
               m(ToolbarTitle, { text: 'Event Signups' }),
@@ -130,7 +130,7 @@ export default class UserView extends ItemView {
           ]),
         })),
         m('div.viewcontainercolumn', m(Card, {
-          style: { height: '300px' },
+          style: { height: '350px' },
           content: m('div', [
             this.groupchoice && groupSelect,
             m(Toolbar, { compact: true }, [
@@ -142,7 +142,7 @@ export default class UserView extends ItemView {
               }),
             ]),
             m(TableView, {
-              tableHeight: '175px',
+              tableHeight: '225px',
               controller: this.groupmemberships,
               keys: ['group.name', 'expiry'],
               titles: ['groupname', 'expiry'],
