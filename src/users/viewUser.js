@@ -4,6 +4,7 @@ import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import SelectList from '../views/selectList';
 import DatalistController from '../listcontroller';
+import RelationlistController from '../relationlistcontroller';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';
 
@@ -11,15 +12,13 @@ export default class UserView extends ItemView {
   constructor(vnode) {
     super(vnode);
     // a controller to handle the groupmemberships of this user
-    this.groupmemberships = new DatalistController('groupmemberships', {
+    this.groupmemberships = new RelationlistController('groupmemberships', 'groups', {
       where: { user: this.data._id },
-      embedded: { group: 1 },
-    }, ['group.name'], false);
+    });
     // a controller to handle the eventsignups of this user
-    this.eventsignups = new DatalistController('eventsignups', {
+    this.eventsignups = new RelationlistController('eventsignups', 'events', {
       where: { user: this.data._id },
-      embedded: { event: 1 },
-    }, ['event.title_de', 'event.title_en'], false);
+    });
     // initially, don't display the choice field for a new group
     // (this will be displayed once the user clicks on 'new')
     this.groupchoice = false;
@@ -85,6 +84,8 @@ export default class UserView extends ItemView {
       onCancel: () => { this.groupchoice = false; m.redraw(); },
     });
 
+    const now = new Date();
+
     return this.layout([
       m('div.maincontainer', [
         m('h1', `${this.data.firstname} ${this.data.lastname}`),
@@ -116,6 +117,13 @@ export default class UserView extends ItemView {
               keys: ['event.title_de'],
               titles: ['event'],
               clickOnRows: (data) => { m.route.set(`/events/${data.event._id}`); },
+              filters: [[{
+                name: 'upcoming',
+                query: { time_start: { $gte: `${now.toISOString().slice(0, -5)}Z` } },
+              }, {
+                name: 'past',
+                query: { time_start: { $lt: `${now.toISOString().slice(0, -5)}Z` } },
+              }]],
             }),
           ]),
         })),

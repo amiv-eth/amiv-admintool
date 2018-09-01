@@ -12,6 +12,8 @@ import { colors } from '../style';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import DatalistController from '../listcontroller';
+import RelationlistController from '../relationlistcontroller';
+
 import SelectList from '../views/selectList';
 import { ResourceHandler } from '../auth';
 
@@ -21,10 +23,7 @@ import { ResourceHandler } from '../auth';
 class MembersTable {
   constructor({ attrs: { group } }) {
     this.group_id = group;
-    this.ctrl = new DatalistController('groupmemberships', {
-      embedded: { user: 1 },
-      where: { group },
-    }, ['user.email', 'user.firstname', 'user.lastname'], false);
+    this.ctrl = new RelationlistController('groupmemberships', 'users', { where: { group } });
     // true while in the modus of adding a member
     this.addmode = false;
     this.userController = new DatalistController(
@@ -203,8 +202,8 @@ export default class viewGroup extends ItemView {
         m('h1', this.data.name),
         this.data.requires_storage && m(chip, {
           svg: icons.cloud,
-          color: '#ffffff',
-          background: colors.orange,
+          svgColor: '#ffffff',
+          svgBackground: colors.orange,
           ...stdMargin,
         }, 'has a folder on the AMIV Cloud'),
         m('div', { style: { display: 'flex' } }, [
