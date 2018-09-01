@@ -18,7 +18,7 @@ class GroupListItem {
 
 export default class GroupList {
   constructor() {
-    this.ctrl = new DatalistController('groups', {}, ['name']);
+    this.ctrl = new DatalistController('groups', { sort: [['name', 1]] }, ['name']);
     this.data = [];
     this.ctrl.getFullList().then((list) => { this.data = list; m.redraw(); });
   }
