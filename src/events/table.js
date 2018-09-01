@@ -42,6 +42,8 @@ export default class EventTable {
         name: 'past',
         query: { time_start: { $lt: `${now.toISOString().slice(0, -5)}Z` } },
       }]],
+      // per default, enable the 'upcoming' filter
+      initFilterIdxs: [[0, 0]],
       onAdd: () => { m.route.set('/newevent'); },
     });
   }

@@ -43,25 +43,25 @@ export default class UserView extends ItemView {
 
     let membership = m(chip, {
       svg: icons.clear,
-      background: colors.amiv_red,
+      svgBackground: colors.amiv_red,
       ...stdMargin,
     }, 'No Member');
     if (this.data.membership === 'regular') {
       membership = m(chip, {
         svg: icons.checked,
-        background: colors.green,
+        svgBackground: colors.green,
         ...stdMargin,
       }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
       membership = m(
         chip,
-        { svg: icons.checked, background: colors.green, ...stdMargin },
+        { svg: icons.checked, svgBackground: colors.green, ...stdMargin },
         'Extraordinary Member',
       );
     } else if (this.data.membership === 'honorary') {
       membership = m(
         chip,
-        { svg: icons.star, background: colors.orange, ...stdMargin },
+        { svg: icons.star, svgBackground: colors.orange, ...stdMargin },
         'Honorary Member',
       );
     }
@@ -124,6 +124,8 @@ export default class UserView extends ItemView {
                 name: 'past',
                 query: { time_start: { $lt: `${now.toISOString().slice(0, -5)}Z` } },
               }]],
+              // per default, enable the 'upcoming' filter
+              initFilterIdxs: [[0, 0]],
             }),
           ]),
         })),

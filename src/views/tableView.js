@@ -71,6 +71,20 @@ export default class TableView {
       filterGroup.map(filter => Object.assign({}, filter))) : null;
   }
 
+  /*
+   * initFilterIdxs lets you specify the filters that are active at initialization.
+   * They are specified as index to the nexted filterGroups array.
+   */
+  oninit({ attrs: { controller, initFilterIdxs = [] } }) {
+    if (this.filters) {
+      initFilterIdxs.forEach((filterIdx) => {
+        this.filters[filterIdx[0]][filterIdx[1]].selected = true;
+      });
+      // update filters in controller
+      controller.setFilter(this.getSelectedFilterQuery());
+    }
+  }
+
   getItemData(data) {
     return this.tableKeys.map((key) => {
       // Access a nested key, indicated by dot-notation
