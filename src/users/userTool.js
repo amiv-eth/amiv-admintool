@@ -21,7 +21,7 @@ export class UserItem {
 
 export class UserTable {
   constructor() {
-    this.ctrl = new DatalistController('users');
+    this.ctrl = new DatalistController('users', { sort: [['lastname', 1]] });
   }
   view() {
     return m(TableView, {
