@@ -173,7 +173,7 @@ export default class TableView {
       this.filters && m('div', {
         style: {
           height: '40px',
-          'overflow-x': 'scroll',
+          'overflow-x': 'auto',
           'white-space': 'nowrap',
           padding: '0px 5px',
         },
