@@ -90,12 +90,8 @@ export default class DatalistController {
   }
 
   setSearch(search) {
-    if (this.onlineSearch) {
-      this.search = search;
-      this.query.search = search;
-    } else if (this.clientSearchKeys.length > 0) {
-      this.search = search;
-    }
+    this.search = search;
+    this.query.search = search;
   }
 
   setFilter(filter) {
