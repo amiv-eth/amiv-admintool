@@ -62,7 +62,7 @@ export default class TableView {
     },
   }) {
     this.search = '';
-    this.tableKeys = keys;
+    this.tableKeys = keys || [];
     this.tileContent = tileContent;
     this.clickOnRows = clickOnRows;
     this.searchValue = '';

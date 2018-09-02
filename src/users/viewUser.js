@@ -114,7 +114,10 @@ export default class UserView extends ItemView {
             m(TableView, {
               tableHeight: '175px',
               controller: this.eventsignups,
-              keys: ['event.title_de'],
+              tileContent: (item) => {
+                console.log(item);
+                return m('div', item.event.title_en || item.event.title_de);
+              },
               titles: ['event'],
               clickOnRows: (data) => { m.route.set(`/events/${data.event._id}`); },
               filters: [[{
