@@ -22,7 +22,6 @@ export default class RelationlistController {
     this.secondaryKey = secondary.slice(0, -1);
     this.query = query || {};
     this.query2 = secondaryQuery || {};
-    this.search = null;
     this.filter = null;
     this.filter2 = null;
     // state pointer that is counted up every time the table is refreshed so
@@ -130,7 +129,6 @@ export default class RelationlistController {
   }
 
   setSearch(search) {
-    this.search = search;
     this.query.search = search;
     this.query2.search = search;
   }
@@ -150,8 +148,7 @@ export default class RelationlistController {
   }
 
   setQuery(query) {
-    this.query = query;
-    this.query.search = this.search;
+    this.query = Object.assign({}, query, { search: this.query.search });
     this.refresh();
   }
 }

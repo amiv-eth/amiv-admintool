@@ -7,7 +7,6 @@ export default class DatalistController {
   constructor(resource, query = {}, searchKeys = false) {
     this.handler = new ResourceHandler(resource, searchKeys);
     this.query = query || {};
-    this.search = null;
     this.filter = null;
     // state pointer that is counted up every time the table is refreshed so
     // we can tell infinite scroll that the data-version has changed.
@@ -90,7 +89,6 @@ export default class DatalistController {
   }
 
   setSearch(search) {
-    this.search = search;
     this.query.search = search;
   }
 
@@ -100,8 +98,7 @@ export default class DatalistController {
   }
 
   setQuery(query) {
-    this.query = query;
-    this.query.search = this.search;
+    this.query = Object.assign({}, query, { search: this.query.search });
     this.refresh();
   }
 }
