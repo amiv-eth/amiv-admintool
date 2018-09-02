@@ -119,10 +119,10 @@ export default class UserView extends ItemView {
               clickOnRows: (data) => { m.route.set(`/events/${data.event._id}`); },
               filters: [[{
                 name: 'upcoming',
-                query: { time_start: { $gte: `${now.toISOString().slice(0, -5)}Z` } },
+                query: { 'event.time_start': { $gte: `${now.toISOString().slice(0, -5)}Z` } },
               }, {
                 name: 'past',
-                query: { time_start: { $lt: `${now.toISOString().slice(0, -5)}Z` } },
+                query: { 'event.time_start': { $lt: `${now.toISOString().slice(0, -5)}Z` } },
               }]],
               // per default, enable the 'upcoming' filter
               initFilterIdxs: [[0, 0]],
