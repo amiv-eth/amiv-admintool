@@ -112,7 +112,6 @@ export class Layout {
           })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
           m(Button, {
-            //className: 'blue-button',
             label: 'logout',
             events: { onclick: deleteSession },
           }),
