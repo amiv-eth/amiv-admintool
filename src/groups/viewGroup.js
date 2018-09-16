@@ -47,6 +47,7 @@ class MembersTable {
           onclick: () => {
             this.ctrl.handler.delete(data).then(() => {
               this.ctrl.refresh();
+              m.redraw();
             });
           },
         },
