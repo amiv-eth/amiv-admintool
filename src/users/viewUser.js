@@ -1,9 +1,8 @@
 import m from 'mithril';
 import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
+import { SelectList, DatalistController } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
-import SelectList from '../views/selectList';
-import DatalistController from '../listcontroller';
 import RelationlistController from '../relationlistcontroller';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';

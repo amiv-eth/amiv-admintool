@@ -1,7 +1,7 @@
 import m from 'mithril';
+import { DatalistController } from 'amiv-web-ui-components';
 import { joboffers as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
-import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
 
 

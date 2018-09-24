@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Card } from 'polythene-mithril';
-import DatalistController from '../listcontroller';
+import { DatalistController } from 'amiv-web-ui-components';
 import { loadingScreen } from '../layout';
 
 

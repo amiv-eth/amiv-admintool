@@ -1,9 +1,9 @@
 import m from 'mithril';
+import { DatalistController } from 'amiv-web-ui-components';
 import EditUser from './editUser';
 import ViewUser from './viewUser';
 import TableView from '../views/tableView';
 import { users as config } from '../resourceConfig.json';
-import DatalistController from '../listcontroller';
 import ItemController from '../itemcontroller';
 import { loadingScreen } from '../layout';
 
