@@ -1,13 +1,11 @@
-import Ajv from 'ajv';
-import { Checkbox, IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
+import m from 'mithril';
+import { IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import { Form } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
-import { textInput, datetimeInput, numInput, icons } from './elements';
+import { icons } from './elements';
 import { colors } from '../style';
-
-const m = require('mithril');
 
 // Mapper for resource vs schema-object names
 const objectNameForResource = {

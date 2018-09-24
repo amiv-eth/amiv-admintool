@@ -1,10 +1,11 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Slider, Switch } from 'polythene-mithril';
+import { RaisedButton, RadioGroup, Switch } from 'polythene-mithril';
+import { fileInput } from 'amiv-web-ui-components';
 import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-import { fileInput } from '../views/elements';
+
 
 const style = [
   {
@@ -19,33 +20,33 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
-    if (!this.data.priority) this.data.priority = 1;
+    if (!this.form.data.priority) this.form.data.priority = 1;
 
     // read additional_fields to make it editable
-    if (this.data.additional_fields) {
-      const copy = JSON.parse(this.data.additional_fields);
-      this.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
-      this.data.add_fields_food = 'Food' in copy.properties;
-      this.data.additional_fields = {};
+    if (this.form.data.additional_fields) {
+      const copy = JSON.parse(this.form.data.additional_fields);
+      this.form.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
+      this.form.data.add_fields_food = 'Food' in copy.properties;
+      this.form.data.additional_fields = {};
     }
 
     // price can either not be set or set to null
     // if it is 0 however, that would mean that there actually is a price that
     // you can edit
-    this.hasprice = 'price' in this.data && this.data.price !== null;
-    this.hasregistration = 'time_advertising_start' in this.data;
+    this.hasprice = 'price' in this.form.data && this.form.data.price !== null;
+    this.hasregistration = 'time_advertising_start' in this.form.data;
   }
 
   beforeSubmit() {
     // Collect images seperate from everything else
     const images = {};
     ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
-      if (this.data[`new_${key}`]) {
-        images[`img_${key}`] = this.data[`new_${key}`];
-        delete this.data[`new_${key}`];
+      if (this.form.data[`new_${key}`]) {
+        images[`img_${key}`] = this.form.data[`new_${key}`];
+        delete this.form.data[`new_${key}`];
       }
-      if (this.data[`img_${key}`]) {
-        delete this.data[`img_${key}`];
+      if (this.form.data[`img_${key}`]) {
+        delete this.form.data[`img_${key}`];
       }
     });
 
@@ -58,7 +59,7 @@ export default class newEvent extends EditView {
       properties: {},
       required: [],
     };
-    if (this.data.add_fields_sbb) {
+    if (this.form.data.add_fields_sbb) {
       additionalFields.properties.SBB_Abo = {
         type: 'string',
         enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
@@ -66,7 +67,7 @@ export default class newEvent extends EditView {
       additionalFields.required.push('SBB_Abo');
     }
 
-    if (this.data.add_fields_food) {
+    if (this.form.data.add_fields_food) {
       additionalFields.properties.Food = {
         type: 'string',
         enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
@@ -76,31 +77,31 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('Food');
     }
-    if ('add_fields_sbb' in this.data) delete this.data.add_fields_sbb;
-    if ('add_fields_food' in this.data) delete this.data.add_fields_food;
+    if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
+    if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
 
     // if the properties are empty, we null the whole field, otherwise we send a json string
     // of the additional fields object
     if (Object.keys(additionalFields.properties).length > 0) {
-      this.data.additional_fields = JSON.stringify(additionalFields);
+      this.form.data.additional_fields = JSON.stringify(additionalFields);
     } else {
-      this.data.additional_fields = null;
+      this.form.data.additional_fields = null;
     }
 
 
     // if spots is not set, also remove 'allow_email_signup'
-    if (!('spots' in this.data) && 'allow_email_signup' in this.data
-        && !this.data.allow_email_signup) {
-      delete this.data.allow_email_signup;
+    if (!('spots' in this.form.data) && 'allow_email_signup' in this.form.data
+        && !this.form.data.allow_email_signup) {
+      delete this.form.data.allow_email_signup;
     }
 
-    console.log(this.data);
+    console.log(this.form.data);
     if (Object.keys(images).length > 0) {
-      images._id = this.data._id;
-      images._etag = this.data._etag;
+      images._id = this.form.data._id;
+      images._etag = this.form.data._etag;
       // first upload the images as formData, then the rest as JSON
       this.controller.handler.patch(images, true).then(({ _etag }) => {
-        this.data._etag = _etag;
+        this.form.data._etag = _etag;
         this.submit();
       });
     } else {
@@ -143,8 +144,8 @@ export default class newEvent extends EditView {
       ],
       onChange: (state) => {
         this.selection_strategy = state.value;
-        this.data.selection_strategy = state.value;
-        console.log(this.data); // Temp proof of concept.
+        this.form.data.selection_strategy = state.value;
+        console.log(this.form.data); // Temp proof of concept.
       },
       value: this.selection_strategy,
     });
@@ -162,7 +163,7 @@ export default class newEvent extends EditView {
       m('br'),
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
-      }, this.renderPage({
+      }, this.form.renderPage({
         title_en: { type: 'text', label: 'English Event Title' },
         catchphrase_en: { type: 'text', label: 'English Catchphrase' },
         description_en: {
@@ -182,7 +183,7 @@ export default class newEvent extends EditView {
       })),
       m('div', {
         style: { display: (this.currentpage === 2) ? 'block' : 'none' },
-      }, this.renderPage({
+      }, this.form.renderPage({
         time_start: { type: 'datetime', label: 'Event Start Time' },
         time_end: { type: 'datetime', label: 'Event End Time' },
         location: { type: 'text', label: 'Location' },
@@ -198,12 +199,12 @@ export default class newEvent extends EditView {
             this.hasprice = checked;
             if (!checked) {
               // if it originally had a price, set to null, otherwise delete
-              if (this.controller.data.price) this.data.price = null;
-              else delete this.data.price;
+              if (this.controller.data.price) this.form.data.price = null;
+              else delete this.form.data.price;
             }
           },
         }),
-        ...this.hasprice && this.renderPage({
+        ...this.hasprice && this.form.renderPage({
           price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
         }),
         m('br'),
@@ -213,17 +214,17 @@ export default class newEvent extends EditView {
           onChange: ({ checked }) => {
             this.hasregistration = checked;
             if (!checked) {
-              delete this.data.spots;
-              delete this.data.time_register_start;
-              delete this.data.time_register_end;
-              delete this.data.add_fields_sbb;
-              delete this.data.add_fields_food;
-              delete this.data.allow_email_signup;
-              delete this.data.selection_strategy;
+              delete this.form.data.spots;
+              delete this.form.data.time_register_start;
+              delete this.form.data.time_register_end;
+              delete this.form.data.add_fields_sbb;
+              delete this.form.data.add_fields_food;
+              delete this.form.data.allow_email_signup;
+              delete this.form.data.selection_strategy;
             }
           },
         }),
-        ...this.hasregistration && this.renderPage({
+        ...this.hasregistration && this.form.renderPage({
           spots: {
             type: 'number',
             label: 'Number of Spots',
@@ -237,7 +238,7 @@ export default class newEvent extends EditView {
           add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
         }),
         m('br'),
-        ...this.hasregistration && this.renderPage({
+        ...this.hasregistration && this.form.renderPage({
           allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
         }),
         this.hasregistration && radioButtonSelectionMode,
@@ -245,7 +246,7 @@ export default class newEvent extends EditView {
       m('div', {
         style: { display: (this.currentpage === 4) ? 'block' : 'none' },
       }, [
-        ...this.renderPage({
+        ...this.form.renderPage({
           time_advertising_start: {
             type: 'datetime',
             label: 'Start of Advertisement',
@@ -257,15 +258,17 @@ export default class newEvent extends EditView {
             required: true,
           },
         }),
-        m.trust('Priority<br>'),
+        // TODO is deactivated now
+        /*m.trust('Priority<br>'),
         m(Slider, {
           min: 1,
           max: 10,
           stepSize: 1,
+
           // value: this.data.priority || 1,
           // onChange: ({ value }) => { this.data.priority = value; },
-        }),
-        ...this.renderPage({
+        }),*/
+        ...this.form.renderPage({
           show_website: { type: 'checkbox', label: 'Advertise on Website' },
           show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
           show_infoscreen: {
@@ -278,11 +281,11 @@ export default class newEvent extends EditView {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
         ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
-          this.data[`img_${key}`] ? m('img', {
-            src: `${apiUrl}${this.data[`img_${key}`].file}`,
+          this.form.data[`img_${key}`] ? m('img', {
+            src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
             style: { 'max-height': '50px', 'max-width': '100px' },
           }) : m('div', `currently no ${key} image set`),
-          m(fileInput, this.bind({
+          m(fileInput, this.form.bind({
             name: `new_${key}`,
             label: `New ${key} Image`,
             accept: 'image/png, image/jpeg',

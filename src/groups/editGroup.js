@@ -1,10 +1,9 @@
 import m from 'mithril';
 import { TextField } from 'polythene-mithril';
+import { SelectList, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
-import SelectList from '../views/selectList';
 import { MDCSelect } from '../views/selectOption';
-import DatalistController from '../listcontroller';
 import EditView from '../views/editView';
 
 
@@ -82,19 +81,18 @@ export default class NewGroup extends EditView {
       'users', {},
       ['firstname', 'lastname', 'email', 'nethz'],
     );
-    console.log(this.data);
   }
 
   beforeSubmit() {
     // exchange moderator object with string of id
-    const { moderator } = this.data;
-    if (moderator) { this.data.moderator = `${moderator._id}`; }
+    const { moderator } = this.form.data;
+    if (moderator) { this.form.data.moderator = `${moderator._id}`; }
     this.submit();
   }
 
   view() {
     return this.layout([
-      ...this.renderPage({
+      ...this.form.renderPage({
         name: { type: 'text', label: 'Group Name' },
         allow_self_enrollment: {
           type: 'checkbox',
@@ -109,15 +107,15 @@ export default class NewGroup extends EditView {
         m(TextField, { label: 'Group Moderator: ', disabled: true, style: { width: '160px' } }),
         m('div', { style: { 'flex-grow': 1 } }, m(SelectList, {
           controller: this.userController,
-          selection: this.data.moderator,
+          selection: this.form.data.moderator,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
-          onSelect: (data) => { this.data.moderator = data; },
+          onSelect: (data) => { this.form.data.moderator = data; },
         })),
       ]),
       m(PermissionEditor, {
-        permissions: this.data.permissions,
-        onChange: (newPermissions) => { this.data.permissions = newPermissions; },
+        permissions: this.form.data.permissions,
+        onChange: (newPermissions) => { this.form.data.permissions = newPermissions; },
       }),
     ]);
   }
