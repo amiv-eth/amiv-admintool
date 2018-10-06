@@ -13,7 +13,10 @@ import { dateFormatter } from '../utils';
 
 export default class JobTable {
   constructor() {
-    this.ctrl = new DatalistController('joboffers', {}, config.tableKeys);
+    this.handler = new ResourceHandler('joboffers', config.tableKeys);
+    this.ctrl = new DatalistController(
+      (query, search) => this.handler.get({ search, ...query }),
+    );
   }
 
   getItemData(data) {

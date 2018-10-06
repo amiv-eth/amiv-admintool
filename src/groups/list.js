@@ -2,6 +2,7 @@ import m from 'mithril';
 import { Card } from 'polythene-mithril';
 import { DatalistController } from 'amiv-web-ui-components';
 import { loadingScreen } from '../layout';
+import { ResourceHandler } from '../auth';
 
 
 class GroupListItem {
@@ -18,7 +19,11 @@ class GroupListItem {
 
 export default class GroupList {
   constructor() {
-    this.ctrl = new DatalistController('groups', { sort: [['name', 1]] }, ['name']);
+    this.handler = new ResourceHandler('groups', ['name']);
+    this.ctrl = new DatalistController(
+      (query, search) => this.handler.get({ search, ...query }),
+      { sort: [['name', 1]] },
+    );
     this.data = [];
     this.ctrl.getFullList().then((list) => { this.data = list; m.redraw(); });
   }

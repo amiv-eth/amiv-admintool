@@ -3,6 +3,7 @@ import { DatalistController } from 'amiv-web-ui-components';
 import { events as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import { dateFormatter } from '../utils';
+import { ResourceHandler } from '../auth';
 
 
 /* Table of all Events
@@ -13,7 +14,10 @@ import { dateFormatter } from '../utils';
 
 export default class EventTable {
   constructor() {
-    this.ctrl = new DatalistController('events', {}, config.tableKeys);
+    this.handler = new ResourceHandler('events', config.tableKeys);
+    this.ctrl = new DatalistController(
+      (query, search) => this.handler.get({ search, ...query }),
+    );
   }
 
   getItemData(data) {
