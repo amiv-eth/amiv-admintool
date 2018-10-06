@@ -1,8 +1,9 @@
 import m from 'mithril';
 import { TextField } from 'polythene-mithril';
-import { SelectList, DatalistController } from 'amiv-web-ui-components';
+import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
+import { ResourceHandler } from '../auth';
 import { MDCSelect } from '../views/selectOption';
 import EditView from '../views/editView';
 
@@ -77,10 +78,9 @@ class PermissionEditor {
 export default class NewGroup extends EditView {
   constructor(vnode) {
     super(vnode);
-    this.userController = new DatalistController(
-      'users', {},
-      ['firstname', 'lastname', 'email', 'nethz'],
-    );
+    this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
+    this.userController = new DatalistController((query, search) =>
+      this.userHandler.get({ search, ...query }));
   }
 
   beforeSubmit() {
@@ -105,12 +105,12 @@ export default class NewGroup extends EditView {
       }),
       m('div', { style: { display: 'flex' } }, [
         m(TextField, { label: 'Group Moderator: ', disabled: true, style: { width: '160px' } }),
-        m('div', { style: { 'flex-grow': 1 } }, m(SelectList, {
+        m('div', { style: { 'flex-grow': 1 } }, m(ListSelect, {
           controller: this.userController,
           selection: this.form.data.moderator,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
-          onSelect: (data) => { this.form.data.moderator = data; },
+          onSelect: (data) => { console.log('data'); this.form.data.moderator = data; },
         })),
       ]),
       m(PermissionEditor, {

@@ -1,9 +1,10 @@
 import m from 'mithril';
 import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
-import { SelectList, DatalistController } from 'amiv-web-ui-components';
+import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
+import { ResourceHandler } from '../auth';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';
 
@@ -22,7 +23,9 @@ export default class UserView extends ItemView {
     // (this will be displayed once the user clicks on 'new')
     this.groupchoice = false;
     // a controller to handle the list of possible groups to join
-    this.groupcontroller = new DatalistController('groups', {}, ['name']);
+    this.groupHandler = new ResourceHandler('groups', ['name']);
+    this.groupController = new DatalistController((query, search) =>
+      this.groupHandler.get({ search, ...query }));
     // exclude the groups where the user is already a member
     this.groupmemberships.handler.get({ where: { user: this.data._id } })
       .then((data) => {
@@ -67,8 +70,8 @@ export default class UserView extends ItemView {
 
     // Selector that is only displayed if "new" is clicked in the
     // groupmemberships. Selects a group to request membership for.
-    const groupSelect = m(SelectList, {
-      controller: this.groupcontroller,
+    const groupSelect = m(ListSelect, {
+      controller: this.groupController,
       listTileAttrs: group => Object.assign({}, { title: group.name }),
       selectedText: group => group.name,
       onSubmit: (group) => {
@@ -78,6 +81,7 @@ export default class UserView extends ItemView {
           group: group._id,
         }).then(() => {
           this.groupmemberships.refresh();
+          m.redraw();
         });
       },
       onCancel: () => { this.groupchoice = false; m.redraw(); },

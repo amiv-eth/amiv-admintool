@@ -15,9 +15,7 @@ import { ResourceHandler } from '../auth';
 export default class EventTable {
   constructor() {
     this.handler = new ResourceHandler('events', config.tableKeys);
-    this.ctrl = new DatalistController(
-      (query, search) => this.handler.get({ search, ...query }),
-    );
+    this.ctrl = new DatalistController((query, search) => this.handler.get({ search, ...query }));
   }
 
   getItemData(data) {
