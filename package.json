@@ -18,7 +18,7 @@
     "@material/drawer": "^0.30.0",
     "@material/select": "^0.35.1",
     "ajv": "^5.5.0",
-    "amiv-web-ui-components": "git+ssh://git@gitlab.ethz.ch:amiv/web-ui-components",
+    "amiv-web-ui-components": "git+https://git@gitlab.ethz.ch/amiv/web-ui-components.git",
     "axios": "^0.17.1",
     "client-oauth2": "^4.2.0",
     "mithril": "^1.1.6",
