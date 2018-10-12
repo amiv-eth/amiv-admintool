@@ -50,6 +50,7 @@ const config = {
         include: [
           path.resolve(__dirname, './src'),
           path.resolve(__dirname, 'node_modules/@material'),
+          path.resolve(__dirname, 'node_modules/amiv-web-ui-components'),
         ],
         use: [{
           loader: 'babel-loader',
