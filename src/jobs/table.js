@@ -1,8 +1,9 @@
 import m from 'mithril';
+import { DatalistController } from 'amiv-web-ui-components';
 import { joboffers as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
-import DatalistController from '../listcontroller';
 import { dateFormatter } from '../utils';
+import { ResourceHandler } from '../auth';
 
 
 /* Table of all current Jobs
@@ -13,7 +14,8 @@ import { dateFormatter } from '../utils';
 
 export default class JobTable {
   constructor() {
-    this.ctrl = new DatalistController('joboffers', {}, config.tableKeys);
+    this.handler = new ResourceHandler('joboffers', config.tableKeys);
+    this.ctrl = new DatalistController((query, search) => this.handler.get({ search, ...query }));
   }
 
   getItemData(data) {

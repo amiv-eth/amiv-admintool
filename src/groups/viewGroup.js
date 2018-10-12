@@ -7,14 +7,13 @@ import {
   TextField,
   Icon,
 } from 'polythene-mithril';
-import { icons, Property, DropdownCard, chip } from '../views/elements';
+import { DatalistController, ListSelect, DropdownCard } from 'amiv-web-ui-components';
+import { icons, Property, chip } from '../views/elements';
 import { colors } from '../style';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
-import DatalistController from '../listcontroller';
 import RelationlistController from '../relationlistcontroller';
 
-import SelectList from '../views/selectList';
 import { ResourceHandler } from '../auth';
 
 
@@ -26,10 +25,9 @@ class MembersTable {
     this.ctrl = new RelationlistController('groupmemberships', 'users', { where: { group } });
     // true while in the modus of adding a member
     this.addmode = false;
-    this.userController = new DatalistController(
-      'users', {},
-      ['firstname', 'lastname', 'email', 'nethz'],
-    );
+    this.userHandler = new ResourceHandler('users');
+    this.userController = new DatalistController((query, search) =>
+      this.userHandler.get({ search, ...query }));
   }
 
   itemRow(data) {
@@ -59,7 +57,7 @@ class MembersTable {
     return m(Card, {
       style: { height: '500px' },
       content: m('div', [
-        this.addmode ? m(SelectList, {
+        this.addmode ? m(ListSelect, {
           controller: this.userController,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
@@ -181,7 +179,6 @@ class EmailTable {
 }
 
 export default class viewGroup extends ItemView {
-
   oninit() {
     // load the number of members in this group
     const handler = new ResourceHandler('groupmemberships');

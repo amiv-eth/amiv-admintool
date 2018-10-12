@@ -1,11 +1,12 @@
 import m from 'mithril';
+import { DatalistController } from 'amiv-web-ui-components';
 import EditUser from './editUser';
 import ViewUser from './viewUser';
 import TableView from '../views/tableView';
 import { users as config } from '../resourceConfig.json';
-import DatalistController from '../listcontroller';
 import ItemController from '../itemcontroller';
 import { loadingScreen } from '../layout';
+import { ResourceHandler } from '../auth';
 
 export class UserItem {
   constructor() {
@@ -21,7 +22,11 @@ export class UserItem {
 
 export class UserTable {
   constructor() {
-    this.ctrl = new DatalistController('users', { sort: [['lastname', 1]] });
+    this.handler = new ResourceHandler('users');
+    this.ctrl = new DatalistController(
+      (query, search) => this.handler.get({ search, ...query }),
+      { sort: [['lastname', 1]] },
+    );
   }
   view() {
     return m(TableView, {

@@ -1,6 +1,4 @@
 import m from 'mithril';
-//import * as mdc from 'material-components-web';
-//import "@material/drawer";
 import {
   List,
   ListTile,
@@ -66,7 +64,7 @@ const layoutStyle = [
       width: '100%',
       height: '100%',
       background: '#000000aa',
-      'z-index': 100000000
+      'z-index': 100000000,
     },
   },
 ];

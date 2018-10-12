@@ -6,7 +6,7 @@ export default class newJob extends EditView {
   view() {
     return this.layout([
       m('h3', 'Add a New Job Offer'),
-      ...this.renderPage({
+      ...this.form.renderPage({
         title_de: { type: 'text', label: 'German Title' },
       }),
     ]);

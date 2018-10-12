@@ -7,6 +7,7 @@ import {
   TextField,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
+import { DropdownCard } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
@@ -14,7 +15,7 @@ import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
 import { dateFormatter } from '../utils';
-import { icons, DropdownCard, Property, chip } from '../views/elements';
+import { icons, Property, chip } from '../views/elements';
 import { ResourceHandler } from '../auth';
 
 const viewLayout = [

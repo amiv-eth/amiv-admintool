@@ -6,7 +6,7 @@ import EditView from '../views/editView';
 export default class UserEdit extends EditView {
   view() {
     return this.layout([
-      ...this.renderPage({
+      ...this.form.renderPage({
         lastname: { type: 'text', label: 'Last Name' },
         firstname: { type: 'text', label: 'First Name' },
         email: { type: 'text', label: 'Email' },
@@ -19,41 +19,41 @@ export default class UserEdit extends EditView {
           {
             value: 'none',
             label: 'No Member',
-            defaultChecked: this.data.membership === 'none',
+            defaultChecked: this.form.data.membership === 'none',
           },
           {
             value: 'regular',
             label: 'Regular AMIV Member',
-            defaultChecked: this.data.membership === 'regular',
+            defaultChecked: this.form.data.membership === 'regular',
           },
           {
             value: 'extraordinary',
             label: 'Extraordinary Member',
-            defaultChecked: this.data.membership === 'extraordinary',
+            defaultChecked: this.form.data.membership === 'extraordinary',
           },
           {
             value: 'honorary',
             label: 'Honorary Member',
-            defaultChecked: this.data.membership === 'honorary',
+            defaultChecked: this.form.data.membership === 'honorary',
           },
         ],
-        onChange: ({ value }) => { this.data.membership = value; },
+        onChange: ({ value }) => { this.form.data.membership = value; },
       }),
       m(RadioGroup, {
         name: 'Sex',
         buttons: [
           { value: 'female', label: 'Female', defaultChecked: this.data.gender === 'female' },
-          { value: 'male', label: 'Male', defaultChecked: this.data.gender === 'male' },
+          { value: 'male', label: 'Male', defaultChecked: this.form.data.gender === 'male' },
         ],
-        onChange: ({ value }) => { console.log(value); this.data.gender = value; },
+        onChange: ({ value }) => { console.log(value); this.form.data.gender = value; },
       }),
       m(RadioGroup, {
         name: 'Departement',
         buttons: [
-          { value: 'itet', label: 'ITET', defaultChecked: this.data.department === 'itet' },
-          { value: 'mavt', label: 'MAVT', defaultChecked: this.data.department === 'mavt' },
+          { value: 'itet', label: 'ITET', defaultChecked: this.form.data.department === 'itet' },
+          { value: 'mavt', label: 'MAVT', defaultChecked: this.form.data.department === 'mavt' },
         ],
-        onChange: ({ value }) => { this.data.department = value; },
+        onChange: ({ value }) => { this.form.data.department = value; },
       }),
     ]);
   }
