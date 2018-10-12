@@ -119,7 +119,7 @@ export class datetimeInput {
       // convert to locale timezone
       const locale = {
         year: parsed.getFullYear(),
-        month: `${parsed.getMonth()}`.padStart(2, '0'),
+        month: `${parsed.getMonth() + 1}`.padStart(2, '0'),
         date: `${parsed.getDate()}`.padStart(2, '0'),
         hour: `${parsed.getHours()}`.padStart(2, '0'),
         minute: `${parsed.getMinutes()}`.padStart(2, '0'),
