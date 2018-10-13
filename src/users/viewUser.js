@@ -34,6 +34,7 @@ export default class UserView extends ItemView {
           where: { _id: { $nin: groupIds } },
         });
       });
+    this.sessionsHandler = new ResourceHandler('sessions');
   }
 
   oninit() {
@@ -154,6 +155,24 @@ export default class UserView extends ItemView {
           ]),
         })),
       ]),
+    ], [
+      m(Button, {
+        label: 'log out all Sessions',
+        className: 'itemView-delete-button',
+        border: true,
+        events: {
+          onclick: () => {
+            this.sessionsHandler.get({
+              where: { user: this.data._id },
+            }).then((response) => {
+              response._items.forEach((session) => {
+                this.sessionsHandler.delete(session);
+              });
+              console.log(response);
+            });
+          },
+        },
+      }),
     ]);
   }
 }

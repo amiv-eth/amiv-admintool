@@ -9,9 +9,7 @@ import config from './resourceConfig.json';
 const APISession = {
   authenticated: false,
   token: '',
-  // user admins are a very special case as the permissions on the resource can only
-  // be seen by requesting users and check whether you see their membership
-  isUserAdmin: false,
+  userID: null,
 };
 
 const amivapi = axios.create({
@@ -36,7 +34,7 @@ function resetSession() {
 function checkToken(token) {
   // check if a token is still valid
   return new Promise((resolve, reject) => {
-    amivapi.get('users', {
+    amivapi.get(`sessions/${token}`, {
       headers: { 'Content-Type': 'application/json', Authorization: token },
     }).then((response) => {
       if (response.status === 200) resolve(response.data);
@@ -56,14 +54,10 @@ export function checkAuthenticated() {
       console.log(`found this token: ${token}`);
       if (token !== '') {
         // check of token is valid
-        checkToken(token).then((users) => {
+        checkToken(token).then((session) => {
           APISession.token = token;
           APISession.authenticated = true;
-          // if we see the membership of more than 1 person in the response, we
-          // have admin rights on users
-          if (users._items[0].membership && users._items[1].membership) {
-            APISession.isUserAdmin = true;
-          }
+          APISession.userID = session.user;
           console.log(APISession);
           resolve();
         }).catch(resetSession);
@@ -106,6 +100,10 @@ export function deleteSession() {
       }).catch(reject);
     });
   });
+}
+
+export function getCurrentUser() {
+  return APISession.userID;
 }
 
 export class ResourceHandler {
@@ -309,7 +307,15 @@ export class OauthRedirect {
       APISession.authenticated = true;
       APISession.token = response.accessToken;
       localStorage.set('token', response.accessToken);
-      m.route.set('/users');
+      amivapi.get(`sessions/${response.accessToken}`, {
+        headers: { 'Content-Type': 'application/json', Authorization: APISession.token },
+      }).then((response) => {
+        console.log(response);
+        APISession.userID = response.data.user;
+        m.route.set('/');
+      }).catch(() => {
+        resetSession();
+      });
     });
     return 'redirecting...';
   }
