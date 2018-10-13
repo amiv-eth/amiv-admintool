@@ -146,7 +146,6 @@ export default class viewEvent extends ItemView {
       where.accepted = true;
     }
     this.signupCtrl.getFullList().then((list) => {
-      console.log(list);
       this.emaillist = (list.map(item => item.email));
       m.redraw();
     });
