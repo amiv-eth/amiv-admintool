@@ -56,7 +56,7 @@ export default class GroupList {
             'font-size': '20px',
             'margin': '10px 5px'
           },
-        }, 'Your Groups'),
+        }, 'moderated by you'),
         m('div', {
           style: { display: 'flex', 'flex-wrap': 'wrap' }
         }, this.moderatedGroups.map(item =>
@@ -70,7 +70,7 @@ export default class GroupList {
             'font-size': '20px',
             'margin': '10px 5px'
           },
-        }, 'All Groups'),
+        }, 'all groups'),
         m('div', {
           style: { display: 'flex', 'flex-wrap': 'wrap' }
         },
