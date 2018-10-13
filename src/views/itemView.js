@@ -50,7 +50,7 @@ export default class ItemView {
     });
   }
 
-  layout(children) {
+  layout(children, buttons = []) {
     if (!this.controller || !this.controller.data) return m(loadingScreen);
     return m('div', [
       m(Toolbar, m('div.pe-button-row', [
@@ -66,6 +66,7 @@ export default class ItemView {
           border: true,
           events: { onclick: () => this.delete() },
         }),
+        ...buttons,
       ])),
       m('div', {
         style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll' },
