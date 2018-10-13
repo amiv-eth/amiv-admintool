@@ -114,5 +114,8 @@
             "email"
         ],
         "searchKeys": []
+    },
+    "sessions": {
+        "searchKeys": []
     }
 }
