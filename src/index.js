@@ -10,6 +10,8 @@ import eventDraft from './events/eventDraft';
 import eventWithExport from './events/eventWithExport';
 import JobTable from './jobs/table';
 import JobItem from './jobs/item';
+import StudydocTable from './studydocs/list';
+import studydocItem from './studydocs/item';
 import { Layout } from './layout';
 import './style';
 
@@ -41,4 +43,6 @@ m.route(root, '/events', {
   '/joboffers': layoutWith(JobTable),
   '/newjoboffer': layoutWith(JobItem),
   '/joboffers/:id': layoutWith(JobItem),
+  '/studydocuments': layoutWith(StudydocTable),
+  '/studydocuments/:id': layoutWith(studydocItem),
 });
