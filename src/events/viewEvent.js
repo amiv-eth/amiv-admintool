@@ -5,6 +5,7 @@ import {
   ToolbarTitle,
   Card,
   TextField,
+  Button,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
@@ -17,6 +18,7 @@ import RelationlistController from '../relationlistcontroller';
 import { dateFormatter } from '../utils';
 import { icons, Property, chip } from '../views/elements';
 import { ResourceHandler } from '../auth';
+import { colors } from '../style';
 
 const viewLayout = [
   {
@@ -151,6 +153,41 @@ export default class viewEvent extends ItemView {
     });
   }
 
+
+  cloneEvent() {
+    const event = Object.assign({}, this.data);
+    console.log(event);
+
+    const eventInfoToDelete = [
+      '_id',
+      '_created',
+      '_etag',
+      '_links',
+      '_updated',
+      'signup_count',
+      '__proto__',
+    ];
+    const now = new Date();
+    console.log(`${now.toISOString().slice(0, -5)}Z`);
+    if (event.time_end < `${now.toISOString().slice(0, -5)}Z`) {
+      eventInfoToDelete.push(...[
+        'time_advertising_end',
+        'time_advertising_start',
+        'time_end',
+        'time_register_end',
+        'time_register_end',
+        'time_register_start',
+        'time_start']);
+    }
+    eventInfoToDelete.forEach((key) => {
+      delete event[key];
+    });
+
+    console.log(event);
+    this.controller.changeModus('new');
+    this.controller.data = event;
+  }
+
   view() {
     let displaySpots = '-';
     const stdMargin = { margin: '5px' };
@@ -277,6 +314,29 @@ export default class viewEvent extends ItemView {
         ]),
       ]),
 
+    ], [
+      m(Button, {
+        label: 'Clone Event',
+        border: true,
+        style: {
+          color: colors.light_blue,
+          'border-color': colors.light_blue,
+        },
+        events: {
+          // opens 'new event' ,
+          // coping All information but the 'event_id',  past dates and API generated properties
+          onclick: () => this.cloneEvent(),
+        },
+      }),
     ]);
   }
 }
+
+/*
+        m(Button, {
+          element: 'div',
+          className: 'itemView-edit-button',
+          label: `Edit ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
+          events: { onclick: () => { this.controller.changeModus('edit'); } },
+        }),
+*/
