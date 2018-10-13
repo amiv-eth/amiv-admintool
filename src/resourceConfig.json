@@ -85,7 +85,7 @@
             "pdf": "PDF provided by company",
             "time_end": "Application deadline",
             "title_de": "Stelle auf Deutsch",
-            "title_de": "Position title in English",
+            "title_en": "Position title in English",
             "show_website": "Is the job listed on the website?",
             "_id":"Job ID."
         },
