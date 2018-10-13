@@ -331,12 +331,3 @@ export default class viewEvent extends ItemView {
     ]);
   }
 }
-
-/*
-        m(Button, {
-          element: 'div',
-          className: 'itemView-edit-button',
-          label: `Edit ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
-          events: { onclick: () => { this.controller.changeModus('edit'); } },
-        }),
-*/

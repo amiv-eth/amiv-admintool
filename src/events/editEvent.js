@@ -5,7 +5,6 @@ import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-// import { colors } from '../style';
 
 const style = [
   {
