@@ -179,6 +179,19 @@ export class ResourceHandler {
     return `?${m.buildQueryString(fullQuery)}`;
   }
 
+  networkError(e) {
+    console.log(e);
+    Snackbar.show({ title: 'Network error, try again.', style: { color: 'red' } });
+  }
+
+  error422(data) {
+    Snackbar.show({ title: 'Errors in object, please fix.' });
+  }
+
+  successful(title) {
+    Snackbar.show({ title, style: { color: 'green' } });
+  }
+
   get(query) {
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
@@ -193,8 +206,7 @@ export class ResourceHandler {
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
-          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
+          this.networkError(e);
           reject(e);
         });
       });
@@ -220,8 +232,7 @@ export class ResourceHandler {
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
-          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
+          this.networkError(e);
           reject(e);
         });
       });
@@ -233,10 +244,10 @@ export class ResourceHandler {
       getSession().then((api) => {
         api.post(this.resource, item).then((response) => {
           if (response.code === 201) {
-            Snackbar.show({ title: 'creation successful', style: { color: 'green' } });
+            this.successful('Creation successful.');
             resolve({});
           } else if (response.status === 422) {
-            Snackbar.show({ title: 'errors in object, please fix' });
+            this.error422(response.data);
             reject(response.data);
           } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
@@ -246,8 +257,7 @@ export class ResourceHandler {
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
-          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
+          this.networkError(e);
           reject(e);
         });
       });
@@ -276,19 +286,18 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
         }).then((response) => {
           if (response.status === 422) {
-            Snackbar.show({ title: 'errors in object, please fix' });
+            this.error422(response.data);
             reject(response.data);
           } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
-            Snackbar.show({ title: 'change successful', style: { color: 'green' } });
+            this.successful('Change successful.');
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
-          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
+          this.networkError(e);
           reject(e);
         });
       });
@@ -306,12 +315,11 @@ export class ResourceHandler {
             resetSession();
             reject();
           } else {
-            Snackbar.show({ title: 'delete successful' });
+            this.successful('Delete successful.');
             resolve();
           }
         }).catch((e) => {
-          console.log(e);
-          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
+          this.networkError(e);
           reject(e);
         });
       });
