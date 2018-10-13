@@ -7,6 +7,7 @@ export const icons = {
   clear: '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
   ArrowRight: '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/><path d="M0-.25h24v24H0z" fill="none"/></svg>',
   ArrowDown: '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"/><path d="M0-.75h24v24H0z" fill="none"/></svg>',
+  iconUnknownCompany: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg>',
   iconUsersSVG: '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3 5v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.11 0-2 .9-2 2zm12 4c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-9 8c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/><path d="M0 0h24v24H0z" fill="none"/></svg>',
   iconEventSVG: '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/><path d="M0 0h24v24H0z" fill="none"/></svg>',
   iconJobsSVG: '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>',
@@ -89,6 +90,59 @@ export class chip {
         },
       }, m(Icon, { svg: { content: m.trust(svg) }, size: 'small', style: { svgColor } })),
       m('div', { style: { 'line-height': '24px' } }, children),
+    ]);
+  }
+}
+
+export class svgWithTitle {
+  view({
+    attrs: {
+      svg,
+      title,
+      background = '#ffffff',
+      textColor = '#000000',
+      svgColor = '#000000',
+    },
+    children,
+  }) {
+    return m('div', {
+      style: {
+        height: '40px',
+        'background-color': background,
+        color: textColor,
+        'border-radius': '16px',
+        display: 'inline-flex',
+      },
+    }, [
+      svg && m(Icon, { svg: { content: m.trust(svg) }, size: 'large', style: { svgColor } }),
+      title && m('div', { style: { 'font-size': '26px' } }, title),
+      m('span', { style: { 'line-height': '2px' } }, children),
+    ]);
+  }
+}
+
+export class imgWithTitle {
+  view({
+    attrs: {
+      img,
+      title,
+      background = '#ffffff',
+      textColor = '#000000',
+    },
+    children,
+  }) {
+    return m('div', {
+      style: {
+        height: '40px',
+        'background-color': background,
+        color: textColor,
+        'border-radius': '16px',
+        display: 'inline-flex',
+      },
+    }, [
+      img && m('img', { height: '40' }),
+      title && m('div', { style: { 'font-size': '26px' } }, title),
+      m('span', { style: { 'line-height': '2px' } }, children),
     ]);
   }
 }
