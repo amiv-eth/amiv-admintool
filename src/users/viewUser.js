@@ -4,7 +4,7 @@ import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
-import { ResourceHandler } from '../auth';
+import { ResourceHandler, deleteSession } from '../auth';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';
 
@@ -34,6 +34,7 @@ export default class UserView extends ItemView {
           where: { _id: { $nin: groupIds } },
         });
       });
+    this.sessionsHandler = new ResourceHandler('sessions');
   }
 
   oninit() {
@@ -91,7 +92,35 @@ export default class UserView extends ItemView {
 
     return this.layout([
       m('div.maincontainer', [
-        m('h1', `${this.data.firstname} ${this.data.lastname}`),
+        m('div', { style: { display: 'flex' } }, [
+          m('h1', `${this.data.firstname} ${this.data.lastname}`),
+          m('div.reset', {
+            style: {
+              'margin-left': 'auto',
+              'margin-right': '5px',
+              'margin-top': '5px',
+            },
+          }, [
+            m(Button, {
+
+              label: `Reset ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
+              className: 'itemView-delete-button',
+              border: true,
+              events: {
+                onclick: () => {
+                  this.sessionsHandler.get({
+                    where: { user: this.data._id },
+                  }).then((response) => {
+                    response._items.forEach((session) => {
+                      this.sessionsHandler.delete(session);
+                    });
+                    console.log(response);
+                  });
+                },
+              },
+            }),
+          ]),
+        ]),
         membership,
         this.data.department && m(
           chip,
