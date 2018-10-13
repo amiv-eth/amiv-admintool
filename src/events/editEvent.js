@@ -5,7 +5,7 @@ import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-import { colors } from '../style'; 
+// import { colors } from '../style';
 
 
 const style = [
@@ -151,46 +151,51 @@ export default class newEvent extends EditView {
       value: this.selection_strategy,
     });
 
-    const keysPages = [
-      ['title_en', 'catchphrase_en', 'description_en', 'title_de', 'catchphrase_de', 'description_de'],
-      ['time_start', 'time_end', 'location'],
-      ['price', 'spots', 'time_register_start', 'time_register_end' ],
-      ['time_advertising_start', 'time_advertising_end'],
-      [],
-    ]
-    
+    const keysPages = [[
+      'title_en',
+      'catchphrase_en',
+      'description_en',
+      'title_de',
+      'catchphrase_de',
+      'description_de',
+    ],
+    ['time_start', 'time_end', 'location'],
+    ['price', 'spots', 'time_register_start', 'time_register_end'],
+    ['time_advertising_start', 'time_advertising_end'],
+    [],
+    ];
     const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
-      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0
-      else return false;
+      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
+      return false;
     }).includes(true));
-    
     const titles = [
       'Event Description', 'When and Where?', 'Signups', 'Advertisement', 'Images',
     ];
 
     // checks currentPage and selects the fitting page
     return this.layout([
-      // new developed navigation bar
-      // all pages are displayed, current is highlighted, validation errors are shown per page by red icon-background
-      m('div', 
-        { style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' } }, 
-        [...titles.entries()].map(numAndTitle => m('div', 
-          m('div', {
-            style: {
-              border: (this.currentpage === numAndTitle[0]+1) ? '2px solid black' : '2px solid #888888',
-              color: (this.currentpage === numAndTitle[0]+1) ? 'black' : '#888888',
-              'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
-              'border-radius':'20px',
-              height: '40px',
-              'margin-bottom': '7px',
-              padding: '12px',
-              'font-size': '20px',
-              'line-height': '11px',
-            },
-            onclick: () => {this.currentpage = numAndTitle[0]+1;},
-          }, numAndTitle[1]))
-        )
-      ),
+      // navigation bar
+      // all pages are displayed, current is highlighted,
+      // validation errors are shown per page by red icon-background
+      m('div', {
+        style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' },
+      }, [...titles.entries()].map(numAndTitle => m('div', m('div', {
+        style: {
+          border: (this.currentpage === numAndTitle[0] + 1) ?
+            '2px solid black' :
+            '2px solid #888888',
+          color: (this.currentpage === numAndTitle[0] + 1) ? 'black' : '#888888',
+          'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
+          'border-radius': '20px',
+          height: '40px',
+          'margin-bottom': '7px',
+          padding: '12px',
+          'font-size': '20px',
+          'line-height': '11px',
+        },
+        onclick: () => { this.currentpage = numAndTitle[0] + 1; },
+      }, numAndTitle[1])))),
+      // page 1: title & description
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
       }, this.form.renderPage({
@@ -211,6 +216,7 @@ export default class newEvent extends EditView {
           rows: 5,
         },
       })),
+      // page 2: when & where
       m('div', {
         style: { display: (this.currentpage === 2) ? 'block' : 'none' },
       }, this.form.renderPage({
@@ -218,6 +224,7 @@ export default class newEvent extends EditView {
         time_end: { type: 'datetime', label: 'Event End Time' },
         location: { type: 'text', label: 'Location' },
       })),
+      // page 3: registration
       m('div', {
         style: { display: (this.currentpage === 3) ? 'block' : 'none' },
       }, [
@@ -273,6 +280,7 @@ export default class newEvent extends EditView {
         }),
         this.hasregistration && radioButtonSelectionMode,
       ]),
+      // page 4: advertisement
       m('div', {
         style: { display: (this.currentpage === 4) ? 'block' : 'none' },
       }, [
@@ -289,7 +297,8 @@ export default class newEvent extends EditView {
           },
         }),
         // TODO is deactivated now
-        /*m.trust('Priority<br>'),
+        /*
+        m.trust('Priority<br>'),
         m(Slider, {
           min: 1,
           max: 10,
@@ -297,7 +306,8 @@ export default class newEvent extends EditView {
 
           // value: this.data.priority || 1,
           // onChange: ({ value }) => { this.data.priority = value; },
-        }),*/
+        }),
+        */
         ...this.form.renderPage({
           show_website: { type: 'checkbox', label: 'Advertise on Website' },
           show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
@@ -307,6 +317,7 @@ export default class newEvent extends EditView {
           },
         }),
       ]),
+      // page 5: images
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
@@ -322,6 +333,12 @@ export default class newEvent extends EditView {
           })),
         ]),
       ]),
+      // bottom back & forth
+      m('div', {
+        style: { display: 'flex', 'justify-content': 'space-between', padding: '35px', 'padding-top': '20px'}
+      },
+      [buttonLeft, buttonRight],
+      ),
     ]);
   }
 }
