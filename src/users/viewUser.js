@@ -4,7 +4,7 @@ import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
-import { ResourceHandler, deleteSession } from '../auth';
+import { ResourceHandler } from '../auth';
 import { chip, icons, Property } from '../views/elements';
 import { colors } from '../style';
 
