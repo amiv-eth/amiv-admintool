@@ -5,8 +5,6 @@ import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-// import { colors } from '../style';
-
 
 const style = [
   {
@@ -114,6 +112,7 @@ export default class newEvent extends EditView {
     const buttonRight = m(RaisedButton, {
       label: 'next',
       disabled: this.currentpage === 5,
+      ink: false,
       events: {
         onclick: () => {
           this.currentpage = Math.min(this.currentpage + 1, 5);
@@ -124,6 +123,7 @@ export default class newEvent extends EditView {
     const buttonLeft = m(RaisedButton, {
       label: 'previous',
       disabled: this.currentpage === 1,
+      ink: false,
       events: {
         onclick: () => {
           this.currentpage = Math.max(1, this.currentpage - 1);
@@ -335,10 +335,13 @@ export default class newEvent extends EditView {
       ]),
       // bottom back & forth
       m('div', {
-        style: { display: 'flex', 'justify-content': 'space-between', padding: '35px', 'padding-top': '20px'}
-      },
-      [buttonLeft, buttonRight],
-      ),
+        style: {
+          display: 'flex',
+          'justify-content': 'space-between',
+          padding: '35px',
+          'padding-top': '20px',
+        },
+      }, [buttonLeft, buttonRight]),
     ]);
   }
 }
