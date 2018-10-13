@@ -32,6 +32,7 @@ m.route(root, '/events', {
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(EventItem),
   '/newevent': layoutWith(EventItem),
+  '/proposeevent': layoutWith(EventItem),
   '/draftevent': layoutWith(eventDraft),
   '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith(GroupList),

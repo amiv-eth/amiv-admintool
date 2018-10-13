@@ -84,7 +84,7 @@ export default class EditView extends ItemView {
     this.submit();
   }
 
-  layout(children) {
+  layout(children, buttonLabel = 'submit') {
     return m('div', { style: { 'background-color': 'white' } }, [
       m(Toolbar, { style: { 'background-color': colors.orange } }, [
         m(IconButton, {
@@ -95,7 +95,8 @@ export default class EditView extends ItemView {
           ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
         m(Button, {
           className: 'blue-button-filled',
-          label: 'submit',
+          extraWide: true,
+          label: buttonLabel,
           disabled: !this.form.valid,
           events: { onclick: () => { this.beforeSubmit(); } },
         }),

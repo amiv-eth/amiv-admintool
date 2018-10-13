@@ -119,6 +119,7 @@ export class ResourceHandler {
    */
   constructor(resource, searchKeys = false) {
     this.resource = resource;
+    this.rights = [];
     // special case for users
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
     else this.searchKeys = searchKeys || config[resource].searchKeys;
@@ -203,6 +204,7 @@ export class ResourceHandler {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
             reject();
           } else {
+            this.rights = response.data._links.self.methods;
             resolve(response.data);
           }
         }).catch((e) => {
