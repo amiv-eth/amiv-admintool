@@ -27,7 +27,7 @@ export default class newEvent extends EditView {
       const copy = JSON.parse(this.form.data.additional_fields);
       this.form.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
       this.form.data.add_fields_food = 'Food' in copy.properties;
-      this.form.data.additional_fields = {};
+      this.form.data.additional_fields = null;
     }
 
     // price can either not be set or set to null
