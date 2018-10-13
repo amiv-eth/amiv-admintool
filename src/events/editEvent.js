@@ -19,6 +19,14 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
+
+    if (m.route.get().startsWith('/newevent') && m.route.param('proposition')) {
+      const data = JSON.parse(window.atob(m.route.param('proposition')));
+      console.log(data);
+      this.form.data = data;
+    }
+
+
     if (!this.form.data.priority) this.form.data.priority = 1;
 
     // read additional_fields to make it editable
@@ -95,7 +103,7 @@ export default class newEvent extends EditView {
     }
 
     // Propose <=> Submit desicion due to rights
-    if (m.route.get() === '/newevent') {
+    if (m.route.get().startsWith('/newevent')) {
       // Submition tool
       if (Object.keys(images).length > 0) {
         images._id = this.form.data._id;
@@ -121,7 +129,9 @@ export default class newEvent extends EditView {
           m('input', {
             type: 'text',
             style: { width: '335px' },
-            value: `${ownUrl}/newevent?proposition=${window.btoa(JSON.stringify(this.form.data))}`,
+            value: `${ownUrl}/newevent?${m.buildQueryString({
+              proposition: window.btoa(JSON.stringify(this.form.data)),
+            })}`,
             id: 'textId',
           }),
         ],
@@ -143,7 +153,7 @@ export default class newEvent extends EditView {
   }
 
   view() {
-    const rightSubmit = (m.route.get() === '/newevent');
+    const rightSubmit = m.route.get().startsWith('/newevent');
 
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (rightSubmit) titles.push('Images');
