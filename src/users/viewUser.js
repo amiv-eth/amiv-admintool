@@ -92,35 +92,7 @@ export default class UserView extends ItemView {
 
     return this.layout([
       m('div.maincontainer', [
-        m('div', { style: { display: 'flex' } }, [
-          m('h1', `${this.data.firstname} ${this.data.lastname}`),
-          m('div.reset', {
-            style: {
-              'margin-left': 'auto',
-              'margin-right': '5px',
-              'margin-top': '5px',
-            },
-          }, [
-            m(Button, {
-
-              label: `Reset ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
-              className: 'itemView-delete-button',
-              border: true,
-              events: {
-                onclick: () => {
-                  this.sessionsHandler.get({
-                    where: { user: this.data._id },
-                  }).then((response) => {
-                    response._items.forEach((session) => {
-                      this.sessionsHandler.delete(session);
-                    });
-                    console.log(response);
-                  });
-                },
-              },
-            }),
-          ]),
-        ]),
+        m('h1', `${this.data.firstname} ${this.data.lastname}`),
         membership,
         this.data.department && m(
           chip,
@@ -183,6 +155,24 @@ export default class UserView extends ItemView {
           ]),
         })),
       ]),
+    ], [
+      m(Button, {
+        label: 'log out all Sessions',
+        className: 'itemView-delete-button',
+        border: true,
+        events: {
+          onclick: () => {
+            this.sessionsHandler.get({
+              where: { user: this.data._id },
+            }).then((response) => {
+              response._items.forEach((session) => {
+                this.sessionsHandler.delete(session);
+              });
+              console.log(response);
+            });
+          },
+        },
+      }),
     ]);
   }
 }
