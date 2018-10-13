@@ -5,6 +5,7 @@ import {
   ToolbarTitle,
   Card,
   TextField,
+  Dialog,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
@@ -280,6 +281,21 @@ export default class viewEvent extends ItemView {
                 this.data.img_poster && m('img', {
                   src: `${apiUrl}${this.data.img_poster.file}`,
                   width: '100%',
+                  onclick: () => {
+                    Dialog.show({
+                      backdrop: true,
+                      fullBleed: true,
+                      style: {
+                        width: '100vw',
+                        'margin-left': '-37vw',
+                        'text-align': 'center',
+                      },
+                      body: [m('div', { style: { height: '70vh', overflow: 'hidden' } }, m('img', {
+                        src: `${apiUrl}${this.data.img_poster.file}`,
+                        height: '100%',
+                      }))],
+                    });
+                  },
                 })]),
               m('div', {
                 style: {
@@ -292,12 +308,49 @@ export default class viewEvent extends ItemView {
                   this.data.img_infoscreen && m('img', {
                     src: `${apiUrl}${this.data.img_infoscreen.file}`,
                     width: '100%',
-                  })]),
+                    onclick: () => {
+                      Dialog.show({
+                        backdrop: true,
+                        fullBleed: true,
+                        style: {
+                          width: '100vw',
+                          'margin-left': '-37vw',
+                          'text-align': 'center',
+                        },
+                        body: [m('div', {
+                          style: { height: '70vh', overflow: 'hidden' },
+                        }, m('img', {
+                          src: `${apiUrl}${this.data.img_infoscreen.file}`,
+                          height: '100%',
+                        }))],
+                      });
+                    },
+                  }),
+                ]),
                 m('div', [
                   this.data.img_banner && m('div', 'Banner'),
                   this.data.img_banner && m('img', {
                     src: `${apiUrl}${this.data.img_banner.file}`,
                     width: '100%',
+                    onclick: () => {
+                      Dialog.show({
+                        body: [m('div', {
+                          style: { height: '70vh', overflow: 'hidden' },
+                        }, m('img', {
+                          src: `${apiUrl}${this.data.img_banner.file}`,
+                          'max-height': '100%',
+                          'max-width': '100%',
+                        }))],
+                        backdrop: true,
+                        fullBleed: true,
+                        slef_alignment: 'center',
+                        style: {
+                          width: '100vw',
+                          'margin-left': '-37vw',
+                          'text-align': 'center',
+                        },
+                      });
+                    },
                   })]),
               ]),
             ]),
