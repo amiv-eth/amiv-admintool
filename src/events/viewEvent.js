@@ -8,7 +8,7 @@ import {
   Button,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
-import { DropdownCard } from 'amiv-web-ui-components';
+import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
@@ -125,6 +125,9 @@ export default class viewEvent extends ItemView {
   constructor(vnode) {
     super(vnode);
     this.signupHandler = new ResourceHandler('eventsignups');
+    this.signupCtrl = new DatalistController((query, search) => this.signupHandler.get({
+      search, ...query,
+    }));
     this.description = false;
     this.advertisement = false;
     this.registration = false;
@@ -144,8 +147,8 @@ export default class viewEvent extends ItemView {
       // only show accepted
       where.accepted = true;
     }
-    this.signupHandler.get({ where }).then((data) => {
-      this.emaillist = (data._items.map(item => item.email));
+    this.signupCtrl.getFullList().then((list) => {
+      this.emaillist = (list.map(item => item.email));
       m.redraw();
     });
   }

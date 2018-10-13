@@ -63,12 +63,13 @@ export default class EditView extends ItemView {
       request.catch((error) => {
         console.log(error);
         // Process the API error
-        const { response } = error;
-        if (response.status === 422) {
+        if ('_issues' in error) {
           // there are problems with some fields, display them
-          Object.keys(response.data._issues).forEach((field) => {
-            this.errors[field] = [response.data._issues[field]];
+          Object.keys(error._issues).forEach((field) => {
+            this.form.errors[field] = [error._issues[field]];
+            this.form.valid = false;
           });
+          console.log(this.form.errors);
           m.redraw();
         } else {
           console.log(error);

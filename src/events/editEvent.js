@@ -5,6 +5,7 @@ import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
+// import { colors } from '../style';
 
 const style = [
   {
@@ -26,7 +27,7 @@ export default class newEvent extends EditView {
       const copy = JSON.parse(this.form.data.additional_fields);
       this.form.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
       this.form.data.add_fields_food = 'Food' in copy.properties;
-      this.form.data.additional_fields = {};
+      this.form.data.additional_fields = null;
     }
 
     // price can either not be set or set to null
