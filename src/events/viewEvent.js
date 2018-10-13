@@ -252,7 +252,7 @@ export default class viewEvent extends ItemView {
           ]),
 
           // a list of email adresses of all participants, easy to copy-paste
-          m(DropdownCard, { title: 'Email Adresses', style: { margin: '10px 0' }  }, [
+          m(DropdownCard, { title: 'Email Adresses', style: { margin: '10px 0' } }, [
             m(Switch, {
               defaultChecked: false,
               label: 'show unaccepted',
@@ -264,17 +264,45 @@ export default class viewEvent extends ItemView {
             m(EmailList, { list: this.emaillist }),
           ]),
 
-          m(DropdownCard, { title: 'Images' }, [
-            m('div', this.data.img_thumbnail && 'Thumbnail'),
-            m('div', this.data.img_poster && 'Poster'),
-            m('div', this.data.img_infoscreen && 'Infoscreen'),
-            this.data.img_poster && m('img', {
-              'src': `${apiUrl}${this.data.img_poster.file}`,
-              'width': '40%',
-            }),
+          m(DropdownCard, { title: 'Images' }, [
+            m('div', {
+              style: {
+                display: 'flex',
+              },
+            }, [
+              m('div', {
+                style: {
+                  width: '40%',
+                  padding: '5px',
+                },
+              }, [
+                this.data.img_poster && m('div', 'Poster'),
+                this.data.img_poster && m('img', {
+                  src: `${apiUrl}${this.data.img_poster.file}`,
+                  width: '100%',
+                })]),
+              m('div', {
+                style: {
+                  width: '52%',
+                  padding: '5px',
+                },
+              }, [
+                m('div', [
+                  this.data.img_infoscreen && m('div', 'Infoscreen'),
+                  this.data.img_infoscreen && m('img', {
+                    src: `${apiUrl}${this.data.img_infoscreen.file}`,
+                    width: '100%',
+                  })]),
+                m('div', [
+                  this.data.img_banner && m('div', 'Banner'),
+                  this.data.img_banner && m('img', {
+                    src: `${apiUrl}${this.data.img_banner.file}`,
+                    width: '100%',
+                  })]),
+              ]),
+            ]),
           ]),
         ]),
-
         m('div.viewcontainercolumn', [
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: true, event: this.data._id },
@@ -286,7 +314,6 @@ export default class viewEvent extends ItemView {
           }) : '',
         ]),
       ]),
-
     ]);
   }
 }
