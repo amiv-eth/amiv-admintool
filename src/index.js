@@ -6,8 +6,6 @@ import { UserItem, UserTable } from './users/userTool';
 import { MembershipView } from './membershipTool';
 import EventTable from './events/table';
 import EventItem from './events/item';
-import eventDraft from './events/eventDraft';
-import eventWithExport from './events/eventWithExport';
 import JobTable from './jobs/table';
 import JobItem from './jobs/item';
 import { Layout } from './layout';
@@ -33,8 +31,6 @@ m.route(root, '/events', {
   '/events/:id': layoutWith(EventItem),
   '/newevent': layoutWith(EventItem),
   '/proposeevent': layoutWith(EventItem),
-  '/draftevent': layoutWith(eventDraft),
-  '/eventwithexport': layoutWith(eventWithExport),
   '/groups': layoutWith(GroupList),
   '/groups/:id': layoutWith(GroupItem),
   '/newgroup': layoutWith(GroupItem),
