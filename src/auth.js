@@ -1,6 +1,7 @@
 import m from 'mithril';
 import axios from 'axios';
 import ClientOAuth2 from 'client-oauth2';
+import { Snackbar } from 'polythene-mithril';
 import { apiUrl, ownUrl, oAuthID } from 'networkConfig';
 import * as localStorage from './localStorage';
 import config from './resourceConfig.json';
@@ -15,6 +16,7 @@ const APISession = {
 const amivapi = axios.create({
   baseURL: apiUrl,
   headers: { 'Content-Type': 'application/json' },
+  validateStatus: () => true,
 });
 
 // OAuth Handler
@@ -76,6 +78,7 @@ export function getSession() {
           'Content-Type': 'application/json',
           Authorization: APISession.token,
         },
+        validateStatus: () => true,
       });
       resolve(authenticatedSession);
     }).catch(resetSession);
@@ -184,12 +187,14 @@ export class ResourceHandler {
         api.get(url).then((response) => {
           if (response.status >= 400) {
             resetSession();
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             reject();
           } else {
             resolve(response.data);
           }
         }).catch((e) => {
           console.log(e);
+          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
           reject(e);
         });
       });
@@ -208,6 +213,7 @@ export class ResourceHandler {
         }
         api.get(url).then((response) => {
           if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
@@ -215,6 +221,7 @@ export class ResourceHandler {
           }
         }).catch((e) => {
           console.log(e);
+          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
           reject(e);
         });
       });
@@ -226,10 +233,13 @@ export class ResourceHandler {
       getSession().then((api) => {
         api.post(this.resource, item).then((response) => {
           if (response.code === 201) {
+            Snackbar.show({ title: 'creation successful', style: { color: 'green' } });
             resolve({});
           } else if (response.status === 422) {
+            Snackbar.show({ title: 'errors in object, please fix' });
             reject(response.data);
           } else if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
@@ -237,6 +247,7 @@ export class ResourceHandler {
           }
         }).catch((e) => {
           console.log(e);
+          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
           reject(e);
         });
       });
@@ -265,15 +276,19 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
         }).then((response) => {
           if (response.status === 422) {
+            Snackbar.show({ title: 'errors in object, please fix' });
             reject(response.data);
           } else if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
+            Snackbar.show({ title: 'change successful', style: { color: 'green' } });
             resolve(response.data);
           }
         }).catch((e) => {
           console.log(e);
+          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
           reject(e);
         });
       });
@@ -287,13 +302,16 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
         }).then((response) => {
           if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
+            Snackbar.show({ title: 'delete successful' });
             resolve();
           }
         }).catch((e) => {
           console.log(e);
+          Snackbar.show({ title: 'network error, try again', style: { color: 'red' } });
           reject(e);
         });
       });
