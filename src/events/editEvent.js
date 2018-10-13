@@ -5,6 +5,7 @@ import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
+import { colors } from '../style'; 
 
 
 const style = [
@@ -34,7 +35,7 @@ export default class newEvent extends EditView {
     // if it is 0 however, that would mean that there actually is a price that
     // you can edit
     this.hasprice = 'price' in this.form.data && this.form.data.price !== null;
-    this.hasregistration = 'time_advertising_start' in this.form.data;
+    this.hasregistration = 'spots' in this.form.data || 'time_registration_start' in this.form.data;
   }
 
   beforeSubmit() {
@@ -150,17 +151,46 @@ export default class newEvent extends EditView {
       value: this.selection_strategy,
     });
 
-    const title = [
+    const keysPages = [
+      ['title_en', 'catchphrase_en', 'description_en', 'title_de', 'catchphrase_de', 'description_de'],
+      ['time_start', 'time_end', 'location'],
+      ['price', 'spots', 'time_register_start', 'time_register_end' ],
+      ['time_advertising_start', 'time_advertising_end'],
+      [],
+    ]
+    
+    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
+      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0
+      else return false;
+    }).includes(true));
+    
+    const titles = [
       'Event Description', 'When and Where?', 'Signups', 'Advertisement', 'Images',
-    ][this.currentpage - 1];
+    ];
 
     // checks currentPage and selects the fitting page
     return this.layout([
-      m('h3', title),
-      buttonLeft,
-      m.trust('&nbsp;'),
-      buttonRight,
-      m('br'),
+      // new developed navigation bar
+      // all pages are displayed, current is highlighted, validation errors are shown per page by red icon-background
+      m('div', 
+        { style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' } }, 
+        [...titles.entries()].map(numAndTitle => m('div', 
+          m('div', {
+            style: {
+              border: (this.currentpage === numAndTitle[0]+1) ? '2px solid black' : '2px solid #888888',
+              color: (this.currentpage === numAndTitle[0]+1) ? 'black' : '#888888',
+              'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
+              'border-radius':'20px',
+              height: '40px',
+              'margin-bottom': '7px',
+              padding: '12px',
+              'font-size': '20px',
+              'line-height': '11px',
+            },
+            onclick: () => {this.currentpage = numAndTitle[0]+1;},
+          }, numAndTitle[1]))
+        )
+      ),
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
       }, this.form.renderPage({
