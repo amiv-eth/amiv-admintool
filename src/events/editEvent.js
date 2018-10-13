@@ -20,7 +20,11 @@ export default class newEvent extends EditView {
     super(vnode);
     this.currentpage = 1;
 
-    if (m.route.get().startsWith('/newevent') && m.route.param('proposition')) {
+    // check whether the user has the right to create events or can only propose
+    this.rightSubmit = !m.route.get().startsWith('/proposeevent');
+
+    // proposition URL-link decoder
+    if (this.rightSubmit && m.route.param('proposition')) {
       const data = JSON.parse(window.atob(m.route.param('proposition')));
       console.log(data);
       this.form.data = data;
@@ -103,7 +107,7 @@ export default class newEvent extends EditView {
     }
 
     // Propose <=> Submit desicion due to rights
-    if (m.route.get().startsWith('/newevent')) {
+    if (this.rightSubmit) {
       // Submition tool
       if (Object.keys(images).length > 0) {
         images._id = this.form.data._id;
@@ -153,10 +157,8 @@ export default class newEvent extends EditView {
   }
 
   view() {
-    const rightSubmit = m.route.get().startsWith('/newevent');
-
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
-    if (rightSubmit) titles.push('Images');
+    if (this.rightSubmit) titles.push('Images');
 
     const buttonRight = m(RaisedButton, {
       label: 'next',
@@ -387,6 +389,6 @@ export default class newEvent extends EditView {
           'padding-top': '20px',
         },
       }, [buttonLeft, buttonRight]),
-    ], rightSubmit ? 'submit' : 'propose');
+    ], this.rightSubmit ? 'submit' : 'propose');
   }
 }
