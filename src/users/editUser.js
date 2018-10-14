@@ -1,10 +1,11 @@
 import m from 'mithril';
-import { RadioGroup } from 'polythene-mithril';
+import { RadioGroup } from 'amiv-web-ui-components';
 import EditView from '../views/editView';
 
 
 export default class UserEdit extends EditView {
   view() {
+    const style = 'display: inline-block; vertical-align: top; padding-right: 80px';
     return this.layout([
       ...this.form.renderPage({
         lastname: { type: 'text', label: 'Last Name' },
@@ -13,48 +14,63 @@ export default class UserEdit extends EditView {
         nethz: { type: 'text', label: 'NETHZ' },
         rfid: { type: 'text', label: 'RFID Code' },
       }),
-      m(RadioGroup, {
-        name: 'Membership',
-        buttons: [
-          {
-            value: 'none',
-            label: 'No Member',
-            defaultChecked: this.form.data.membership === 'none',
+      m(
+        'div', { style },
+        m(RadioGroup, {
+          name: 'Membership',
+          values: [
+            {
+              value: 'none',
+              label: 'No Member',
+            },
+            {
+              value: 'regular',
+              label: 'Regular AMIV Member',
+            },
+            {
+              value: 'extraordinary',
+              label: 'Extraordinary Member',
+            },
+            {
+              value: 'honorary',
+              label: 'Honorary Member',
+            },
+          ],
+          onchange: (value) => {
+            this.form.data.membership = value;
+            this.form.validate();
           },
-          {
-            value: 'regular',
-            label: 'Regular AMIV Member',
-            defaultChecked: this.form.data.membership === 'regular',
+        }),
+      ),
+      m(
+        'div', { style },
+        m(RadioGroup, {
+          name: 'Sex',
+          values: [
+            { value: 'female', label: 'Female' },
+            { value: 'male', label: 'Male' },
+          ],
+          onchange: (value) => {
+            this.form.data.gender = value;
+            this.form.validate();
           },
-          {
-            value: 'extraordinary',
-            label: 'Extraordinary Member',
-            defaultChecked: this.form.data.membership === 'extraordinary',
+        }),
+      ),
+      m(
+        'div', { style },
+        m(RadioGroup, {
+          name: 'Departement',
+          values: [
+            { value: 'itet', label: 'ITET' },
+            { value: 'mavt', label: 'MAVT' },
+            { value: null, label: 'None' },
+          ],
+          onchange: (value) => {
+            this.form.data.department = value;
+            this.form.validate();
           },
-          {
-            value: 'honorary',
-            label: 'Honorary Member',
-            defaultChecked: this.form.data.membership === 'honorary',
-          },
-        ],
-        onChange: ({ value }) => { this.form.data.membership = value; },
-      }),
-      m(RadioGroup, {
-        name: 'Sex',
-        buttons: [
-          { value: 'female', label: 'Female', defaultChecked: this.data.gender === 'female' },
-          { value: 'male', label: 'Male', defaultChecked: this.form.data.gender === 'male' },
-        ],
-        onChange: ({ value }) => { console.log(value); this.form.data.gender = value; },
-      }),
-      m(RadioGroup, {
-        name: 'Departement',
-        buttons: [
-          { value: 'itet', label: 'ITET', defaultChecked: this.form.data.department === 'itet' },
-          { value: 'mavt', label: 'MAVT', defaultChecked: this.form.data.department === 'mavt' },
-        ],
-        onChange: ({ value }) => { this.form.data.department = value; },
-      }),
+        }),
+      ),
     ]);
   }
 }

@@ -2,6 +2,7 @@ import m from 'mithril';
 import axios from 'axios';
 import ClientOAuth2 from 'client-oauth2';
 import { Snackbar } from 'polythene-mithril';
+// eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl, oAuthID } from 'networkConfig';
 import * as localStorage from './localStorage';
 import config from './resourceConfig.json';
@@ -119,6 +120,7 @@ export class ResourceHandler {
    */
   constructor(resource, searchKeys = false) {
     this.resource = resource;
+    this.rights = [];
     // special case for users
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
     else this.searchKeys = searchKeys || config[resource].searchKeys;
@@ -184,6 +186,9 @@ export class ResourceHandler {
     Snackbar.show({ title: 'Network error, try again.', style: { color: 'red' } });
   }
 
+  // in future, we may communicate based on the data available
+  // therefore, require data already here
+  // eslint-disable-next-line no-unused-vars
   error422(data) {
     Snackbar.show({ title: 'Errors in object, please fix.' });
   }
@@ -203,6 +208,7 @@ export class ResourceHandler {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
             reject();
           } else {
+            this.rights = response.data._links.self.methods;
             resolve(response.data);
           }
         }).catch((e) => {
@@ -329,11 +335,11 @@ export class ResourceHandler {
 
 export class OauthRedirect {
   view() {
-    oauth.token.getToken(m.route.get()).then((response) => {
+    oauth.token.getToken(m.route.get()).then((auth) => {
       APISession.authenticated = true;
-      APISession.token = response.accessToken;
-      localStorage.set('token', response.accessToken);
-      amivapi.get(`sessions/${response.accessToken}`, {
+      APISession.token = auth.accessToken;
+      localStorage.set('token', auth.accessToken);
+      amivapi.get(`sessions/${auth.accessToken}`, {
         headers: { 'Content-Type': 'application/json', Authorization: APISession.token },
       }).then((response) => {
         console.log(response);

@@ -3,8 +3,6 @@ import { Card } from 'polythene-mithril';
 import { DatalistController } from 'amiv-web-ui-components';
 import { loadingScreen } from '../layout';
 import { ResourceHandler, getCurrentUser } from '../auth';
-import { colors } from '../style';
-
 
 class GroupListItem {
   view({ attrs: { name, _id, color = '#ffffff' } }) {
@@ -36,7 +34,7 @@ export default class GroupList {
       this.ctrl.getFullList().then((moderatedList) => {
         this.moderatedGroups = moderatedList;
         m.redraw();
-      })
+      });
     });
   }
 
@@ -54,13 +52,13 @@ export default class GroupList {
         m('div', {
           style: {
             'font-size': '20px',
-            'margin': '10px 5px'
+            margin: '10px 5px',
           },
         }, 'moderated by you'),
         m('div', {
-          style: { display: 'flex', 'flex-wrap': 'wrap' }
+          style: { display: 'flex', 'flex-wrap': 'wrap' },
         }, this.moderatedGroups.map(item =>
-          m(GroupListItem, { ...item } ))),
+          m(GroupListItem, { ...item }))),
       ]),
       m('div.maincontainer', {
         style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-top': '5px' },
@@ -68,18 +66,18 @@ export default class GroupList {
         this.moderatedGroups.length > 0 && m('div', {
           style: {
             'font-size': '20px',
-            'margin': '10px 5px'
+            margin: '10px 5px',
           },
         }, 'all groups'),
         m('div', {
-          style: { display: 'flex', 'flex-wrap': 'wrap' }
-        },
-        this.groups.map(item => m(GroupListItem, item)),
-        m('div', {
-          style: { 'max-width': '500px', margin: '5px' },
-          onclick: () => { m.route.set('/newgroup'); },
-        }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
-        ),
+          style: { display: 'flex', 'flex-wrap': 'wrap' },
+        }, [
+          this.groups.map(item => m(GroupListItem, item)),
+          m('div', {
+            style: { 'max-width': '500px', margin: '5px' },
+            onclick: () => { m.route.set('/newgroup'); },
+          }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
+        ]),
       ]),
     ]);
   }

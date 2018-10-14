@@ -1,9 +1,7 @@
+import m from 'mithril';
 import EditView from './views/editView';
-import SelectList from './views/selectList';
 
-const m = require('mithril');
-
-export class MembershipView extends EditView {
+export default class MembershipView extends EditView {
   constructor(vnode) {
     super(vnode, 'groupmemberships', { user: 1, group: 1 });
   }
@@ -21,19 +19,5 @@ export class MembershipView extends EditView {
       m('br'),
       m('span', this.data.expiry),
     ]);
-  }
-}
-
-export class NewMembership {
-  constructor() {
-    this.selectUser = new SelectList('users', ['firstname', 'lastname'], {
-      view(vnode) {
-        return m('span', `${vnode.attrs.firstname} ${vnode.attrs.lastname}`);
-      },
-    });
-  }
-
-  view() {
-    return m(this.selectUser);
   }
 }

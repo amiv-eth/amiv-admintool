@@ -21,20 +21,20 @@ export default class EditView extends ItemView {
    * Extension of ItemView to edit a data item
    *
    * Requires:
-   * - call constructor with vnode, resource, (valid, true by default)
+   * - call constructor with vnode, resource, (valid, false by default)
    * - vnode.attrs.onfinish has to be a callback function that is called after
    *   the edit is finished
    * @param  {object} vnode   [as provided by mithril]
    * @param  {string} resource  [the API resource of this view, e.g. 'events']
    * @param  {object} embedded  [any embedding query that should be added
    *                             to API requests for this resource]
-   * @param  {Boolean} valid    [whether the view should be valid before the
-   *                             first validation]
    */
-  constructor(vnode, valid = true) {
+  constructor(vnode,) {
     super(vnode);
+    // the form is valid in case that the item controller is in edit mode
+    const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
-    this.form = new Form({}, valid, Object.assign({}, this.controller.data));
+    this.form = new Form({}, validInitially, Object.assign({}, this.controller.data));
   }
 
   oninit() {
@@ -84,7 +84,7 @@ export default class EditView extends ItemView {
     this.submit();
   }
 
-  layout(children) {
+  layout(children, buttonLabel = 'submit') {
     return m('div', { style: { 'background-color': 'white' } }, [
       m(Toolbar, { style: { 'background-color': colors.orange } }, [
         m(IconButton, {
@@ -95,7 +95,8 @@ export default class EditView extends ItemView {
           ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
         m(Button, {
           className: 'blue-button-filled',
-          label: 'submit',
+          extraWide: true,
+          label: buttonLabel,
           disabled: !this.form.valid,
           events: { onclick: () => { this.beforeSubmit(); } },
         }),
