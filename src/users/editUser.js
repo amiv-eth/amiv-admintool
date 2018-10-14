@@ -49,6 +49,14 @@ export default class UserEdit extends EditView {
         firstname: { type: 'text', label: 'First Name' },
         email: { type: 'text', label: 'Email' },
         nethz: { type: 'text', label: 'NETHZ' },
+      }),
+      m(textInput, this.form.bind({
+        type: 'password',
+        name: 'password',
+        label: 'New password',
+        floatingLabel: true,
+      })),
+      ...this.form.renderPage({
         rfid: { type: 'text', label: 'RFID Code' },
       }),
       m(RadioGroup, {
@@ -93,33 +101,6 @@ export default class UserEdit extends EditView {
         ],
         onChange: ({ value }) => { this.form.data.department = value; },
       }),
-      m(Button, {
-        label: 'Change Password',
-        border: true,
-        events: { onclick: () => this.resetpw() },
-      }),
     ]);
-  }
-  resetpw() {
-    this.pw.data._id = this.form.data._id;
-    this.pw.data._etag = this.form.data._etag;
-
-    Dialog.show({
-      body: [
-        'Enter the new password.',
-        m('div', m(passwordField, { form: this.pw })),
-      ],
-      backdrop: true,
-      footerButtons: [
-        m(Button, {
-          label: 'Cancel',
-          events: {
-            onclick: () => {
-              Dialog.hide();
-            },
-          },
-        }),
-      ],
-    });
   }
 }
