@@ -47,6 +47,7 @@ export default class viewJob extends ItemView {
         ),
         m(
           Property, { title: 'Offer ends:', style: stdMargin },
+          this.data.time_advertising_end?`${dateFormatter(this.data.time_advertising_end)}`:'',
         ),
       ]),
       // m('div.viewcontainercolumn', [
@@ -97,3 +98,5 @@ export default class viewJob extends ItemView {
       //   }),
       // ]),
     ]);
+  }
+}
