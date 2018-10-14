@@ -21,7 +21,7 @@ export default class EditView extends ItemView {
    * Extension of ItemView to edit a data item
    *
    * Requires:
-   * - call constructor with vnode, resource, (valid, true by default)
+   * - call constructor with vnode, resource, (valid, false by default)
    * - vnode.attrs.onfinish has to be a callback function that is called after
    *   the edit is finished
    * @param  {object} vnode   [as provided by mithril]
@@ -31,7 +31,7 @@ export default class EditView extends ItemView {
    * @param  {Boolean} valid    [whether the view should be valid before the
    *                             first validation]
    */
-  constructor(vnode, valid = true) {
+  constructor(vnode, valid = false) {
     super(vnode);
     // start a form to collect the submit data
     this.form = new Form({}, valid, Object.assign({}, this.controller.data));
