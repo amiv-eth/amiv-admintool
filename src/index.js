@@ -3,11 +3,13 @@ import { OauthRedirect } from './auth';
 import GroupList from './groups/list';
 import GroupItem from './groups/item';
 import { UserItem, UserTable } from './users/userTool';
-import { MembershipView } from './membershipTool';
+import MembershipView from './membershipTool';
 import EventTable from './events/table';
 import EventItem from './events/item';
 import JobTable from './jobs/table';
 import JobItem from './jobs/item';
+import StudydocTable from './studydocs/list';
+import studydocItem from './studydocs/item';
 import { Layout } from './layout';
 import './style';
 
@@ -38,4 +40,7 @@ m.route(root, '/events', {
   '/joboffers': layoutWith(JobTable),
   '/newjoboffer': layoutWith(JobItem),
   '/joboffers/:id': layoutWith(JobItem),
+  '/studydocuments': layoutWith(StudydocTable),
+  '/studydocuments/:id': layoutWith(studydocItem),
+  '/newstudydocument': layoutWith(studydocItem),
 });

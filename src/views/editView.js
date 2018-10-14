@@ -28,13 +28,13 @@ export default class EditView extends ItemView {
    * @param  {string} resource  [the API resource of this view, e.g. 'events']
    * @param  {object} embedded  [any embedding query that should be added
    *                             to API requests for this resource]
-   * @param  {Boolean} valid    [whether the view should be valid before the
-   *                             first validation]
    */
-  constructor(vnode, valid = false) {
+  constructor(vnode,) {
     super(vnode);
+    // the form is valid in case that the item controller is in edit mode
+    const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
-    this.form = new Form({}, valid, Object.assign({}, this.controller.data));
+    this.form = new Form({}, validInitially, Object.assign({}, this.controller.data));
   }
 
   oninit() {

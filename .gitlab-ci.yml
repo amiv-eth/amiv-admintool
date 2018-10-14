@@ -1,6 +1,15 @@
 stages:
+  - test
   - build
   - deploy
+
+eslint:
+  stage: test
+  image: node:latest
+  before_script:
+   - npm install
+  script:
+   - npm run lint
 
 build_master_dev:
   stage: build
