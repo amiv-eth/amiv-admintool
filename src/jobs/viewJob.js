@@ -5,27 +5,6 @@ import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
 import { Property } from '../views/elements';
 
-// small helper class to display both German and English content together, dependent
-// on which content is available.
-class DuoLangProperty {
-  view({ attrs: { title, de, en } }) {
-    // TODO Lang indicators should be smaller and there should be less margin
-    // between languages
-    return m(
-      Property,
-      { title },
-      de ? m('div', [
-        m('div', { className: 'propertyLangIndicator' }, 'DE'),
-        m('p', de),
-      ]) : '',
-      en ? m('div', [
-        m('div', { className: 'propertyLangIndicator' }, 'EN'),
-        m('p', en),
-      ]) : '',
-    );
-  }
-}
-
 export default class viewJob extends ItemView {
   view() {
     return this.layout([

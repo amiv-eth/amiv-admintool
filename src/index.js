@@ -3,7 +3,7 @@ import { OauthRedirect } from './auth';
 import GroupList from './groups/list';
 import GroupItem from './groups/item';
 import { UserItem, UserTable } from './users/userTool';
-import { MembershipView } from './membershipTool';
+import MembershipView from './membershipTool';
 import EventTable from './events/table';
 import EventItem from './events/item';
 import JobTable from './jobs/table';
