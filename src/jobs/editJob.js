@@ -1,5 +1,6 @@
 import m from 'mithril';
-import { RaisedButton } from 'polythene-mithril';
+import marked from 'marked';
+import { RaisedButton, Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import { fileInput } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
@@ -9,6 +10,8 @@ export default class newJob extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
+    this.editingGerman = true;
+    this.editingEnglish = true;
   }
 
   view() {
@@ -43,6 +46,54 @@ export default class newJob extends EditView {
       m('br'),
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
+      }, m('div.viewcontainer', [
+        m('div.viewcontainercolumn', m(Card, {
+          content: m('div', [
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'Deutsche Beschreibung' }),
+              m(Button, {
+                className: 'blue-button',
+                label: 'Markdown überprüfen',
+                events: { onclick: () => { this.editingGerman = !this.editingGerman; } },
+              }),
+            ]),
+            this.editingGerman ? m('div', this.form.renderPage({
+              title_de: { type: 'text', label: 'German Event Title' },
+              catchphrase_de: { type: 'text', label: 'German Catchphrase' },
+              description_de: {
+                type: 'text',
+                label: 'German Description',
+                multiLine: true,
+                rows: 10000,
+              },
+            })) : m('p', m.trust(marked(escape(this.data.description_de)))),
+          ]),
+        })),
+        m('div.viewcontainercolumn', m(Card, {
+          content: m('div', [
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'English description' }),
+              m(Button, {
+                className: 'blue-button',
+                label: 'Verify markdown',
+                events: { onclick: () => { this.editingEnglish = !this.editingEnglish; } },
+              }),
+            ]),
+            this.editingEnglish ? m('div', this.form.renderPage({
+              title_en: { type: 'text', label: 'English Event Title' },
+              catchphrase_en: { type: 'text', label: 'English Catchphrase' },
+              description_en: {
+                type: 'text',
+                label: 'English Description',
+                multiLine: true,
+                rows: 10000,
+              },
+            })) : m('p', m.trust(marked(escape(this.data.description_en)))),
+          ]),
+        })),
+      ])),
+      m('div', {
+        style: { display: (this.currentpage === 3) ? 'block' : 'none' },
       }, this.form.renderPage({
         title_en: { type: 'text', label: 'English Job Title' },
         description_en: {

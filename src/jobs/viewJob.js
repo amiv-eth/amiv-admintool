@@ -1,7 +1,7 @@
 import m from 'mithril';
 import marked from 'marked';
 import escape from 'html-escape';
-import { Card, Toolbar, ToolbarTitle, Button, TextField} from 'polythene-mithril';
+import { Card, Toolbar, ToolbarTitle, Button, TextField } from 'polythene-mithril';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
 import { Property, icons, svgWithTitle, imgWithTitle } from '../views/elements';
