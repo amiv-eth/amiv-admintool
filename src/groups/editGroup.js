@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { TextField } from 'polythene-mithril';
+import { TextField, Dialog, Button } from 'polythene-mithril';
 import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
@@ -48,28 +48,29 @@ class PermissionEditor {
       }, m('div', {
         style: { display: 'flex', width: '100%', 'flex-flow': 'row wrap' },
       }, this.apiEndpoints.map(apiEndpoint => m('div', {
-        style: { display: 'flex', width: '330px', 'padding-right': '20px' },
-      }, [
-        m(TextField, {
-          label: apiEndpoint.title,
-          disabled: true,
-          style: { width: '60%' },
-        }),
-        m('div', { style: { width: '40%' } }, m(MDCSelect, {
-          name: apiEndpoint.href,
-          options: ['no permission', 'read', 'readwrite'],
-          onchange: (newVal) => {
-            if (newVal === 'no permission') {
-              // the api equivalent to no permission if to delete the key out of the dict
-              if (internalPerm[apiEndpoint.href]) delete internalPerm[apiEndpoint.href];
-            } else {
-              internalPerm[apiEndpoint.href] = newVal;
-            }
-            onChange(internalPerm);
-          },
-          value: internalPerm[apiEndpoint.href],
-        })),
-      ])))),
+          style: { display: 'flex', width: '330px', 'padding-right': '20px' },
+        }, [
+          m(TextField, {
+            label: apiEndpoint.title,
+            disabled: true,
+            style: { width: '60%' },
+          }),
+          m('div', { style: { width: '40%' } }, m(MDCSelect, {
+            name: apiEndpoint.href,
+            options: ['no permission', 'read', 'readwrite'],
+            onchange: (newVal) => {
+              if (newVal === 'no permission') {
+                // the api equivalent to no permission if to delete the key out of the dict
+                if (internalPerm[apiEndpoint.href]) delete internalPerm[apiEndpoint.href];
+              } else {
+                internalPerm[apiEndpoint.href] = newVal;
+              }
+              onChange(internalPerm);
+            },
+            value: internalPerm[apiEndpoint.href],
+          })),
+        ]))
+      )),
     ]);
   }
 }
@@ -79,11 +80,75 @@ export default class NewGroup extends EditView {
   constructor(vnode) {
     super(vnode);
     this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
-    this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+    this.userController = new DatalistController((query, search) => {
+      this.userHandler.get({ search, ...query })
+    });
+
+
+    const self = this
+    this.groupPermissionsChanged = false;
+    this.takingPermissions = false;
+    this.givingPermissions = false;
+    this.initialGroupPermissions = undefined
+    if (this.form.data.permissions)
+      this.initialGroupPermissions = this.form.data.permissions.groups
+    this.warningDialog = {
+      id: 'warning',
+      title: 'Super Powers Warning',
+      body: '',
+      backdrop: true,
+      footer: [
+        m('div', { style: 'padding-right: 16px; text-align: right'},
+        [
+          m(Button, {
+            label: 'Abort',
+            className: 'blue-button',
+            style: 'margin-right: 16px',
+            events: {
+              onclick() {
+                self.rejectSubmission();
+              }
+            }
+          }),
+          m(Button, {
+            label: 'Submit',
+            className: 'red-row-button',
+            events: {
+              onclick() {
+                self.acceptSubmission();
+              }
+            }
+          }),
+        ])
+      ]
+    };
   }
 
   beforeSubmit() {
+    if (this.groupPermissionsChanged) {
+      if (this.takingPermissions) {
+        this.warningDialog.body = `You are taking the ability to change
+          group permissions from the selected group. You're basically taking
+          their super powers away. Are you sure you want to do this?`;
+      } else if (this.givingPermissions) {
+        this.warningDialog.body = `You are giving the ability to change
+          group permissions to the selected group. You're basically giving
+          them super powers. Are you sure you want to do this?`;
+      } else {
+        this.warningDialog.body = `Something unexpected happen, be wary.`;
+      }
+      Dialog.show(this.warningDialog);
+    } else {
+      this.acceptSubmission();
+    }
+  }
+
+  rejectSubmission() {
+    Dialog.hide();
+  }
+
+  acceptSubmission() {
+    Dialog.hide();
     // exchange moderator object with string of id
     const { moderator } = this.form.data;
     if (moderator) { this.form.data.moderator = `${moderator._id}`; }
@@ -115,7 +180,23 @@ export default class NewGroup extends EditView {
       ]),
       m(PermissionEditor, {
         permissions: this.form.data.permissions,
-        onChange: (newPermissions) => { this.form.data.permissions = newPermissions; },
+        onChange: (newPermissions) => {
+          console.log(newPermissions.groups, this.initialGroupPermissions)
+          if (newPermissions.groups != this.initialGroupPermissions) {
+            if (newPermissions.groups == 'readwrite') {
+              this.groupPermissionsChanged = true;
+              this.givingPermissions = true;
+              this.takingPermissions = false;
+            } else if (this.initialGroupPermissions == 'readwrite') {
+              this.groupPermissionsChanged = true;
+              this.givingPermissions = false;
+              this.takingPermissions = true;
+            }
+          } else {
+            this.groupPermissionsChanged = false;
+          }
+          this.form.data.permissions = newPermissions;
+        },
       }),
     ]);
   }
