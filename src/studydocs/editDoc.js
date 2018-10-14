@@ -8,17 +8,18 @@ export default class editDoc extends EditView {
     return this.layout([
       m('h3', 'Add a New Studydocument'),
       ...this.form.renderPage({
+        // uploader
         author: { type: 'text', label: 'Author' },
-        files: [{ type: 'text', label: 'File' }], // buggy
+        files: { type: 'text', label: 'File' }, // buggy only singel file possible
         lecture: { type: 'text', label: 'Lecture' },
         title: { type: 'text', label: 'Title' },
         professor: { type: 'text', label: 'Professor' },
-        course_year: { type: 'number', lable: 'Year', limit_min: '1990' }, // buggy
+        course_year: { type: 'number', lable: 'Year' }, // semester unterscheidung, plausibility
       }),
       // department //drop-down-list
+      m('div', 'Semester'), // formatieren
       m(RadioGroup, {
         name: 'semester',
-        label: 'Semester',
         buttons: [
           { value: '1', label: '1.', defaultChecked: this.form.data.gender === '1' },
           { value: '2', label: '2', defaultChecked: this.form.data.gender === '2' },
