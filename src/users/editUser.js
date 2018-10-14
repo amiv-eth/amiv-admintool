@@ -1,6 +1,8 @@
 import m from 'mithril';
-import { RadioGroup } from 'amiv-web-ui-components';
+import { RadioGroup, textInput } from 'amiv-web-ui-components';
 import EditView from '../views/editView';
+import { Form } from 'amiv-web-ui-components';
+import { apiUrl } from 'networkConfig';
 
 class passwordField {
   view({ attrs: { form } }) {
