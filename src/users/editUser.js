@@ -1,19 +1,8 @@
 import m from 'mithril';
-import { RadioGroup, textInput } from 'amiv-web-ui-components';
-import EditView from '../views/editView';
-import { Form } from 'amiv-web-ui-components';
+import { RadioGroup, textInput, Form } from 'amiv-web-ui-components';
+// eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
-
-class passwordField {
-  view({ attrs: { form } }) {
-    return m(textInput, form.bind({
-      type: 'password',
-      name: 'password',
-      label: 'new password',
-      floatingLabel: true,
-    }));
-  }
-}
+import EditView from '../views/editView';
 
 export default class UserEdit extends EditView {
   constructor(vnode) {
