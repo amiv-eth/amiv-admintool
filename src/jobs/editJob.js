@@ -57,7 +57,8 @@ export default class newJob extends EditView {
         time_end: { type: 'datetime', label: 'Prospective Job End Time' },
         time_start: {
           type: 'datetime',
-          label: 'Desired Job Start Time (If as soon as possible, write nothing.)',
+          label: 'Desired Job Start Time',
+          hint: 'If as soon as possible, write nothing.',
         },
       })),
       m('div', {
@@ -67,12 +68,12 @@ export default class newJob extends EditView {
           time_advertising_start: {
             type: 'datetime',
             label: 'Start of Advertisement on Website',
-            required: true,
+            required: false,
           },
           time_advertising_end: {
             type: 'datetime',
             label: 'End of Advertisement on Website',
-            required: true,
+            required: false,
           },
         }),
         ...this.form.renderPage({
@@ -82,7 +83,7 @@ export default class newJob extends EditView {
       m('div', {
         style: { display: (this.currentpage === 3) ? 'block' : 'none' },
       }, [
-        ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+        ['logo'].map(key => [ // think about adding a thumbnail.
           this.data[`img_${key}`] ? m('img', {
             src: `${apiUrl}${this.data[`img_${key}`].file}`,
             style: { 'max-height': '50px', 'max-width': '100px' },

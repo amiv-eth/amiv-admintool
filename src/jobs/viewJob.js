@@ -1,32 +1,18 @@
 import m from 'mithril';
 import marked from 'marked';
 import escape from 'html-escape';
+import { Card, Toolbar, ToolbarTitle, Button, TextField} from 'polythene-mithril';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
-import { Property, icons, svgWithTitle, imgWithTitle, chip } from '../views/elements';
-
-// small helper class to display both German and English content together, dependent
-// on which content is available.
-class DuoLangProperty {
-  view({ attrs: { title, de, en } }) {
-    // TODO Lang indicators should be smaller and there should be less margin
-    // between languages
-    return m(
-      Property,
-      { title },
-      de ? m('div', [
-        m('div', { className: 'propertyLangIndicator' }, 'DE'),
-        m('p', de),
-      ]) : '',
-      en ? m('div', [
-        m('div', { className: 'propertyLangIndicator' }, 'EN'),
-        m('p', en),
-      ]) : '',
-    );
-  }
-}
+import { Property, icons, svgWithTitle, imgWithTitle } from '../views/elements';
 
 export default class viewJob extends ItemView {
+  constructor(vnode) {
+    super(vnode);
+    this.editingGerman = false;
+    this.editingEnglish = false;
+  }
+
   view() {
     const stdMargin = { margin: '5px' };
 
@@ -61,23 +47,56 @@ export default class viewJob extends ItemView {
         ),
         m(
           Property, { title: 'Offer ends:', style: stdMargin },
-          this.data.time_advertising_end ? `${dateFormatter(this.data.time_advertising_end)}` : 'If you see this message, please inform the AMIV committee that they forgot to add time_advertising_end for this offer.'
+          this.data.time_advertising_end ? `${dateFormatter(this.data.time_advertising_end)}` : '',
         ),
       ]),
       // m('div.viewcontainercolumn', [
-      m('div', [
-        this.data.location ? m(Property, { title: 'Location' }, `${this.data.location}`) :
-          m(Property, { title: 'Location' }, 'Unknown location.'),
-        m(chip, {
-          svg: this.data.show_website ? icons.checked : icons.clear,
-          border: '1px #aaaaaa solid',
-        }, 'website'),
-        m(DuoLangProperty, {
-          title: 'Description',
-          de: m('p', m.trust(marked(escape(this.data.description_de)))),
-          en: m('p', m.trust(marked(escape(this.data.description_en)))),
-        }),
+      m('div.viewcontainer', [
+        m('div.viewcontainercolumn', m(Card, {
+          content: m('div', [
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'Deutsche Beschreibung' }),
+              m(Button, {
+                className: 'blue-button',
+                label: 'Beschreibung erfassen',
+                events: { onclick: () => { this.editingGerman = !this.editingGerman; } },
+              }),
+            ]),
+            this.editingGerman ? m(TextField, {
+              multiLine: true,
+            }) : m('p', m.trust(marked(escape(this.data.description_de)))),
+          ]),
+        })),
+        m('div.viewcontainercolumn', m(Card, {
+          // style: { height: '350px' },
+          content: m('div', [
+            m(Toolbar, { compact: true }, [
+              m(ToolbarTitle, { text: 'English description' }),
+              m(Button, {
+                className: 'blue-button',
+                label: 'Write description',
+                events: { onclick: () => { this.editingEnglish = !this.editingEnglish; } },
+              }),
+            ]),
+            this.editingEnglish ? m(TextField, {
+              multiLine: true,
+            }) : m('p', m.trust(marked(escape(this.data.description_en)))),
+          ]),
+        })),
       ]),
+      // m(Card, [
+      //   this.data.location ? m(Property, { title: 'Location' }, `${this.data.location}`) :
+      //     m(Property, { title: 'Location' }, 'Unknown location.'),
+      //   m(chip, {
+      //     svg: this.data.show_website ? icons.checked : icons.clear,
+      //     border: '1px #aaaaaa solid',
+      //   }, 'website'),
+      //   m(DuoLangProperty, {
+      //     title: 'Description',
+      //     de: m('p', m.trust(marked(escape(this.data.description_de)))),
+      //     en: m('p', m.trust(marked(escape(this.data.description_en)))),
+      //   }),
+      // ]),
     ]);
   }
 }
