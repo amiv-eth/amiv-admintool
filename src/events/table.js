@@ -46,7 +46,14 @@ export default class EventTable {
       }]],
       // per default, enable the 'upcoming' filter
       initFilterIdxs: [[0, 0]],
-      onAdd: () => { m.route.set('/newevent'); },
+      onAdd: (this.handler.rights.length > 0) ?
+        () => {
+          if (this.handler.rights.includes('POST')) {
+            m.route.set('/newevent');
+          } else {
+            m.route.set('/proposeevent');
+          }
+        } : false,
     });
   }
 }

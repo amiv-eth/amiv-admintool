@@ -1,9 +1,9 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Switch } from 'polythene-mithril';
+import { RaisedButton, RadioGroup, Switch, Dialog, Button } from 'polythene-mithril';
 import { fileInput } from 'amiv-web-ui-components';
 import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
+import { apiUrl, ownUrl } from 'networkConfig';
 import EditView from '../views/editView';
 
 const style = [
@@ -19,6 +19,18 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
+
+    // check whether the user has the right to create events or can only propose
+    this.rightSubmit = !m.route.get().startsWith('/proposeevent');
+
+    // proposition URL-link decoder
+    if (this.rightSubmit && m.route.param('proposition')) {
+      const data = JSON.parse(window.atob(m.route.param('proposition')));
+      console.log(data);
+      this.form.data = data;
+    }
+
+
     if (!this.form.data.priority) this.form.data.priority = 1;
 
     // read additional_fields to make it editable
@@ -94,24 +106,63 @@ export default class newEvent extends EditView {
       delete this.form.data.allow_email_signup;
     }
 
-    console.log(this.form.data);
-    if (Object.keys(images).length > 0) {
-      images._id = this.form.data._id;
-      images._etag = this.form.data._etag;
-      // first upload the images as formData, then the rest as JSON
-      this.controller.handler.patch(images, true).then(({ _etag }) => {
-        this.form.data._etag = _etag;
+    // Propose <=> Submit desicion due to rights
+    if (this.rightSubmit) {
+      // Submition tool
+      if (Object.keys(images).length > 0) {
+        images._id = this.form.data._id;
+        images._etag = this.form.data._etag;
+        // first upload the images as formData, then the rest as JSON
+        this.controller.handler.patch(images, true).then(({ _etag }) => {
+          this.form.data._etag = _etag;
+          this.submit();
+        });
+      } else {
         this.submit();
-      });
+      }
     } else {
-      this.submit();
+      // Propose tool
+      Dialog.show({
+        title: 'Congratulations!',
+        body: [
+          m(
+            'div',
+            'You sucessfuly setup an event.',
+            'Please send this link to the respectiv board member for validation.',
+          ),
+          m('input', {
+            type: 'text',
+            style: { width: '335px' },
+            value: `${ownUrl}/newevent?${m.buildQueryString({
+              proposition: window.btoa(JSON.stringify(this.form.data)),
+            })}`,
+            id: 'textId',
+          }),
+        ],
+        backdrop: true,
+        footerButtons: [
+          m(Button, {
+            label: 'Copy',
+            events: {
+              onclick: () => {
+                const copyText = document.getElementById('textId');
+                copyText.select();
+                document.execCommand('copy');
+              },
+            },
+          }),
+        ],
+      });
     }
   }
 
   view() {
+    const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
+    if (this.rightSubmit) titles.push('Images');
+
     const buttonRight = m(RaisedButton, {
       label: 'next',
-      disabled: this.currentpage === 5,
+      disabled: this.currentpage === titles.length,
       ink: false,
       events: {
         onclick: () => {
@@ -146,7 +197,6 @@ export default class newEvent extends EditView {
       onChange: (state) => {
         this.selection_strategy = state.value;
         this.form.data.selection_strategy = state.value;
-        console.log(this.form.data); // Temp proof of concept.
       },
       value: this.selection_strategy,
     });
@@ -168,9 +218,6 @@ export default class newEvent extends EditView {
       if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
       return false;
     }).includes(true));
-    const titles = [
-      'Event Description', 'When and Where?', 'Signups', 'Advertisement', 'Images',
-    ];
 
     // checks currentPage and selects the fitting page
     return this.layout([
@@ -342,6 +389,6 @@ export default class newEvent extends EditView {
           'padding-top': '20px',
         },
       }, [buttonLeft, buttonRight]),
-    ]);
+    ], this.rightSubmit ? 'submit' : 'propose');
   }
 }

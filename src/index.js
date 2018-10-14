@@ -3,11 +3,9 @@ import { OauthRedirect } from './auth';
 import GroupList from './groups/list';
 import GroupItem from './groups/item';
 import { UserItem, UserTable } from './users/userTool';
-import { MembershipView } from './membershipTool';
+import MembershipView from './membershipTool';
 import EventTable from './events/table';
 import EventItem from './events/item';
-import eventDraft from './events/eventDraft';
-import eventWithExport from './events/eventWithExport';
 import JobTable from './jobs/table';
 import JobItem from './jobs/item';
 import StudydocTable from './studydocs/list';
@@ -34,8 +32,7 @@ m.route(root, '/events', {
   '/events': layoutWith(EventTable),
   '/events/:id': layoutWith(EventItem),
   '/newevent': layoutWith(EventItem),
-  '/draftevent': layoutWith(eventDraft),
-  '/eventwithexport': layoutWith(eventWithExport),
+  '/proposeevent': layoutWith(EventItem),
   '/groups': layoutWith(GroupList),
   '/groups/:id': layoutWith(GroupItem),
   '/newgroup': layoutWith(GroupItem),
