@@ -7,7 +7,7 @@
     "start": "webpack-dev-server --hot --inline",
     "build": "webpack -p --config webpack.config.prod.js",
     "build-dev": "webpack -p --config webpack.config.dev.js",
-    "lint": "eslint src/**.js"
+    "lint": "eslint src/**/*.js src/*.js"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "babel-preset-env": "^1.7.0",
     "compression-webpack-plugin": "^1.1.11",
     "css-loader": "^0.28.11",
-    "eslint": "^4.10.0",
+    "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.9.0",

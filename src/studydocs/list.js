@@ -2,7 +2,6 @@ import m from 'mithril';
 import { DatalistController } from 'amiv-web-ui-components';
 import { studydocuments as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
-import { dateFormatter } from '../utils';
 import { ResourceHandler } from '../auth';
 
 
