@@ -5,8 +5,8 @@ import {
   ToolbarTitle,
   Card,
   TextField,
-  Dialog,
 } from 'polythene-mithril';
+import Stream from 'mithril/stream';
 import { styler } from 'polythene-core-css';
 import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
@@ -133,6 +133,7 @@ export default class viewEvent extends ItemView {
     this.emailAdresses = false;
     this.emaillist = [''];
     this.showAllEmails = false;
+    this.modalDisplay = Stream('none');
   }
 
   oninit() {
@@ -155,6 +156,10 @@ export default class viewEvent extends ItemView {
   view() {
     let displaySpots = '-';
     const stdMargin = { margin: '5px' };
+
+    // Get the image and insert it inside the modal -
+    // use its "alt" text as a caption
+    const modalImg = document.getElementById('modalImg');
 
     if (this.data.spots !== 0) {
       displaySpots = this.data.spots;
@@ -282,21 +287,11 @@ export default class viewEvent extends ItemView {
                   src: `${apiUrl}${this.data.img_poster.file}`,
                   width: '100%',
                   onclick: () => {
-                    Dialog.show({
-                      backdrop: true,
-                      fullBleed: true,
-                      style: {
-                        width: '100vw',
-                        'margin-left': '-37vw',
-                        'text-align': 'center',
-                      },
-                      body: [m('div', { style: { height: '70vh', overflow: 'hidden' } }, m('img', {
-                        src: `${apiUrl}${this.data.img_poster.file}`,
-                        height: '100%',
-                      }))],
-                    });
+                    this.modalDisplay('block');
+                    modalImg.src = `${apiUrl}${this.data.img_poster.file}`;
                   },
-                })]),
+                }),
+              ]),
               m('div', {
                 style: {
                   width: '52%',
@@ -309,21 +304,8 @@ export default class viewEvent extends ItemView {
                     src: `${apiUrl}${this.data.img_infoscreen.file}`,
                     width: '100%',
                     onclick: () => {
-                      Dialog.show({
-                        backdrop: true,
-                        fullBleed: true,
-                        style: {
-                          width: '100vw',
-                          'margin-left': '-37vw',
-                          'text-align': 'center',
-                        },
-                        body: [m('div', {
-                          style: { height: '70vh', overflow: 'hidden' },
-                        }, m('img', {
-                          src: `${apiUrl}${this.data.img_infoscreen.file}`,
-                          height: '100%',
-                        }))],
-                      });
+                      this.modalDisplay('block');
+                      modalImg.src = `${apiUrl}${this.data.img_infoscreen.file}`;
                     },
                   }),
                 ]),
@@ -333,25 +315,11 @@ export default class viewEvent extends ItemView {
                     src: `${apiUrl}${this.data.img_banner.file}`,
                     width: '100%',
                     onclick: () => {
-                      Dialog.show({
-                        body: [m('div', {
-                          style: { height: '70vh', overflow: 'hidden' },
-                        }, m('img', {
-                          src: `${apiUrl}${this.data.img_banner.file}`,
-                          'max-height': '100%',
-                          'max-width': '100%',
-                        }))],
-                        backdrop: true,
-                        fullBleed: true,
-                        slef_alignment: 'center',
-                        style: {
-                          width: '100vw',
-                          'margin-left': '-37vw',
-                          'text-align': 'center',
-                        },
-                      });
+                      this.modalDisplay('block');
+                      modalImg.src = `${apiUrl}${this.data.img_banner.file}`;
                     },
-                  })]),
+                  }),
+                ]),
               ]),
             ]),
           ]),
@@ -366,6 +334,46 @@ export default class viewEvent extends ItemView {
             title: 'Participants on Waiting List',
           }) : '',
         ]),
+      ]),
+      m('div', {
+        id: 'imgModal',
+        style: {
+          display: this.modalDisplay(),
+          position: 'fixed',
+          'z-index': '100',
+          'padding-top': '100px',
+          left: 0,
+          top: 0,
+          width: '100vw',
+          height: '100vh',
+          overflow: 'auto',
+          'background-color': 'rgba(0, 0, 0, 0.9)',
+        },
+      }, [
+        m('img', {
+          id: 'modalImg',
+          style: {
+            margin: 'auto',
+            display: 'block',
+            'max-width': '80vw',
+            'max-heigth': '80vh',
+          },
+        }),
+        m('div', {
+          onclick: () => {
+            this.modalDisplay('none');
+          },
+          style: {
+            top: '15px',
+            right: '35px',
+            color: '#f1f1f1',
+            transition: '0.3s',
+            'z-index': 10,
+            position: 'absolute',
+            'font-size': '40px',
+            'font-weight': 'bold',
+          },
+        }, 'x'),
       ]),
     ]);
   }
