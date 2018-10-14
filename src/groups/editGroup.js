@@ -181,7 +181,6 @@ export default class NewGroup extends EditView {
       m(PermissionEditor, {
         permissions: this.form.data.permissions,
         onChange: (newPermissions) => {
-          console.log(newPermissions.groups, this.initialGroupPermissions)
           if (newPermissions.groups != this.initialGroupPermissions) {
             if (newPermissions.groups == 'readwrite') {
               this.groupPermissionsChanged = true;
@@ -191,6 +190,8 @@ export default class NewGroup extends EditView {
               this.groupPermissionsChanged = true;
               this.givingPermissions = false;
               this.takingPermissions = true;
+            } else {
+              this.groupPermissionsChanged = false;
             }
           } else {
             this.groupPermissionsChanged = false;
