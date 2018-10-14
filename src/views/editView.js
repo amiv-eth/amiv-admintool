@@ -29,7 +29,7 @@ export default class EditView extends ItemView {
    * @param  {object} embedded  [any embedding query that should be added
    *                             to API requests for this resource]
    */
-  constructor(vnode,) {
+  constructor(vnode) {
     super(vnode);
     // the form is valid in case that the item controller is in edit mode
     const validInitially = this.controller.modus === 'edit';

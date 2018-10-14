@@ -1,6 +1,4 @@
 import m from 'mithril';
-// eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { Property } from '../views/elements';
 
