@@ -42,7 +42,7 @@ export default class UserEdit extends EditView {
       m(RadioGroup, {
         name: 'Sex',
         buttons: [
-          { value: 'female', label: 'Female', defaultChecked: this.data.gender === 'female' },
+          { value: 'female', label: 'Female', defaultChecked: this.form.data.gender === 'female' },
           { value: 'male', label: 'Male', defaultChecked: this.form.data.gender === 'male' },
         ],
         onChange: ({ value }) => { console.log(value); this.form.data.gender = value; },

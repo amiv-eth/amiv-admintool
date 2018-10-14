@@ -45,4 +45,5 @@ m.route(root, '/events', {
   '/joboffers/:id': layoutWith(JobItem),
   '/studydocuments': layoutWith(StudydocTable),
   '/studydocuments/:id': layoutWith(studydocItem),
+  '/newstudydocument': layoutWith(studydocItem),
 });
