@@ -39,7 +39,7 @@ export default class ItemController {
 
   cancel() {
     if (this.modus === 'edit') this.changeModus('view');
-    if (this.modus === 'new') m.route.set(`/${this.resource}`);
+    else m.route.set(`/${this.resource}`);
   }
 
   changeModus(newModus) {
