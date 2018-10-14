@@ -35,6 +35,8 @@ export default class EditView extends ItemView {
     super(vnode);
     // start a form to collect the submit data
     this.form = new Form({}, valid, Object.assign({}, this.controller.data));
+    // error bag for unknown use (see error handling in submit())
+    this.errors = {}
   }
 
   oninit() {
@@ -69,6 +71,7 @@ export default class EditView extends ItemView {
           Object.keys(response.data._issues).forEach((field) => {
             this.errors[field] = [response.data._issues[field]];
           });
+          console.log(this.errors)
           m.redraw();
         } else {
           console.log(error);
