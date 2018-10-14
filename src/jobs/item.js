@@ -4,7 +4,7 @@ import editJob from './editJob';
 import ItemController from '../itemcontroller';
 import { loadingScreen } from '../layout';
 
-export default class jobModal {
+export default class JobItem {
   constructor() {
     this.controller = new ItemController('joboffers');
   }

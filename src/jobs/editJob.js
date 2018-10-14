@@ -1,9 +1,9 @@
 import m from 'mithril';
-import RaisedButton from 'polythene-mithril';
-import apiUrl from 'networkConfig';
-
+import { RaisedButton } from 'polythene-mithril';
+import { fileInput } from 'amiv-web-ui-components';
+// eslint-disable-next-line import/extensions
+import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-import fileInput from '../views/elements';
 
 export default class newJob extends EditView {
   view() {
@@ -38,7 +38,7 @@ export default class newJob extends EditView {
       m('br'),
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
-      }, this.renderPage({
+      }, this.form.renderPage({
         title_en: { type: 'text', label: 'English Job Title' },
         description_en: {
           type: 'text',
@@ -53,14 +53,17 @@ export default class newJob extends EditView {
           multiLine: true,
           rows: 5,
         },
-        location: { type: 'text', label: 'Location' },
-        // time_end: { type: 'datetime', label: 'Prospective Job End Time' },
-        time_start: { type: 'datetime', label: 'Desired Job Start Time (If as soon as possible, write nothing.)' },
+        // location: { type: 'text', label: 'Location' },
+        time_end: { type: 'datetime', label: 'Prospective Job End Time' },
+        time_start: {
+          type: 'datetime',
+          label: 'Desired Job Start Time (If as soon as possible, write nothing.)',
+        },
       })),
       m('div', {
         style: { display: (this.currentpage === 2) ? 'block' : 'none' },
       }, [
-        ...this.renderPage({
+        ...this.form.renderPage({
           time_advertising_start: {
             type: 'datetime',
             label: 'Start of Advertisement on Website',
@@ -72,7 +75,7 @@ export default class newJob extends EditView {
             required: true,
           },
         }),
-        ...this.renderPage({
+        ...this.form.renderPage({
           show_website: { type: 'checkbox', label: 'Advertise on Website' },
         }),
       ]),
@@ -84,7 +87,7 @@ export default class newJob extends EditView {
             src: `${apiUrl}${this.data[`img_${key}`].file}`,
             style: { 'max-height': '50px', 'max-width': '100px' },
           }) : m('div', `currently no ${key} image set`),
-          m(fileInput, this.bind({
+          m(fileInput, this.form.bind({
             name: `new_${key}`,
             label: `New ${key} Image`,
             accept: 'image/png, image/jpeg',
