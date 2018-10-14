@@ -1,8 +1,9 @@
 import m from 'mithril';
-import { Toolbar, Dialog, Button } from 'polythene-mithril';
+import { IconButton, Toolbar, Dialog, Button } from 'polythene-mithril';
 import { ButtonCSS } from 'polythene-css';
 import { colors } from '../style';
 import { loadingScreen } from '../layout';
+import { icons } from './elements';
 
 ButtonCSS.addStyle('.itemView-edit-button', {
   color_light_background: colors.light_blue,
@@ -53,21 +54,29 @@ export default class ItemView {
   layout(children, buttons = []) {
     if (!this.controller || !this.controller.data) return m(loadingScreen);
     return m('div', [
-      m(Toolbar, m('div.pe-button-row', [
-        m(Button, {
-          element: 'div',
-          className: 'itemView-edit-button',
-          label: `Edit ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
-          events: { onclick: () => { this.controller.changeModus('edit'); } },
+      m(Toolbar, [
+        m('div', { style: { width: 'calc(100% - 48px)' } }, m('div.pe-button-row', [
+          m(Button, {
+            element: 'div',
+            className: 'itemView-edit-button',
+            label: `Edit ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
+            events: { onclick: () => { this.controller.changeModus('edit'); } },
+          }),
+          m(Button, {
+            label: `Delete ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
+            className: 'itemView-delete-button',
+            border: true,
+            events: { onclick: () => this.delete() },
+          }),
+          ...buttons,
+        ])),
+        m(IconButton, {
+          style: { 'margin-left': 'auto', 'margin-right': '0px' },
+          icon: { svg: { content: m.trust(icons.clear) } },
+          events: { onclick: () => { this.controller.cancel(); } },
         }),
-        m(Button, {
-          label: `Delete ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`,
-          className: 'itemView-delete-button',
-          border: true,
-          events: { onclick: () => this.delete() },
-        }),
-        ...buttons,
-      ])),
+
+      ]),
       m('div', {
         style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll' },
       }, children),
