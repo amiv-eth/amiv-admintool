@@ -117,5 +117,14 @@
     },
     "sessions": {
         "searchKeys": []
+    },
+    "studydocuments": {
+        "searchKeys": [
+            "title",
+            "lecture",
+            "professor",
+            "author",
+            "uploader"
+        ]
     }
 }
