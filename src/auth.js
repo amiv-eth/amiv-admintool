@@ -1,6 +1,8 @@
 import m from 'mithril';
 import axios from 'axios';
 import ClientOAuth2 from 'client-oauth2';
+import { Snackbar } from 'polythene-mithril';
+// eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl, oAuthID } from 'networkConfig';
 import * as localStorage from './localStorage';
 import config from './resourceConfig.json';
@@ -15,6 +17,7 @@ const APISession = {
 const amivapi = axios.create({
   baseURL: apiUrl,
   headers: { 'Content-Type': 'application/json' },
+  validateStatus: () => true,
 });
 
 // OAuth Handler
@@ -76,6 +79,7 @@ export function getSession() {
           'Content-Type': 'application/json',
           Authorization: APISession.token,
         },
+        validateStatus: () => true,
       });
       resolve(authenticatedSession);
     }).catch(resetSession);
@@ -116,6 +120,7 @@ export class ResourceHandler {
    */
   constructor(resource, searchKeys = false) {
     this.resource = resource;
+    this.rights = [];
     // special case for users
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
     else this.searchKeys = searchKeys || config[resource].searchKeys;
@@ -176,6 +181,22 @@ export class ResourceHandler {
     return `?${m.buildQueryString(fullQuery)}`;
   }
 
+  networkError(e) {
+    console.log(e);
+    Snackbar.show({ title: 'Network error, try again.', style: { color: 'red' } });
+  }
+
+  // in future, we may communicate based on the data available
+  // therefore, require data already here
+  // eslint-disable-next-line no-unused-vars
+  error422(data) {
+    Snackbar.show({ title: 'Errors in object, please fix.' });
+  }
+
+  successful(title) {
+    Snackbar.show({ title, style: { color: 'green' } });
+  }
+
   get(query) {
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
@@ -184,12 +205,14 @@ export class ResourceHandler {
         api.get(url).then((response) => {
           if (response.status >= 400) {
             resetSession();
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             reject();
           } else {
+            this.rights = response.data._links.self.methods;
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
+          this.networkError(e);
           reject(e);
         });
       });
@@ -208,13 +231,14 @@ export class ResourceHandler {
         }
         api.get(url).then((response) => {
           if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
+          this.networkError(e);
           reject(e);
         });
       });
@@ -226,17 +250,20 @@ export class ResourceHandler {
       getSession().then((api) => {
         api.post(this.resource, item).then((response) => {
           if (response.code === 201) {
+            this.successful('Creation successful.');
             resolve({});
           } else if (response.status === 422) {
+            this.error422(response.data);
             reject(response.data);
           } else if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
+          this.networkError(e);
           reject(e);
         });
       });
@@ -265,15 +292,18 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
         }).then((response) => {
           if (response.status === 422) {
+            this.error422(response.data);
             reject(response.data);
           } else if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
+            this.successful('Change successful.');
             resolve(response.data);
           }
         }).catch((e) => {
-          console.log(e);
+          this.networkError(e);
           reject(e);
         });
       });
@@ -287,13 +317,15 @@ export class ResourceHandler {
           headers: { 'If-Match': item._etag },
         }).then((response) => {
           if (response.status >= 400) {
+            Snackbar.show({ title: response.data, style: { color: 'red' } });
             resetSession();
             reject();
           } else {
+            this.successful('Delete successful.');
             resolve();
           }
         }).catch((e) => {
-          console.log(e);
+          this.networkError(e);
           reject(e);
         });
       });
@@ -303,11 +335,11 @@ export class ResourceHandler {
 
 export class OauthRedirect {
   view() {
-    oauth.token.getToken(m.route.get()).then((response) => {
+    oauth.token.getToken(m.route.get()).then((auth) => {
       APISession.authenticated = true;
-      APISession.token = response.accessToken;
-      localStorage.set('token', response.accessToken);
-      amivapi.get(`sessions/${response.accessToken}`, {
+      APISession.token = auth.accessToken;
+      localStorage.set('token', auth.accessToken);
+      amivapi.get(`sessions/${auth.accessToken}`, {
         headers: { 'Content-Type': 'application/json', Authorization: APISession.token },
       }).then((response) => {
         console.log(response);

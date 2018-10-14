@@ -9,6 +9,7 @@ import {
   SVG,
   Button,
   IconButton,
+  Snackbar,
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
@@ -152,6 +153,7 @@ export class Layout {
         // shadow over content in case drawer is out
         m('div.content-hider'),
       ]),
+      m(Snackbar),
       // dialog element will show when Dialog.show() is called, this is only a placeholder
       m(Dialog),
     ]);

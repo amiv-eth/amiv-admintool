@@ -1,11 +1,10 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Switch } from 'polythene-mithril';
+import { RaisedButton, RadioGroup, Switch, Dialog, Button } from 'polythene-mithril';
 import { fileInput } from 'amiv-web-ui-components';
 import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
+import { apiUrl, ownUrl } from 'networkConfig';
 import EditView from '../views/editView';
-
 
 const style = [
   {
@@ -20,6 +19,18 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
+
+    // check whether the user has the right to create events or can only propose
+    this.rightSubmit = !m.route.get().startsWith('/proposeevent');
+
+    // proposition URL-link decoder
+    if (this.rightSubmit && m.route.param('proposition')) {
+      const data = JSON.parse(window.atob(m.route.param('proposition')));
+      console.log(data);
+      this.form.data = data;
+    }
+
+
     if (!this.form.data.priority) this.form.data.priority = 1;
 
     // read additional_fields to make it editable
@@ -27,14 +38,14 @@ export default class newEvent extends EditView {
       const copy = JSON.parse(this.form.data.additional_fields);
       this.form.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
       this.form.data.add_fields_food = 'Food' in copy.properties;
-      this.form.data.additional_fields = {};
+      this.form.data.additional_fields = null;
     }
 
     // price can either not be set or set to null
     // if it is 0 however, that would mean that there actually is a price that
     // you can edit
     this.hasprice = 'price' in this.form.data && this.form.data.price !== null;
-    this.hasregistration = 'time_advertising_start' in this.form.data;
+    this.hasregistration = 'spots' in this.form.data || 'time_registration_start' in this.form.data;
   }
 
   beforeSubmit() {
@@ -95,24 +106,64 @@ export default class newEvent extends EditView {
       delete this.form.data.allow_email_signup;
     }
 
-    console.log(this.form.data);
-    if (Object.keys(images).length > 0) {
-      images._id = this.form.data._id;
-      images._etag = this.form.data._etag;
-      // first upload the images as formData, then the rest as JSON
-      this.controller.handler.patch(images, true).then(({ _etag }) => {
-        this.form.data._etag = _etag;
+    // Propose <=> Submit desicion due to rights
+    if (this.rightSubmit) {
+      // Submition tool
+      if (Object.keys(images).length > 0) {
+        images._id = this.form.data._id;
+        images._etag = this.form.data._etag;
+        // first upload the images as formData, then the rest as JSON
+        this.controller.handler.patch(images, true).then(({ _etag }) => {
+          this.form.data._etag = _etag;
+          this.submit();
+        });
+      } else {
         this.submit();
-      });
+      }
     } else {
-      this.submit();
+      // Propose tool
+      Dialog.show({
+        title: 'Congratulations!',
+        body: [
+          m(
+            'div',
+            'You sucessfuly setup an event.',
+            'Please send this link to the respectiv board member for validation.',
+          ),
+          m('input', {
+            type: 'text',
+            style: { width: '335px' },
+            value: `${ownUrl}/newevent?${m.buildQueryString({
+              proposition: window.btoa(JSON.stringify(this.form.data)),
+            })}`,
+            id: 'textId',
+          }),
+        ],
+        backdrop: true,
+        footerButtons: [
+          m(Button, {
+            label: 'Copy',
+            events: {
+              onclick: () => {
+                const copyText = document.getElementById('textId');
+                copyText.select();
+                document.execCommand('copy');
+              },
+            },
+          }),
+        ],
+      });
     }
   }
 
   view() {
+    const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
+    if (this.rightSubmit) titles.push('Images');
+
     const buttonRight = m(RaisedButton, {
       label: 'next',
-      disabled: this.currentpage === 5,
+      disabled: this.currentpage === titles.length,
+      ink: false,
       events: {
         onclick: () => {
           this.currentpage = Math.min(this.currentpage + 1, 5);
@@ -123,6 +174,7 @@ export default class newEvent extends EditView {
     const buttonLeft = m(RaisedButton, {
       label: 'previous',
       disabled: this.currentpage === 1,
+      ink: false,
       events: {
         onclick: () => {
           this.currentpage = Math.max(1, this.currentpage - 1);
@@ -145,22 +197,52 @@ export default class newEvent extends EditView {
       onChange: (state) => {
         this.selection_strategy = state.value;
         this.form.data.selection_strategy = state.value;
-        console.log(this.form.data); // Temp proof of concept.
       },
       value: this.selection_strategy,
     });
 
-    const title = [
-      'Event Description', 'When and Where?', 'Signups', 'Advertisement', 'Images',
-    ][this.currentpage - 1];
+    const keysPages = [[
+      'title_en',
+      'catchphrase_en',
+      'description_en',
+      'title_de',
+      'catchphrase_de',
+      'description_de',
+    ],
+    ['time_start', 'time_end', 'location'],
+    ['price', 'spots', 'time_register_start', 'time_register_end'],
+    ['time_advertising_start', 'time_advertising_end'],
+    [],
+    ];
+    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
+      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
+      return false;
+    }).includes(true));
 
     // checks currentPage and selects the fitting page
     return this.layout([
-      m('h3', title),
-      buttonLeft,
-      m.trust('&nbsp;'),
-      buttonRight,
-      m('br'),
+      // navigation bar
+      // all pages are displayed, current is highlighted,
+      // validation errors are shown per page by red icon-background
+      m('div', {
+        style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' },
+      }, [...titles.entries()].map(numAndTitle => m('div', m('div', {
+        style: {
+          border: (this.currentpage === numAndTitle[0] + 1) ?
+            '2px solid black' :
+            '2px solid #888888',
+          color: (this.currentpage === numAndTitle[0] + 1) ? 'black' : '#888888',
+          'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
+          'border-radius': '20px',
+          height: '40px',
+          'margin-bottom': '7px',
+          padding: '12px',
+          'font-size': '20px',
+          'line-height': '11px',
+        },
+        onclick: () => { this.currentpage = numAndTitle[0] + 1; },
+      }, numAndTitle[1])))),
+      // page 1: title & description
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
       }, this.form.renderPage({
@@ -181,6 +263,7 @@ export default class newEvent extends EditView {
           rows: 5,
         },
       })),
+      // page 2: when & where
       m('div', {
         style: { display: (this.currentpage === 2) ? 'block' : 'none' },
       }, this.form.renderPage({
@@ -188,6 +271,7 @@ export default class newEvent extends EditView {
         time_end: { type: 'datetime', label: 'Event End Time' },
         location: { type: 'text', label: 'Location' },
       })),
+      // page 3: registration
       m('div', {
         style: { display: (this.currentpage === 3) ? 'block' : 'none' },
       }, [
@@ -243,6 +327,7 @@ export default class newEvent extends EditView {
         }),
         this.hasregistration && radioButtonSelectionMode,
       ]),
+      // page 4: advertisement
       m('div', {
         style: { display: (this.currentpage === 4) ? 'block' : 'none' },
       }, [
@@ -259,7 +344,8 @@ export default class newEvent extends EditView {
           },
         }),
         // TODO is deactivated now
-        /*m.trust('Priority<br>'),
+        /*
+        m.trust('Priority<br>'),
         m(Slider, {
           min: 1,
           max: 10,
@@ -267,7 +353,8 @@ export default class newEvent extends EditView {
 
           // value: this.data.priority || 1,
           // onChange: ({ value }) => { this.data.priority = value; },
-        }),*/
+        }),
+        */
         ...this.form.renderPage({
           show_website: { type: 'checkbox', label: 'Advertise on Website' },
           show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
@@ -277,6 +364,7 @@ export default class newEvent extends EditView {
           },
         }),
       ]),
+      // page 5: images
       m('div', {
         style: { display: (this.currentpage === 5) ? 'block' : 'none' },
       }, [
@@ -292,6 +380,15 @@ export default class newEvent extends EditView {
           })),
         ]),
       ]),
-    ]);
+      // bottom back & forth
+      m('div', {
+        style: {
+          display: 'flex',
+          'justify-content': 'space-between',
+          padding: '35px',
+          'padding-top': '20px',
+        },
+      }, [buttonLeft, buttonRight]),
+    ], this.rightSubmit ? 'submit' : 'propose');
   }
 }
