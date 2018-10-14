@@ -56,17 +56,17 @@ export default class UserView extends ItemView {
         ...stdMargin,
       }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
-      membership = m(
-        chip,
-        { svg: icons.checked, svgBackground: colors.green, ...stdMargin },
-        'Extraordinary Member',
-      );
+      membership = m(chip, {
+        svg: icons.checked,
+        svgBackground: colors.green,
+        ...stdMargin,
+      }, 'Extraordinary Member');
     } else if (this.data.membership === 'honorary') {
-      membership = m(
-        chip,
-        { svg: icons.star, svgBackground: colors.orange, ...stdMargin },
-        'Honorary Member',
-      );
+      membership = m(chip, {
+        svg: icons.star,
+        svgBackground: colors.orange,
+        ...stdMargin,
+      }, 'Honorary Member');
     }
 
     // Selector that is only displayed if "new" is clicked in the

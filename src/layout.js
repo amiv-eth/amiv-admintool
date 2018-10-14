@@ -143,8 +143,9 @@ export class Layout {
                 title: 'Job offers',
               }),
               m(Menupoint, {
-                href: '/announce',
-                title: 'Announce',
+                href: '/studydocuments',
+                icon: icons.studydoc,
+                title: 'Studydocs',
               }),
             ],
           }),

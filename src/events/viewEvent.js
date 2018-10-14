@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
 } from 'polythene-mithril';
+import Stream from 'mithril/stream';
 import { styler } from 'polythene-core-css';
 import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
@@ -134,6 +135,7 @@ export default class viewEvent extends ItemView {
     this.emailAdresses = false;
     this.emaillist = [''];
     this.showAllEmails = false;
+    this.modalDisplay = Stream('none');
   }
 
   oninit() {
@@ -191,6 +193,10 @@ export default class viewEvent extends ItemView {
   view() {
     let displaySpots = '-';
     const stdMargin = { margin: '5px' };
+
+    // Get the image and insert it inside the modal -
+    // use its "alt" text as a caption
+    const modalImg = document.getElementById('modalImg');
 
     if (this.data.spots !== 0) {
       displaySpots = this.data.spots;
@@ -289,7 +295,7 @@ export default class viewEvent extends ItemView {
           ]),
 
           // a list of email adresses of all participants, easy to copy-paste
-          m(DropdownCard, { title: 'Email Adresses' }, [
+          m(DropdownCard, { title: 'Email Adresses', style: { margin: '10px 0' } }, [
             m(Switch, {
               defaultChecked: false,
               label: 'show unaccepted',
@@ -300,8 +306,61 @@ export default class viewEvent extends ItemView {
             }),
             m(EmailList, { list: this.emaillist }),
           ]),
-        ]),
 
+          m(DropdownCard, { title: 'Images' }, [
+            m('div', {
+              style: {
+                display: 'flex',
+              },
+            }, [
+              m('div', {
+                style: {
+                  width: '40%',
+                  padding: '5px',
+                },
+              }, [
+                this.data.img_poster && m('div', 'Poster'),
+                this.data.img_poster && m('img', {
+                  src: `${apiUrl}${this.data.img_poster.file}`,
+                  width: '100%',
+                  onclick: () => {
+                    this.modalDisplay('block');
+                    modalImg.src = `${apiUrl}${this.data.img_poster.file}`;
+                  },
+                }),
+              ]),
+              m('div', {
+                style: {
+                  width: '52%',
+                  padding: '5px',
+                },
+              }, [
+                m('div', [
+                  this.data.img_infoscreen && m('div', 'Infoscreen'),
+                  this.data.img_infoscreen && m('img', {
+                    src: `${apiUrl}${this.data.img_infoscreen.file}`,
+                    width: '100%',
+                    onclick: () => {
+                      this.modalDisplay('block');
+                      modalImg.src = `${apiUrl}${this.data.img_infoscreen.file}`;
+                    },
+                  }),
+                ]),
+                m('div', [
+                  this.data.img_banner && m('div', 'Banner'),
+                  this.data.img_banner && m('img', {
+                    src: `${apiUrl}${this.data.img_banner.file}`,
+                    width: '100%',
+                    onclick: () => {
+                      this.modalDisplay('block');
+                      modalImg.src = `${apiUrl}${this.data.img_banner.file}`;
+                    },
+                  }),
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
         m('div.viewcontainercolumn', [
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: true, event: this.data._id },
@@ -313,7 +372,46 @@ export default class viewEvent extends ItemView {
           }) : '',
         ]),
       ]),
-
+      m('div', {
+        id: 'imgModal',
+        style: {
+          display: this.modalDisplay(),
+          position: 'fixed',
+          'z-index': '100',
+          'padding-top': '100px',
+          left: 0,
+          top: 0,
+          width: '100vw',
+          height: '100vh',
+          overflow: 'auto',
+          'background-color': 'rgba(0, 0, 0, 0.9)',
+        },
+      }, [
+        m('img', {
+          id: 'modalImg',
+          style: {
+            margin: 'auto',
+            display: 'block',
+            'max-width': '80vw',
+            'max-heigth': '80vh',
+          },
+        }),
+        m('div', {
+          onclick: () => {
+            this.modalDisplay('none');
+          },
+          style: {
+            top: '15px',
+            right: '35px',
+            color: '#f1f1f1',
+            transition: '0.3s',
+            'z-index': 10,
+            position: 'absolute',
+            'font-size': '40px',
+            'font-weight': 'bold',
+          },
+        }, 'x'),
+      ]),
     ], [
       m(Button, {
         label: 'Clone Event',

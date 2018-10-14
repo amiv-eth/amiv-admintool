@@ -51,6 +51,7 @@ export default class UserEdit extends EditView {
         'div', { style },
         m(RadioGroup, {
           name: 'Membership',
+          default: this.form.data.membership,
           values: [
             {
               value: 'none',
@@ -79,6 +80,7 @@ export default class UserEdit extends EditView {
         'div', { style },
         m(RadioGroup, {
           name: 'Sex',
+          default: this.form.data.gender,
           values: [
             { value: 'female', label: 'Female' },
             { value: 'male', label: 'Male' },
@@ -93,6 +95,7 @@ export default class UserEdit extends EditView {
         'div', { style },
         m(RadioGroup, {
           name: 'Departement',
+          default: this.form.data.department,
           values: [
             { value: 'itet', label: 'ITET' },
             { value: 'mavt', label: 'MAVT' },
