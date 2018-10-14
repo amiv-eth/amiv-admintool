@@ -41,6 +41,7 @@ export default class EditView extends ItemView {
   oninit() {
     // load schema
     m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
+      console.log(schema.definitions[objectNameForResource[this.resource]])
       this.form.setSchema(schema.definitions[objectNameForResource[this.resource]]);
     }).catch((error) => { console.log(error); });
   }

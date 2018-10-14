@@ -6,6 +6,11 @@ import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
 
 export default class newJob extends EditView {
+  constructor(vnode) {
+    super(vnode);
+    this.currentpage = 1;
+  }
+
   view() {
     const buttonRight = m(RaisedButton, {
       label: 'next',
@@ -54,17 +59,18 @@ export default class newJob extends EditView {
           rows: 5,
         },
         // location: { type: 'text', label: 'Location' },
-        time_end: { type: 'datetime', label: 'Prospective Job End Time' },
+        /*time_end: { type: 'datetime', label: 'Prospective Job End Time' },
         time_start: {
           type: 'datetime',
           label: 'Desired Job Start Time',
           hint: 'If as soon as possible, write nothing.',
-        },
+        },*/
       })),
       m('div', {
         style: { display: (this.currentpage === 2) ? 'block' : 'none' },
       }, [
-        ...this.form.renderPage({
+        // TODO: update once the right fields are accepted by API.
+        /*...this.form.renderPage({
           time_advertising_start: {
             type: 'datetime',
             label: 'Start of Advertisement on Website',
@@ -75,7 +81,7 @@ export default class newJob extends EditView {
             label: 'End of Advertisement on Website',
             required: false,
           },
-        }),
+        }),*/
         ...this.form.renderPage({
           show_website: { type: 'checkbox', label: 'Advertise on Website' },
         }),
