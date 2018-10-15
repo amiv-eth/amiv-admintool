@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { RaisedButton, RadioGroup, Switch, Dialog, Button } from 'polythene-mithril';
-import { fileInput } from 'amiv-web-ui-components';
+import { FileInput } from 'amiv-web-ui-components';
 import { styler } from 'polythene-core-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
@@ -373,7 +373,7 @@ export default class newEvent extends EditView {
             src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
             style: { 'max-height': '50px', 'max-width': '100px' },
           }) : m('div', `currently no ${key} image set`),
-          m(fileInput, this.form.bind({
+          m(FileInput, this.form.bind({
             name: `new_${key}`,
             label: `New ${key} Image`,
             accept: 'image/png, image/jpeg',
