@@ -1,19 +1,20 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Switch, Dialog, Button } from 'polythene-mithril';
+import { RaisedButton, RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
-import { styler } from 'polythene-core-css';
+import { TabsCSS } from 'polythene-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
+import { colors } from '../style';
+import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
-const style = [
-  {
-    '.mywrapper': {
-      padding: '10px',
-    },
-  },
-];
-styler.add('event-add', style);
+TabsCSS.addStyle('.edit-tabs', {
+  color_light: '#555555',
+  // no hover effect
+  color_light_hover: '#555555',
+  color_light_selected: colors.amiv_blue,
+  color_light_tab_indicator: colors.amiv_blue,
+});
 
 export default class newEvent extends EditView {
   constructor(vnode) {
@@ -224,24 +225,23 @@ export default class newEvent extends EditView {
       // navigation bar
       // all pages are displayed, current is highlighted,
       // validation errors are shown per page by red icon-background
-      m('div', {
-        style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' },
-      }, [...titles.entries()].map(numAndTitle => m('div', m('div', {
-        style: {
-          border: (this.currentpage === numAndTitle[0] + 1) ?
-            '2px solid black' :
-            '2px solid #888888',
-          color: (this.currentpage === numAndTitle[0] + 1) ? 'black' : '#888888',
-          'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
-          'border-radius': '20px',
-          height: '40px',
-          'margin-bottom': '7px',
-          padding: '12px',
-          'font-size': '20px',
-          'line-height': '11px',
-        },
-        onclick: () => { this.currentpage = numAndTitle[0] + 1; },
-      }, numAndTitle[1])))),
+      m('div', { style: { margin: '-20px -10px 10px -10px' } }, m(Tabs, {
+        className: 'edit-tabs',
+        // it would be too easy if we could set the background color in the theme class
+        style: { backgroundColor: colors.orange },
+        onChange: ({ index }) => { this.currentpage = index + 1; },
+        centered: true,
+        selectedTabIndex: this.currentpage - 1,
+      }, [...titles.entries()].map((numAndTitle) => {
+        const buttonAttrs = { label: numAndTitle[1] };
+        if (errorPages[numAndTitle[0]]) {
+          buttonAttrs.before = m(Icon, {
+            style: { float: 'left', top: '12px', 'margin-left': 'auto' },
+            svg: { content: m.trust(icons.error) },
+          });
+        }
+        return buttonAttrs;
+      }))),
       // page 1: title & description
       m('div', {
         style: { display: (this.currentpage === 1) ? 'block' : 'none' },
