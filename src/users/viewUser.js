@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Card, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
+import { Card, Toolbar, ToolbarTitle, Button, Snackbar } from 'polythene-mithril';
 import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
@@ -165,10 +165,13 @@ export default class UserView extends ItemView {
             this.sessionsHandler.get({
               where: { user: this.data._id },
             }).then((response) => {
-              response._items.forEach((session) => {
-                this.sessionsHandler.delete(session);
-              });
-              console.log(response);
+              if (response._items.length === 0) {
+                Snackbar.show({ title: 'No active sessions for this user.' });
+              } else {
+                response._items.forEach((session) => {
+                  this.sessionsHandler.delete(session);
+                });
+              }
             });
           },
         },
