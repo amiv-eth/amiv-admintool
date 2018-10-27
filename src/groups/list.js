@@ -73,7 +73,7 @@ export default class GroupList {
           style: { display: 'flex', 'flex-wrap': 'wrap' },
         }, [
           this.groups.map(item => m(GroupListItem, item)),
-          m('div', {
+          this.handler.rights.indexOf('POST') > -1 && m('div', {
             style: { 'max-width': '500px', margin: '5px' },
             onclick: () => { m.route.set('/newgroup'); },
           }, m(Card, { content: [{ primary: { title: '+ add' } }] })),

@@ -20,8 +20,9 @@ import { ResourceHandler } from '../auth';
 // Helper class to either display the signed up participants or those on the
 // waiting list.
 class MembersTable {
-  constructor({ attrs: { group } }) {
+  constructor({ attrs: { group, hasPatchRights} }) {
     this.group_id = group;
+    this.hasPatchRights = hasPatchRights;
     this.ctrl = new RelationlistController('groupmemberships', 'users', { where: { group } });
     // true while in the modus of adding a member
     this.addmode = false;
@@ -36,7 +37,7 @@ class MembersTable {
       m('div', { style: { width: '18em' } }, `${data.user.firstname} ${data.user.lastname}`),
       m('div', { style: { width: '9em' } }, data.user.email),
       m('div', { style: { 'flex-grow': '100' } }),
-      m('div', m(Button, {
+      this.hasPatchRights && m('div', m(Button, {
         // Button to remove this groupmembership
         className: 'red-row-button',
         borders: false,
@@ -75,7 +76,7 @@ class MembersTable {
         }) : '',
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: 'Members' }),
-          m(Button, {
+          this.hasPatchRights && m(Button, {
             className: 'blue-button',
             borders: true,
             label: 'add',
@@ -100,7 +101,7 @@ class MembersTable {
 
 // Table for list of email adresses, both forward_to and receive
 class EmailTable {
-  constructor({ attrs: { onRemove = () => {} } }) {
+  constructor({ attrs: { onRemove = false } }) {
     this.addmode = false;
     this.dirty = false;
     this.newvalue = '';
@@ -117,7 +118,7 @@ class EmailTable {
       },
     }, [
       data,
-      m(Icon, {
+      this.onRemove && m(Icon, {
         style: { 'margin-left': '3px' },
         svg: { content: m.trust(icons.clear) },
         size: 'small',
@@ -128,7 +129,7 @@ class EmailTable {
     ]);
   }
 
-  view({ attrs: { list, title, style = {}, onSubmit = () => {} } }) {
+  view({ attrs: { list, title, style = {}, onSubmit = false } }) {
     return m(Card, {
       style: { height: '200px', ...style },
       content: m('div', [
@@ -163,7 +164,7 @@ class EmailTable {
         ]) : '',
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: title }),
-          m(Button, {
+          onSubmit && m(Button, {
             className: 'blue-button',
             borders: true,
             label: 'add',
@@ -191,9 +192,8 @@ export default class viewGroup extends ItemView {
   view() {
     // update the reference to the controller data, as this may be refreshed in between
     this.data = this.controller.data;
-
+    const hasPatchRights = this.data._links.self.methods.indexOf('PATCH') > -1;
     const stdMargin = { margin: '5px' };
-
     return this.layout([
       // this div is the title line
       m('div.maincontainer', [
@@ -205,7 +205,7 @@ export default class viewGroup extends ItemView {
           ...stdMargin,
         }, 'has a folder on the AMIV Cloud'),
         m('div', { style: { display: 'flex' } }, [
-          this.numMembers && m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
+          ('numMembers' in this) && m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
           this.data.moderator && m(Property, {
             title: 'Moderator',
             onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
@@ -222,22 +222,22 @@ export default class viewGroup extends ItemView {
             Object.keys(this.data.permissions)
               .map(key => m(Property, { title: key }, this.data.permissions[key])),
           ) : '',
-          m(MembersTable, { group: this.data._id }),
+          m(MembersTable, { group: this.data._id, hasPatchRights }),
         ]),
         // the second column contains receive_from and forward_to emails
         m('div.viewcontainercolumn', [
           m(EmailTable, {
             list: this.data.receive_from || [],
             title: 'Receiving Email Adresses',
-            onSubmit: (newItem) => {
+            onSubmit: hasPatchRights ? (newItem) => {
               const oldList = this.data.receive_from || [];
               this.controller.patch({
                 _id: this.data._id,
                 _etag: this.data._etag,
                 receive_from: [...oldList, newItem],
               });
-            },
-            onRemove: (item) => {
+            } : undefined,
+            onRemove: hasPatchRights ? (item) => {
               const oldList = this.data.receive_from;
               // remove the first occurence of the given item-string
               const index = oldList.indexOf(item);
@@ -249,21 +249,21 @@ export default class viewGroup extends ItemView {
                   receive_from: oldList,
                 });
               }
-            },
+            } : undefined,
           }),
           m(EmailTable, {
             list: this.data.forward_to || [],
             title: 'Forwards to Email Adresses',
             style: { 'margin-top': '10px' },
-            onSubmit: (newItem) => {
+            onSubmit: hasPatchRights ? (newItem) => {
               const oldList = this.data.forward_to || [];
               this.controller.patch({
                 _id: this.data._id,
                 _etag: this.data._etag,
                 forward_to: [...oldList, newItem],
               });
-            },
-            onRemove: (item) => {
+            } : undefined,
+            onRemove: hasPatchRights ? (item) => {
               const oldList = this.data.forward_to;
               // remove the first occurence of the given item-string
               const index = oldList.indexOf(item);
@@ -275,7 +275,7 @@ export default class viewGroup extends ItemView {
                   forward_to: oldList,
                 });
               }
-            },
+            } : undefined,
           }),
         ]),
       ]),
