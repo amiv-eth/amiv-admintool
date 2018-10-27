@@ -58,7 +58,7 @@ export default class ItemView {
     return m('div', [
       m(Toolbar, [
         this.handler.rights.indexOf('PATCH') > -1 && m('div', {
-          style: { width: 'calc(100% - 48px)' }
+          style: { width: 'calc(100% - 48px)' },
         }, m('div.pe-button-row', [
           m(Button, {
             element: 'div',

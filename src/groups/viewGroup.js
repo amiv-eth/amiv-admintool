@@ -20,7 +20,7 @@ import { ResourceHandler } from '../auth';
 // Helper class to either display the signed up participants or those on the
 // waiting list.
 class MembersTable {
-  constructor({ attrs: { group, hasPatchRights} }) {
+  constructor({ attrs: { group, hasPatchRights } }) {
     this.group_id = group;
     this.hasPatchRights = hasPatchRights;
     this.ctrl = new RelationlistController('groupmemberships', 'users', { where: { group } });
@@ -205,7 +205,8 @@ export default class viewGroup extends ItemView {
           ...stdMargin,
         }, 'has a folder on the AMIV Cloud'),
         m('div', { style: { display: 'flex' } }, [
-          ('numMembers' in this) && m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
+          ('numMembers' in this) &&
+            m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
           this.data.moderator && m(Property, {
             title: 'Moderator',
             onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },
