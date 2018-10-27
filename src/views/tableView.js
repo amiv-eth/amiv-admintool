@@ -172,8 +172,9 @@ export default class TableView {
       // ones in this group will be deselected)
       this.filters && m('div', {
         style: {
-          height: '40px',
+          height: '50px',
           'overflow-x': 'auto',
+          'overflow-y': 'hidden',
           'white-space': 'nowrap',
           padding: '0px 5px',
         },
