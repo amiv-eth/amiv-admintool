@@ -13,7 +13,7 @@ import {
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
-import { deleteSession } from './auth';
+import { deleteSession, getUserRights } from './auth';
 import { colors } from './style';
 
 const layoutStyle = [
@@ -96,6 +96,7 @@ class Menupoint {
 
 export class Layout {
   view({ children }) {
+    const userRights = getUserRights();
     return m('div', [
       m('div.wrapper-main.smooth', [
         m(Toolbar, {
@@ -122,7 +123,7 @@ export class Layout {
             header: { title: 'Menu' },
             hoverable: true,
             tiles: [
-              m(Menupoint, {
+              userRights.users.indexOf('POST') > -1 && m(Menupoint, {
                 href: '/users',
                 icon: icons.iconUsersSVG,
                 title: 'Users',
@@ -137,12 +138,12 @@ export class Layout {
                 icon: icons.group,
                 title: 'Groups',
               }),
-              m(Menupoint, {
+              userRights.joboffers.indexOf('POST') > -1 && m(Menupoint, {
                 href: '/joboffers',
                 icon: icons.iconJobsSVG,
                 title: 'Job offers',
               }),
-              m(Menupoint, {
+              userRights.studydocuments.indexOf('PATCH') > -1 && m(Menupoint, {
                 href: '/studydocuments',
                 icon: icons.studydoc,
                 title: 'Studydocs',
