@@ -8,13 +8,9 @@ export default class editDoc extends EditView {
   // constructoe^r zu file upload
   constructor(vnode) {
     super(vnode);
-<<<<<<< HEAD
     if (!('files' in this.form.data)) {
       this.form.data.files = [{ name: 'add file' }];
     }
-=======
-    console.log(this.form.data.files);
->>>>>>> d5c9d3ccc17b1e4a034a733d91485388f298b581
   }
 
   view() {
@@ -85,11 +81,7 @@ export default class editDoc extends EditView {
           className: 'blue-button',
           border: true,
           // onclick to be enabled
-<<<<<<< HEAD
           events: { onclick: () => { this.form.data.files.push({ name: 'add file' }); } },
-=======
-          events: { onclick: () => { onAdd(); } },
->>>>>>> d5c9d3ccc17b1e4a034a733d91485388f298b581
 
         }),
       ]),
