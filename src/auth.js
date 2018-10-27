@@ -12,6 +12,11 @@ const APISession = {
   authenticated: false,
   token: '',
   userID: null,
+  rights: {
+    users: [],
+    joboffers: [],
+    studydocuments: [],
+  },
 };
 
 const amivapi = axios.create({
@@ -62,7 +67,16 @@ export function checkAuthenticated() {
           APISession.authenticated = true;
           APISession.userID = session.user;
           console.log(APISession);
-          resolve();
+          amivapi.get('/', {
+            headers: { 'Content-Type': 'application/json', Authorization: token },
+          }).then((response) => {
+            const rights = {};
+            response.data._links.child.forEach(({ href, methods }) => {
+              rights[href] = methods;
+            });
+            APISession.rights = rights;
+            resolve();
+          });
         }).catch(resetSession);
       } else resetSession();
     }
@@ -108,6 +122,10 @@ export function deleteSession() {
 
 export function getCurrentUser() {
   return APISession.userID;
+}
+
+export function getUserRights() {
+  return APISession.rights;
 }
 
 export class ResourceHandler {
@@ -230,9 +248,10 @@ export class ResourceHandler {
           })}`;
         }
         api.get(url).then((response) => {
-          if (response.status >= 400) {
+          if (response.status === 404) {
+            m.route.set('/404');
+          } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
-            resetSession();
             reject();
           } else {
             resolve(response.data);
@@ -334,18 +353,12 @@ export class ResourceHandler {
 export class OauthRedirect {
   view() {
     oauth.token.getToken(m.route.get()).then((auth) => {
-      APISession.authenticated = true;
-      APISession.token = auth.accessToken;
       localStorage.set('token', auth.accessToken);
-      amivapi.get(`sessions/${auth.accessToken}`, {
-        headers: { 'Content-Type': 'application/json', Authorization: APISession.token },
-      }).then((response) => {
-        console.log(response);
-        APISession.userID = response.data.user;
+      checkAuthenticated().then(() => {
+        // checkAuthenticated will check whetehr the token is valid
+        // and store all relevant session info for easy access
         m.route.set('/');
-      }).catch(() => {
-        resetSession();
-      });
+      }).catch(resetSession);
     });
     return 'redirecting...';
   }

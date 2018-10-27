@@ -53,9 +53,13 @@ export default class ItemView {
 
   layout(children, buttons = []) {
     if (!this.controller || !this.controller.data) return m(loadingScreen);
+    // update the data reference
+    this.data = this.controller.data;
     return m('div', [
       m(Toolbar, [
-        m('div', { style: { width: 'calc(100% - 48px)' } }, m('div.pe-button-row', [
+        this.data._links.self.methods.indexOf('PATCH') > -1 && m('div', {
+          style: { width: 'calc(100% - 48px)' },
+        }, m('div.pe-button-row', [
           m(Button, {
             element: 'div',
             className: 'itemView-edit-button',

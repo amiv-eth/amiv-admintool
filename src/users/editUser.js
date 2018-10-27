@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { RadioGroup, textInput, Form } from 'amiv-web-ui-components';
+import { RadioGroup, TextInput, Form } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
@@ -27,7 +27,7 @@ export default class UserEdit extends EditView {
         email: { type: 'text', label: 'Email' },
         nethz: { type: 'text', label: 'NETHZ' },
       }),
-      m(textInput, this.form.bind({
+      m(TextInput, this.form.bind({
         type: 'password',
         name: 'password',
         label: 'New password',
