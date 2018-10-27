@@ -248,9 +248,10 @@ export class ResourceHandler {
           })}`;
         }
         api.get(url).then((response) => {
-          if (response.status >= 400) {
+          if (response.status === 404) {
+            m.route.set('/404');
+          } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
-            resetSession();
             reject();
           } else {
             resolve(response.data);

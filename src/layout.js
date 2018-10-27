@@ -192,3 +192,20 @@ export class loadingScreen {
     }))));
   }
 }
+
+export class Error404 {
+  view() {
+    return m('div', {
+      style: {
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        'flex-direction': 'column',
+        'justify-content': 'center',
+        'align-items': 'center',
+      },
+    }, [
+      m('div', { style: { height: '5vh', 'font-size': '4em' } }, 'Error 404: Item Not Found!'),
+    ]);
+  }
+}

@@ -10,7 +10,7 @@ import JobTable from './jobs/table';
 import JobItem from './jobs/item';
 import StudydocTable from './studydocs/list';
 import studydocItem from './studydocs/item';
-import { Layout } from './layout';
+import { Layout, Error404 } from './layout';
 import './style';
 
 const root = document.body;
@@ -43,4 +43,5 @@ m.route(root, '/events', {
   '/studydocuments': layoutWith(StudydocTable),
   '/studydocuments/:id': layoutWith(studydocItem),
   '/newstudydocument': layoutWith(studydocItem),
+  '/404': layoutWith(Error404),
 });
