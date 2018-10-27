@@ -1,12 +1,18 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
+import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
-import { TabsCSS } from 'polythene-css';
+import { TabsCSS, ButtonCSS } from 'polythene-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
 import { colors } from '../style';
 import { icons } from '../views/elements';
 import EditView from '../views/editView';
+
+ButtonCSS.addStyle('.nav-button', {
+  color_light_border: 'rgba(0, 0, 0, 0.09)',
+  color_light_disabled_background: 'rgba(0, 0, 0, 0.09)',
+  color_light_disabled_border: 'transparent',
+});
 
 TabsCSS.addStyle('.edit-tabs', {
   color_light: '#555555',
@@ -161,26 +167,28 @@ export default class newEvent extends EditView {
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
 
-    const buttonRight = m(RaisedButton, {
-      label: 'next',
+    const buttonRight = m(Button, {
+      label: m('div.pe-button__label', m(Icon, {
+        svg: { content: m.trust(icons.ArrowRight) },
+        style: { top: '-5px', float: 'right' },
+      }), 'next'),
       disabled: this.currentpage === titles.length,
       ink: false,
-      events: {
-        onclick: () => {
-          this.currentpage = Math.min(this.currentpage + 1, 5);
-        },
-      },
+      border: true,
+      className: 'nav-button',
+      events: { onclick: () => { this.currentpage = Math.min(this.currentpage + 1, 5); } },
     });
 
-    const buttonLeft = m(RaisedButton, {
-      label: 'previous',
+    const buttonLeft = m(Button, {
+      label: m('div.pe-button__label', m(Icon, {
+        svg: { content: m.trust(icons.ArrowLeft) },
+        style: { top: '-5px', float: 'left' },
+      }), 'previous'),
       disabled: this.currentpage === 1,
       ink: false,
-      events: {
-        onclick: () => {
-          this.currentpage = Math.max(1, this.currentpage - 1);
-        },
-      },
+      border: true,
+      className: 'nav-button',
+      events: { onclick: () => { this.currentpage = Math.max(1, this.currentpage - 1); } },
     });
 
     const radioButtonSelectionMode = m(RadioGroup, {
@@ -235,10 +243,11 @@ export default class newEvent extends EditView {
       }, [...titles.entries()].map((numAndTitle) => {
         const buttonAttrs = { label: numAndTitle[1] };
         if (errorPages[numAndTitle[0]]) {
-          buttonAttrs.before = m(Icon, {
-            style: { float: 'left', top: '12px', 'margin-left': 'auto' },
+          // in case of an error, put an error icon before the tab label
+          buttonAttrs.label = m('div', m(Icon, {
             svg: { content: m.trust(icons.error) },
-          });
+            style: { top: '-2px', 'margin-right': '4px' },
+          }), numAndTitle[1]);
         }
         return buttonAttrs;
       }))),
