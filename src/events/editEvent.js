@@ -233,7 +233,7 @@ export default class newEvent extends EditView {
       // navigation bar
       // all pages are displayed, current is highlighted,
       // validation errors are shown per page by red icon-background
-      m('div', { style: { margin: '-20px -10px 10px -10px' } }, m(Tabs, {
+      m(Tabs, {
         className: 'edit-tabs',
         // it would be too easy if we could set the background color in the theme class
         style: { backgroundColor: colors.orange },
@@ -250,154 +250,156 @@ export default class newEvent extends EditView {
           }), numAndTitle[1]);
         }
         return buttonAttrs;
-      }))),
-      // page 1: title & description
-      m('div', {
-        style: { display: (this.currentpage === 1) ? 'block' : 'none' },
-      }, this.form.renderPage({
-        title_en: { type: 'text', label: 'English Event Title' },
-        catchphrase_en: { type: 'text', label: 'English Catchphrase' },
-        description_en: {
-          type: 'text',
-          label: 'English Description',
-          multiLine: true,
-          rows: 5,
-        },
-        title_de: { type: 'text', label: 'German Event Title' },
-        catchphrase_de: { type: 'text', label: 'German Catchphrase' },
-        description_de: {
-          type: 'text',
-          label: 'German Description',
-          multiLine: true,
-          rows: 5,
-        },
       })),
-      // page 2: when & where
-      m('div', {
-        style: { display: (this.currentpage === 2) ? 'block' : 'none' },
-      }, this.form.renderPage({
-        time_start: { type: 'datetime', label: 'Event Start Time' },
-        time_end: { type: 'datetime', label: 'Event End Time' },
-        location: { type: 'text', label: 'Location' },
-      })),
-      // page 3: registration
-      m('div', {
-        style: { display: (this.currentpage === 3) ? 'block' : 'none' },
-      }, [
-        m(Switch, {
-          label: 'people have to pay something to attend this event',
-          style: { 'margin-bottom': '5px' },
-          checked: this.hasprice,
-          onChange: ({ checked }) => {
-            this.hasprice = checked;
-            if (!checked) {
-              // if it originally had a price, set to null, otherwise delete
-              if (this.controller.data.price) this.form.data.price = null;
-              else delete this.form.data.price;
-            }
+      m('div.maincontainer', { style: { height: 'calc(100vh - 180px)', 'overflow-y': 'auto' } }, [
+        // page 1: title & description
+        m('div', {
+          style: { display: (this.currentpage === 1) ? 'block' : 'none' },
+        }, this.form.renderPage({
+          title_en: { type: 'text', label: 'English Event Title' },
+          catchphrase_en: { type: 'text', label: 'English Catchphrase' },
+          description_en: {
+            type: 'text',
+            label: 'English Description',
+            multiLine: true,
+            rows: 5,
           },
-        }),
-        ...this.hasprice && this.form.renderPage({
-          price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
-        }),
-        m('br'),
-        m(Switch, {
-          label: 'people have to register to attend this event',
-          checked: this.hasregistration,
-          onChange: ({ checked }) => {
-            this.hasregistration = checked;
-            if (!checked) {
-              delete this.form.data.spots;
-              delete this.form.data.time_register_start;
-              delete this.form.data.time_register_end;
-              delete this.form.data.add_fields_sbb;
-              delete this.form.data.add_fields_food;
-              delete this.form.data.allow_email_signup;
-              delete this.form.data.selection_strategy;
-            }
+          title_de: { type: 'text', label: 'German Event Title' },
+          catchphrase_de: { type: 'text', label: 'German Catchphrase' },
+          description_de: {
+            type: 'text',
+            label: 'German Description',
+            multiLine: true,
+            rows: 5,
           },
-        }),
-        ...this.hasregistration && this.form.renderPage({
-          spots: {
-            type: 'number',
-            label: 'Number of Spots',
-            help: '0 for open event',
-            focusHelp: true,
-            min: 0,
-          },
-          time_register_start: { type: 'datetime', label: 'Start of Registration' },
-          time_register_end: { type: 'datetime', label: 'End of Registration' },
-          add_fields_food: { type: 'checkbox', label: 'Food limitations' },
-          add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
-        }),
-        m('br'),
-        ...this.hasregistration && this.form.renderPage({
-          allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
-        }),
-        this.hasregistration && radioButtonSelectionMode,
-      ]),
-      // page 4: advertisement
-      m('div', {
-        style: { display: (this.currentpage === 4) ? 'block' : 'none' },
-      }, [
-        ...this.form.renderPage({
-          time_advertising_start: {
-            type: 'datetime',
-            label: 'Start of Advertisement',
-            required: true,
-          },
-          time_advertising_end: {
-            type: 'datetime',
-            label: 'End of Advertisement',
-            required: true,
-          },
-        }),
-        // TODO is deactivated now
-        /*
-        m.trust('Priority<br>'),
-        m(Slider, {
-          min: 1,
-          max: 10,
-          stepSize: 1,
-
-          // value: this.data.priority || 1,
-          // onChange: ({ value }) => { this.data.priority = value; },
-        }),
-        */
-        ...this.form.renderPage({
-          show_website: { type: 'checkbox', label: 'Advertise on Website' },
-          show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
-          show_infoscreen: {
-            type: 'checkbox',
-            label: 'Advertise on Infoscreen',
-          },
-        }),
-      ]),
-      // page 5: images
-      m('div', {
-        style: { display: (this.currentpage === 5) ? 'block' : 'none' },
-      }, [
-        ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
-          this.form.data[`img_${key}`] ? m('img', {
-            src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
-            style: { 'max-height': '50px', 'max-width': '100px' },
-          }) : m('div', `currently no ${key} image set`),
-          m(FileInput, this.form.bind({
-            name: `new_${key}`,
-            label: `New ${key} Image`,
-            accept: 'image/png, image/jpeg',
-          })),
+        })),
+        // page 2: when & where
+        m('div', {
+          style: { display: (this.currentpage === 2) ? 'block' : 'none' },
+        }, this.form.renderPage({
+          time_start: { type: 'datetime', label: 'Event Start Time' },
+          time_end: { type: 'datetime', label: 'Event End Time' },
+          location: { type: 'text', label: 'Location' },
+        })),
+        // page 3: registration
+        m('div', {
+          style: { display: (this.currentpage === 3) ? 'block' : 'none' },
+        }, [
+          m(Switch, {
+            label: 'people have to pay something to attend this event',
+            style: { 'margin-bottom': '5px' },
+            checked: this.hasprice,
+            onChange: ({ checked }) => {
+              this.hasprice = checked;
+              if (!checked) {
+                // if it originally had a price, set to null, otherwise delete
+                if (this.controller.data.price) this.form.data.price = null;
+                else delete this.form.data.price;
+              }
+            },
+          }),
+          ...this.hasprice && this.form.renderPage({
+            price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
+          }),
+          m('br'),
+          m(Switch, {
+            label: 'people have to register to attend this event',
+            checked: this.hasregistration,
+            onChange: ({ checked }) => {
+              this.hasregistration = checked;
+              if (!checked) {
+                delete this.form.data.spots;
+                delete this.form.data.time_register_start;
+                delete this.form.data.time_register_end;
+                delete this.form.data.add_fields_sbb;
+                delete this.form.data.add_fields_food;
+                delete this.form.data.allow_email_signup;
+                delete this.form.data.selection_strategy;
+              }
+            },
+          }),
+          ...this.hasregistration && this.form.renderPage({
+            spots: {
+              type: 'number',
+              label: 'Number of Spots',
+              help: '0 for open event',
+              focusHelp: true,
+              min: 0,
+            },
+            time_register_start: { type: 'datetime', label: 'Start of Registration' },
+            time_register_end: { type: 'datetime', label: 'End of Registration' },
+            add_fields_food: { type: 'checkbox', label: 'Food limitations' },
+            add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
+          }),
+          m('br'),
+          ...this.hasregistration && this.form.renderPage({
+            allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
+          }),
+          this.hasregistration && radioButtonSelectionMode,
         ]),
+        // page 4: advertisement
+        m('div', {
+          style: { display: (this.currentpage === 4) ? 'block' : 'none' },
+        }, [
+          ...this.form.renderPage({
+            time_advertising_start: {
+              type: 'datetime',
+              label: 'Start of Advertisement',
+              required: true,
+            },
+            time_advertising_end: {
+              type: 'datetime',
+              label: 'End of Advertisement',
+              required: true,
+            },
+          }),
+          // TODO is deactivated now
+          /*
+          m.trust('Priority<br>'),
+          m(Slider, {
+            min: 1,
+            max: 10,
+            stepSize: 1,
+
+            // value: this.data.priority || 1,
+            // onChange: ({ value }) => { this.data.priority = value; },
+          }),
+          */
+          ...this.form.renderPage({
+            show_website: { type: 'checkbox', label: 'Advertise on Website' },
+            show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
+            show_infoscreen: {
+              type: 'checkbox',
+              label: 'Advertise on Infoscreen',
+            },
+          }),
+        ]),
+        // page 5: images
+        m('div', {
+          style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+        }, [
+          ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+            this.form.data[`img_${key}`] ? m('img', {
+              src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
+              style: { 'max-height': '50px', 'max-width': '100px' },
+            }) : m('div', `currently no ${key} image set`),
+            m(FileInput, this.form.bind({
+              name: `new_${key}`,
+              label: `New ${key} Image`,
+              accept: 'image/png, image/jpeg',
+            })),
+          ]),
+        ]),
+        // bottom back & forth
+        m('div', {
+          style: {
+            display: 'flex',
+            'justify-content': 'space-between',
+            padding: '35px',
+            'padding-top': '20px',
+          },
+        }, [buttonLeft, buttonRight]),
       ]),
-      // bottom back & forth
-      m('div', {
-        style: {
-          display: 'flex',
-          'justify-content': 'space-between',
-          padding: '35px',
-          'padding-top': '20px',
-        },
-      }, [buttonLeft, buttonRight]),
-    ], this.rightSubmit ? 'submit' : 'propose');
+    ], this.rightSubmit ? 'submit' : 'propose', false);
   }
 }

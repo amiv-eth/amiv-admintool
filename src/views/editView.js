@@ -84,7 +84,7 @@ export default class EditView extends ItemView {
     this.submit();
   }
 
-  layout(children, buttonLabel = 'submit') {
+  layout(children, buttonLabel = 'submit', wrapInContainer = true) {
     return m('div', { style: { 'background-color': 'white' } }, [
       m(Toolbar, { style: { 'background-color': colors.orange } }, [
         m(IconButton, {
@@ -101,9 +101,10 @@ export default class EditView extends ItemView {
           events: { onclick: () => { this.beforeSubmit(); } },
         }),
       ]),
-      m('div.maincontainer', {
+      wrapInContainer && m('div.maincontainer', {
         style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll', padding: '10px' },
       }, children),
+      !wrapInContainer && children,
     ]);
   }
 }
