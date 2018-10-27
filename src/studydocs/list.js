@@ -19,8 +19,8 @@ export default class StudydocTable {
       m('div', { style: { width: '6em' } }, data.semester),
       m('div', { style: { width: '10em' } }, data.lecture),
       m('div', { style: { width: '10em' } }, data.files.map((file) => {
-        const splitted_filenames = file.name.split('.');
-        return '.' + splitted_filenames[splitted_filenames.length - 1] + ' ';
+        const splittedFilenames = file.name.split('.');
+        return `.${splittedFilenames[splittedFilenames.length - 1]} `;
       })),
     ];
   }
