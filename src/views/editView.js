@@ -14,6 +14,7 @@ const objectNameForResource = {
   groups: 'Group',
   eventsignups: 'Eventsignup',
   events: 'Event',
+  studydocuments: 'Studydocument',
 };
 
 export default class EditView extends ItemView {
@@ -51,37 +52,37 @@ export default class EditView extends ItemView {
    *                   JSON. Necessary in cases where files are included in the
    *                   changes.
    */
-  submit(formData = false) {
-    if (Object.keys(this.form.data).length > 0) {
-      let request;
-      if (this.controller.modus === 'edit') {
-        // if id is known, this is a patch to an existing item
-        request = this.controller.patch(this.form.data, formData);
-      } else {
-        request = this.controller.post(this.form.data);
-      }
-      request.catch((error) => {
-        console.log(error);
-        // Process the API error
-        if ('_issues' in error) {
-          // there are problems with some fields, display them
-          Object.keys(error._issues).forEach((field) => {
-            this.form.errors[field] = [error._issues[field]];
-            this.form.valid = false;
-          });
-          console.log(this.form.errors);
-          m.redraw();
-        } else {
-          console.log(error);
-        }
-      });
+  submit(data) {
+    let request;
+    if (this.controller.modus === 'edit') {
+      // if id is known, this is a patch to an existing item
+      request = this.controller.patch(data);
     } else {
-      this.controller.changeModus('view');
+      request = this.controller.post(data);
     }
+    request.catch((error) => {
+      console.log(error);
+      // Process the API error
+      if ('_issues' in error) {
+        // there are problems with some fields, display them
+        Object.keys(error._issues).forEach((field) => {
+          this.form.errors[field] = [error._issues[field]];
+          this.form.valid = false;
+        });
+        console.log(this.form.errors);
+        m.redraw();
+      } else {
+        console.log(error);
+      }
+    });
   }
 
   beforeSubmit() {
-    this.submit();
+    if (Object.keys(this.form.data).length > 0) {
+      this.submit(this.form.data);
+    } else {
+      this.controller.changeModus('view');
+    }
   }
 
   layout(children, buttonLabel = 'submit') {

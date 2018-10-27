@@ -125,6 +125,7 @@
             "professor",
             "author",
             "uploader"
-        ]
+        ],
+        "notPatchableKeys": ["uploader"]
     }
 }
