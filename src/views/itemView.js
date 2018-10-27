@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { IconButton, Toolbar, ToolbarTitle, Dialog, Button } from 'polythene-mithril';
+import { IconButton, Toolbar, Dialog, Button } from 'polythene-mithril';
 import { ButtonCSS } from 'polythene-css';
 import { colors } from '../style';
 import { loadingScreen } from '../layout';

@@ -8,10 +8,14 @@ export default class editDoc extends EditView {
   // constructoe^r zu file upload
   constructor(vnode) {
     super(vnode);
-    console.log(this.form.data.files);
+    if (!('files' in this.form.data)) {
+      this.form.data.files = [{ name: 'add file' }];
+    }
   }
 
   view() {
+    console.log(this.form.data.files);
+
     return this.layout([
       m('h3', 'Add a New Studydocument'),
 
@@ -27,7 +31,7 @@ export default class editDoc extends EditView {
           { value: '4', label: '4', defaultChecked: this.form.data.gender === '4' },
           { value: '5', label: '5+', defaultChecked: this.form.data.gender === '5' },
         ],
-        onChange: ({ value }) => { console.log(value); this.form.data.gender = value; },
+        onChange: ({ value }) => { console.log(value); this.form.data.semester = value; },
       }),
       m(RadioGroup, {
         name: 'type',
@@ -77,7 +81,7 @@ export default class editDoc extends EditView {
           className: 'blue-button',
           border: true,
           // onclick to be enabled
-          events: { onclick: () => { onAdd(); } },
+          events: { onclick: () => { this.form.data.files.push({ name: 'add file' }); } },
 
         }),
       ]),
