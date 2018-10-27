@@ -57,7 +57,9 @@ export default class ItemView {
     this.data = this.controller.data;
     return m('div', [
       m(Toolbar, [
-        m('div', { style: { width: 'calc(100% - 48px)' } }, m('div.pe-button-row', [
+        this.handler.rights.indexOf('PATCH') > -1 && m('div', {
+          style: { width: 'calc(100% - 48px)' },
+        }, m('div.pe-button-row', [
           m(Button, {
             element: 'div',
             className: 'itemView-edit-button',
