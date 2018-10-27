@@ -270,26 +270,24 @@ export class ResourceHandler {
     });
   }
 
-  patch(item, formData = false) {
+  patch(item) {
+    const isFormData = item instanceof FormData;
+    let patchInfo = {};
+    if (isFormData) patchInfo = { id: item.get('_id'), etag: item.get('_etag') };
+    else patchInfo = { id: item._id, etag: item._etag };
+
     return new Promise((resolve, reject) => {
       getSession().then((api) => {
+        let submitData = item;
+        if (!isFormData) submitData = Object.assign({}, item);
         // not all fields in the item can be patched. We filter out the fields
         // we are allowed to send
-        let submitData;
-        if (formData) {
-          submitData = new FormData();
-          Object.keys(item).forEach((key) => {
-            if (!this.noPatchKeys.includes(key)) {
-              submitData.append(key, item[key]);
-            }
-          });
-        } else {
-          submitData = Object.assign({}, item);
-          this.noPatchKeys.forEach((key) => { delete submitData[key]; });
-        }
-
-        api.patch(`${this.resource}/${item._id}`, submitData, {
-          headers: { 'If-Match': item._etag },
+        this.noPatchKeys.forEach((key) => {
+          if (isFormData) submitData.delete(key);
+          else delete submitData[key];
+        });
+        api.patch(`${this.resource}/${patchInfo.id}`, submitData, {
+          headers: { 'If-Match': patchInfo.etag },
         }).then((response) => {
           if (response.status === 422) {
             this.error422(response.data);
