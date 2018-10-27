@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { fileInput } from 'amiv-web-ui-components';
+import { FileInput } from 'amiv-web-ui-components';
 import { RadioGroup, Button, List, ListTile } from 'polythene-mithril';
 import EditView from '../views/editView';
 
@@ -64,7 +64,7 @@ export default class editDoc extends EditView {
         m(List, {
           tiles: this.form.data.files.map(file => m(ListTile, {
             content: [
-              m(fileInput, this.form.bind({
+              m(FileInput, this.form.bind({
                 name: 'new_file',
                 label: `${file.name}`,
               })),
