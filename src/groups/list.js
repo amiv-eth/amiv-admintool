@@ -1,43 +1,49 @@
 import m from 'mithril';
-import { Card } from 'polythene-mithril';
+import { Card, Button } from 'polythene-mithril';
 import { DatalistController } from 'amiv-web-ui-components';
 import { styler } from 'polythene-core-css';
 import { loadingScreen } from '../layout';
 import { ResourceHandler, getCurrentUser } from '../auth';
 
 
-class GroupListItem {
-  view({ attrs: { name, _id, color = '#ffffff' } }) {
-    return m('div', {
-      style: { 'width': '250px', margin: '10px' },
-      onclick: () => {
-        m.route.set(`/groups/${_id}`);
-      },
-    }, m(Card, {
-      content: [{ primary: { title: name } }],
-      style: { backgroundColor: color },
+styler.add('groups', [{
+  '.grouplistitem': {
+    width: '250px',
+    height: '50px',
+    padding: '10px',
+    margin: '0px 5px',
+    'font-size': '18px',
+    'line-height': '30px',
+    'flex-grow': 1,
+  },
+  '.grouplistitem:hover': {
+    backgroundColor: '#eeeeee',
+    cursor: 'pointer',
+  },
+}]);
+
+class GroupListCard {
+  view({ attrs: { title, groups, onAdd = false } }) {
+    return m('div.maincontainer', { style: { 'margin-top': '5px' } }, m(Card, {
+      content: m('div', [
+        m('div', { style: { display: 'flex', 'align-items': 'center' } }, [
+          m('div.pe-card__title', title),
+          onAdd && m(Button, {
+            style: { 'margin-right': '20px' },
+            className: 'blue-button',
+            label: 'add',
+            events: { onclick: () => onAdd() },
+          }),
+        ]),
+        m('div', {
+          style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-bottom': '5px' },
+        }, groups.map(item => m('div.grouplistitem', {
+          onclick: () => { m.route.set(`/groups/${item._id}`); },
+        }, item.name))),
+      ]),
     }));
   }
 }
-
-
-const style = [
-  {
-    '.grouplistitem': {
-      width: '250px',
-      height: '50px',
-      padding: '10px',
-      'margin-left': '7px',
-      'font-size': '18px',
-      // border: '1px solid black',
-    },
-    '.grouplistitem:hover': {
-      backgroundColor: '#eeeeee',
-      cursor: 'pointer',
-    },
-  },
-];
-styler.add('groups', style);
 
 
 export default class GroupList {
@@ -61,43 +67,16 @@ export default class GroupList {
 
   view() {
     if (!this.groups) return m(loadingScreen);
-    console.log('test 42');
-    return m('div', [ // maindiv, list of 'moderated', 'all' & 'add'
-      // test for 'moderated'
-      this.moderatedGroups.length > 0 && m('div.maincontainer', {
-        style: { 'margin-top': '5px' },
-      },
-      // moderated card
-      m(Card, {
-        content: m('div', [
-          m('div.pe-card__title', 'moderated by you'),
-          m('div', {
-            style: { display: 'flex', 'flex-wrap': 'wrap' },
-          }, this.moderatedGroups.map(item => m('div.grouplistitem', item.name))),
-        ]),
+    return m('div', [
+      // groups moderated by the current user
+      this.moderatedGroups.length > 0 &&
+        m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }),
+      // all groups
+      m(GroupListCard, {
+        title: 'all groups',
+        groups: this.groups,
+        onAdd: () => { m.route.set('/newgroup'); },
       }),
-      ),
-      // test 'all groups'
-      this.moderatedGroups.length > 0 && m('div.maincontainer', {
-        style: { 'margin-top': '5px' },
-      }, [
-
-        // ''all' cards
-        m(Card, {
-          content: m('div', [
-            m('div.pe-card__title', 'all groups'),
-            m('div', {
-              style: { display: 'flex', 'flex-wrap': 'wrap' },
-            }, this.groups.map(item => m('div.grouplistitem', item.name))),
-          ]),
-        }),
-      ]),
-      // add button
-      m('div', {
-        style: { width: '100px', margin: '5px' },
-        onclick: () => { m.route.set('/newgroup'); },
-      }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
-
     ]);
   }
 }
