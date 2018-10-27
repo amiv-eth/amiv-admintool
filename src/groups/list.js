@@ -68,7 +68,6 @@ export default class GroupList {
   view() {
     if (!this.groups) return m(loadingScreen);
     return m('div', [
-<<<<<<< HEAD
       // groups moderated by the current user
       this.moderatedGroups.length > 0 &&
         m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }),
@@ -79,45 +78,6 @@ export default class GroupList {
         onAdd: this.handler.rights.indexOf('POST') > -1 ?
           () => { m.route.set('/newgroup'); } : undefined,
       }),
-=======
-      this.moderatedGroups.length > 0 && m('div.maincontainer', {
-        style: {
-          'margin-top': '5px',
-          'border-bottom': '1px solid #aaaaaa',
-          'padding-bottom': '20px',
-        },
-      }, [
-        m('div', {
-          style: {
-            'font-size': '20px',
-            margin: '10px 5px',
-          },
-        }, 'moderated by you'),
-        m('div', {
-          style: { display: 'flex', 'flex-wrap': 'wrap' },
-        }, this.moderatedGroups.map(item =>
-          m(GroupListItem, { ...item }))),
-      ]),
-      m('div.maincontainer', {
-        style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-top': '5px' },
-      }, [
-        this.moderatedGroups.length > 0 && m('div', {
-          style: {
-            'font-size': '20px',
-            margin: '10px 5px',
-          },
-        }, 'all groups'),
-        m('div', {
-          style: { display: 'flex', 'flex-wrap': 'wrap' },
-        }, [
-          this.groups.map(item => m(GroupListItem, item)),
-          && m('div', {
-            style: { 'max-width': '500px', margin: '5px' },
-            onclick: () => { m.route.set('/newgroup'); },
-          }, m(Card, { content: [{ primary: { title: '+ add' } }] })),
-        ]),
-      ]),
->>>>>>> master
     ]);
   }
 }
