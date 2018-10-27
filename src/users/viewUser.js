@@ -30,7 +30,7 @@ export default class UserView extends ItemView {
     this.groupmemberships.handler.get({ where: { user: this.data._id } })
       .then((data) => {
         const groupIds = data._items.map(item => item.group);
-        this.groupcontroller.setQuery({
+        this.groupController.setQuery({
           where: { _id: { $nin: groupIds } },
         });
       });

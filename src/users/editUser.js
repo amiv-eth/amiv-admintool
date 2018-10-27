@@ -1,9 +1,23 @@
 import m from 'mithril';
-import { RadioGroup } from 'amiv-web-ui-components';
+import { RadioGroup, textInput, Form } from 'amiv-web-ui-components';
+// eslint-disable-next-line import/extensions
+import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
 
-
 export default class UserEdit extends EditView {
+  constructor(vnode) {
+    super(vnode);
+    this.pw = new Form();
+  }
+
+  oninit() {
+    // load schema
+    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
+      this.pw.setSchema(JSON.parse(JSON.stringify(schema.definitions.User)));
+      this.form.setSchema(schema.definitions.User);
+    }).catch((error) => { console.log(error); });
+  }
+
   view() {
     const style = 'display: inline-block; vertical-align: top; padding-right: 80px';
     return this.layout([
@@ -12,12 +26,21 @@ export default class UserEdit extends EditView {
         firstname: { type: 'text', label: 'First Name' },
         email: { type: 'text', label: 'Email' },
         nethz: { type: 'text', label: 'NETHZ' },
+      }),
+      m(textInput, this.form.bind({
+        type: 'password',
+        name: 'password',
+        label: 'New password',
+        floatingLabel: true,
+      })),
+      ...this.form.renderPage({
         rfid: { type: 'text', label: 'RFID Code' },
       }),
       m(
         'div', { style },
         m(RadioGroup, {
           name: 'Membership',
+          default: this.form.data.membership,
           values: [
             {
               value: 'none',
@@ -46,6 +69,7 @@ export default class UserEdit extends EditView {
         'div', { style },
         m(RadioGroup, {
           name: 'Sex',
+          default: this.form.data.gender,
           values: [
             { value: 'female', label: 'Female' },
             { value: 'male', label: 'Male' },
@@ -60,6 +84,7 @@ export default class UserEdit extends EditView {
         'div', { style },
         m(RadioGroup, {
           name: 'Departement',
+          default: this.form.data.department,
           values: [
             { value: 'itet', label: 'ITET' },
             { value: 'mavt', label: 'MAVT' },
