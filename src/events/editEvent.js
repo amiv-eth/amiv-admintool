@@ -1,10 +1,32 @@
 import m from 'mithril';
-import { RaisedButton, RadioGroup, Switch, Dialog, Button } from 'polythene-mithril';
+import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
+<<<<<<< HEAD
+=======
+import { TabsCSS, ButtonCSS } from 'polythene-css';
+>>>>>>> 8808eeb... Use Tabs for event edit view
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
+import { colors } from '../style';
+import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
+<<<<<<< HEAD
+=======
+ButtonCSS.addStyle('.nav-button', {
+  color_light_border: 'rgba(0, 0, 0, 0.09)',
+  color_light_disabled_background: 'rgba(0, 0, 0, 0.09)',
+  color_light_disabled_border: 'transparent',
+});
+
+TabsCSS.addStyle('.edit-tabs', {
+  color_light: '#555555',
+  // no hover effect
+  color_light_hover: '#555555',
+  color_light_selected: colors.amiv_blue,
+  color_light_tab_indicator: colors.amiv_blue,
+});
+>>>>>>> 8808eeb... Use Tabs for event edit view
 
 export default class newEvent extends EditView {
   constructor(vnode) {
@@ -147,26 +169,28 @@ export default class newEvent extends EditView {
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
 
-    const buttonRight = m(RaisedButton, {
-      label: 'next',
+    const buttonRight = m(Button, {
+      label: m('div.pe-button__label', m(Icon, {
+        svg: { content: m.trust(icons.ArrowRight) },
+        style: { top: '-5px', float: 'right' },
+      }), 'next'),
       disabled: this.currentpage === titles.length,
       ink: false,
-      events: {
-        onclick: () => {
-          this.currentpage = Math.min(this.currentpage + 1, 5);
-        },
-      },
+      border: true,
+      className: 'nav-button',
+      events: { onclick: () => { this.currentpage = Math.min(this.currentpage + 1, 5); } },
     });
 
-    const buttonLeft = m(RaisedButton, {
-      label: 'previous',
+    const buttonLeft = m(Button, {
+      label: m('div.pe-button__label', m(Icon, {
+        svg: { content: m.trust(icons.ArrowLeft) },
+        style: { top: '-5px', float: 'left' },
+      }), 'previous'),
       disabled: this.currentpage === 1,
       ink: false,
-      events: {
-        onclick: () => {
-          this.currentpage = Math.max(1, this.currentpage - 1);
-        },
-      },
+      border: true,
+      className: 'nav-button',
+      events: { onclick: () => { this.currentpage = Math.max(1, this.currentpage - 1); } },
     });
 
     const radioButtonSelectionMode = m(RadioGroup, {
@@ -211,171 +235,173 @@ export default class newEvent extends EditView {
       // navigation bar
       // all pages are displayed, current is highlighted,
       // validation errors are shown per page by red icon-background
-      m('div', {
-        style: { display: 'flex', 'justify-content': 'space-around', 'flex-wrap': 'wrap' },
-      }, [...titles.entries()].map(numAndTitle => m('div', m('div', {
-        style: {
-          border: (this.currentpage === numAndTitle[0] + 1) ?
-            '2px solid black' :
-            '2px solid #888888',
-          color: (this.currentpage === numAndTitle[0] + 1) ? 'black' : '#888888',
-          'background-color': errorPages[numAndTitle[0]] ? '#ff7a56' : 'white',
-          'border-radius': '20px',
-          height: '40px',
-          'margin-bottom': '7px',
-          padding: '12px',
-          'font-size': '20px',
-          'line-height': '11px',
-        },
-        onclick: () => { this.currentpage = numAndTitle[0] + 1; },
-      }, numAndTitle[1])))),
-      // page 1: title & description
-      m('div', {
-        style: { display: (this.currentpage === 1) ? 'block' : 'none' },
-      }, this.form.renderPage({
-        title_en: { type: 'text', label: 'English Event Title' },
-        catchphrase_en: { type: 'text', label: 'English Catchphrase' },
-        description_en: {
-          type: 'text',
-          label: 'English Description',
-          multiLine: true,
-          rows: 5,
-        },
-        title_de: { type: 'text', label: 'German Event Title' },
-        catchphrase_de: { type: 'text', label: 'German Catchphrase' },
-        description_de: {
-          type: 'text',
-          label: 'German Description',
-          multiLine: true,
-          rows: 5,
-        },
+      m(Tabs, {
+        className: 'edit-tabs',
+        // it would be too easy if we could set the background color in the theme class
+        style: { backgroundColor: colors.orange },
+        onChange: ({ index }) => { this.currentpage = index + 1; },
+        centered: true,
+        selectedTabIndex: this.currentpage - 1,
+      }, [...titles.entries()].map((numAndTitle) => {
+        const buttonAttrs = { label: numAndTitle[1] };
+        if (errorPages[numAndTitle[0]]) {
+          // in case of an error, put an error icon before the tab label
+          buttonAttrs.label = m('div', m(Icon, {
+            svg: { content: m.trust(icons.error) },
+            style: { top: '-2px', 'margin-right': '4px' },
+          }), numAndTitle[1]);
+        }
+        return buttonAttrs;
       })),
-      // page 2: when & where
-      m('div', {
-        style: { display: (this.currentpage === 2) ? 'block' : 'none' },
-      }, this.form.renderPage({
-        time_start: { type: 'datetime', label: 'Event Start Time' },
-        time_end: { type: 'datetime', label: 'Event End Time' },
-        location: { type: 'text', label: 'Location' },
-      })),
-      // page 3: registration
-      m('div', {
-        style: { display: (this.currentpage === 3) ? 'block' : 'none' },
-      }, [
-        m(Switch, {
-          label: 'people have to pay something to attend this event',
-          style: { 'margin-bottom': '5px' },
-          checked: this.hasprice,
-          onChange: ({ checked }) => {
-            this.hasprice = checked;
-            if (!checked) {
-              // if it originally had a price, set to null, otherwise delete
-              if (this.controller.data.price) this.form.data.price = null;
-              else delete this.form.data.price;
-            }
+      m('div.maincontainer', { style: { height: 'calc(100vh - 180px)', 'overflow-y': 'auto' } }, [
+        // page 1: title & description
+        m('div', {
+          style: { display: (this.currentpage === 1) ? 'block' : 'none' },
+        }, this.form.renderPage({
+          title_en: { type: 'text', label: 'English Event Title' },
+          catchphrase_en: { type: 'text', label: 'English Catchphrase' },
+          description_en: {
+            type: 'text',
+            label: 'English Description',
+            multiLine: true,
+            rows: 5,
           },
-        }),
-        ...this.hasprice && this.form.renderPage({
-          price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
-        }),
-        m('br'),
-        m(Switch, {
-          label: 'people have to register to attend this event',
-          checked: this.hasregistration,
-          onChange: ({ checked }) => {
-            this.hasregistration = checked;
-            if (!checked) {
-              delete this.form.data.spots;
-              delete this.form.data.time_register_start;
-              delete this.form.data.time_register_end;
-              delete this.form.data.add_fields_sbb;
-              delete this.form.data.add_fields_food;
-              delete this.form.data.allow_email_signup;
-              delete this.form.data.selection_strategy;
-            }
+          title_de: { type: 'text', label: 'German Event Title' },
+          catchphrase_de: { type: 'text', label: 'German Catchphrase' },
+          description_de: {
+            type: 'text',
+            label: 'German Description',
+            multiLine: true,
+            rows: 5,
           },
-        }),
-        ...this.hasregistration && this.form.renderPage({
-          spots: {
-            type: 'number',
-            label: 'Number of Spots',
-            help: '0 for open event',
-            focusHelp: true,
-            min: 0,
-          },
-          time_register_start: { type: 'datetime', label: 'Start of Registration' },
-          time_register_end: { type: 'datetime', label: 'End of Registration' },
-          add_fields_food: { type: 'checkbox', label: 'Food limitations' },
-          add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
-        }),
-        m('br'),
-        ...this.hasregistration && this.form.renderPage({
-          allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
-        }),
-        this.hasregistration && radioButtonSelectionMode,
-      ]),
-      // page 4: advertisement
-      m('div', {
-        style: { display: (this.currentpage === 4) ? 'block' : 'none' },
-      }, [
-        ...this.form.renderPage({
-          time_advertising_start: {
-            type: 'datetime',
-            label: 'Start of Advertisement',
-            required: true,
-          },
-          time_advertising_end: {
-            type: 'datetime',
-            label: 'End of Advertisement',
-            required: true,
-          },
-        }),
-        // TODO is deactivated now
-        /*
-        m.trust('Priority<br>'),
-        m(Slider, {
-          min: 1,
-          max: 10,
-          stepSize: 1,
-
-          // value: this.data.priority || 1,
-          // onChange: ({ value }) => { this.data.priority = value; },
-        }),
-        */
-        ...this.form.renderPage({
-          show_website: { type: 'checkbox', label: 'Advertise on Website' },
-          show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
-          show_infoscreen: {
-            type: 'checkbox',
-            label: 'Advertise on Infoscreen',
-          },
-        }),
-      ]),
-      // page 5: images
-      m('div', {
-        style: { display: (this.currentpage === 5) ? 'block' : 'none' },
-      }, [
-        ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
-          this.form.data[`img_${key}`] ? m('img', {
-            src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
-            style: { 'max-height': '50px', 'max-width': '100px' },
-          }) : m('div', `currently no ${key} image set`),
-          m(FileInput, this.form.bind({
-            name: `new_${key}`,
-            label: `New ${key} Image`,
-            accept: 'image/png, image/jpeg',
-          })),
+        })),
+        // page 2: when & where
+        m('div', {
+          style: { display: (this.currentpage === 2) ? 'block' : 'none' },
+        }, this.form.renderPage({
+          time_start: { type: 'datetime', label: 'Event Start Time' },
+          time_end: { type: 'datetime', label: 'Event End Time' },
+          location: { type: 'text', label: 'Location' },
+        })),
+        // page 3: registration
+        m('div', {
+          style: { display: (this.currentpage === 3) ? 'block' : 'none' },
+        }, [
+          m(Switch, {
+            label: 'people have to pay something to attend this event',
+            style: { 'margin-bottom': '5px' },
+            checked: this.hasprice,
+            onChange: ({ checked }) => {
+              this.hasprice = checked;
+              if (!checked) {
+                // if it originally had a price, set to null, otherwise delete
+                if (this.controller.data.price) this.form.data.price = null;
+                else delete this.form.data.price;
+              }
+            },
+          }),
+          ...this.hasprice && this.form.renderPage({
+            price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
+          }),
+          m('br'),
+          m(Switch, {
+            label: 'people have to register to attend this event',
+            checked: this.hasregistration,
+            onChange: ({ checked }) => {
+              this.hasregistration = checked;
+              if (!checked) {
+                delete this.form.data.spots;
+                delete this.form.data.time_register_start;
+                delete this.form.data.time_register_end;
+                delete this.form.data.add_fields_sbb;
+                delete this.form.data.add_fields_food;
+                delete this.form.data.allow_email_signup;
+                delete this.form.data.selection_strategy;
+              }
+            },
+          }),
+          ...this.hasregistration && this.form.renderPage({
+            spots: {
+              type: 'number',
+              label: 'Number of Spots',
+              help: '0 for open event',
+              focusHelp: true,
+              min: 0,
+            },
+            time_register_start: { type: 'datetime', label: 'Start of Registration' },
+            time_register_end: { type: 'datetime', label: 'End of Registration' },
+            add_fields_food: { type: 'checkbox', label: 'Food limitations' },
+            add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
+          }),
+          m('br'),
+          ...this.hasregistration && this.form.renderPage({
+            allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
+          }),
+          this.hasregistration && radioButtonSelectionMode,
         ]),
+        // page 4: advertisement
+        m('div', {
+          style: { display: (this.currentpage === 4) ? 'block' : 'none' },
+        }, [
+          ...this.form.renderPage({
+            time_advertising_start: {
+              type: 'datetime',
+              label: 'Start of Advertisement',
+              required: true,
+            },
+            time_advertising_end: {
+              type: 'datetime',
+              label: 'End of Advertisement',
+              required: true,
+            },
+          }),
+          // TODO is deactivated now
+          /*
+          m.trust('Priority<br>'),
+          m(Slider, {
+            min: 1,
+            max: 10,
+            stepSize: 1,
+
+            // value: this.data.priority || 1,
+            // onChange: ({ value }) => { this.data.priority = value; },
+          }),
+          */
+          ...this.form.renderPage({
+            show_website: { type: 'checkbox', label: 'Advertise on Website' },
+            show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
+            show_infoscreen: {
+              type: 'checkbox',
+              label: 'Advertise on Infoscreen',
+            },
+          }),
+        ]),
+        // page 5: images
+        m('div', {
+          style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+        }, [
+          ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+            this.form.data[`img_${key}`] ? m('img', {
+              src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
+              style: { 'max-height': '50px', 'max-width': '100px' },
+            }) : m('div', `currently no ${key} image set`),
+            m(FileInput, this.form.bind({
+              name: `new_${key}`,
+              label: `New ${key} Image`,
+              accept: 'image/png, image/jpeg',
+            })),
+          ]),
+        ]),
+        // bottom back & forth
+        m('div', {
+          style: {
+            display: 'flex',
+            'justify-content': 'space-between',
+            padding: '35px',
+            'padding-top': '20px',
+          },
+        }, [buttonLeft, buttonRight]),
       ]),
-      // bottom back & forth
-      m('div', {
-        style: {
-          display: 'flex',
-          'justify-content': 'space-between',
-          padding: '35px',
-          'padding-top': '20px',
-        },
-      }, [buttonLeft, buttonRight]),
-    ], this.rightSubmit ? 'submit' : 'propose');
+    ], this.rightSubmit ? 'submit' : 'propose', false);
   }
 }
