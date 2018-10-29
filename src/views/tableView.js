@@ -137,7 +137,7 @@ export default class TableView {
         display: 'grid',
         height: '100%',
         'grid-template-rows': this.filters ?
-          '48px 40px calc(100% - 78px)' : '48px calc(100% - 78px)',
+          '48px 40px calc(100% - 88px)' : '48px calc(100% - 78px)',
         'background-color': 'white',
       },
     }, [
