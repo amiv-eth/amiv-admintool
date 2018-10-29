@@ -18,6 +18,11 @@ export default class UserEdit extends EditView {
     }).catch((error) => { console.log(error); });
   }
 
+  beforeSubmit() {
+    if ('rfid' in this.form.data && !this.form.data.rfid) delete this.form.data.rfid;
+    this.submit();
+  }
+
   view() {
     const style = 'display: inline-block; vertical-align: top; padding-right: 80px';
     return this.layout([
