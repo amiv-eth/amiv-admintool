@@ -28,12 +28,12 @@ class GroupListCard {
       content: m('div', [
         m('div', { style: { display: 'flex', 'align-items': 'center' } }, [
           m('div.pe-card__title', title),
-          onAdd && m(Button, {
+          onAdd ? m(Button, {
             style: { 'margin-right': '20px' },
             className: 'blue-button',
             label: 'add',
             events: { onclick: () => onAdd() },
-          }),
+          }) : undefined,
         ]),
         m('div', {
           style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-bottom': '5px' },
@@ -69,8 +69,8 @@ export default class GroupList {
     if (!this.groups) return m(loadingScreen);
     return m('div', [
       // groups moderated by the current user
-      this.moderatedGroups.length > 0 &&
-        m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }),
+      this.moderatedGroups.length > 0 ?
+        m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }) : '',
       // all groups
       m(GroupListCard, {
         title: 'all groups',
