@@ -95,8 +95,10 @@ export default class editDoc extends EditView {
         professor: { type: 'text', label: 'Professor' },
         author: { type: 'text', label: 'Author' },
       }),
-      // file upload: unfinished
+      // file upload: work in progress, so far all files get deleted with a patch
       m('div', [
+        'WARNING: Files added here will remove all files currently uploaded. If you want to add',
+        '/edit a file in this studydoc, reupload all other files as well.',
         m(List, {
           tiles: [...this.form.data.files.entries()].map(numAndFile => m(ListTile, {
             content: [
