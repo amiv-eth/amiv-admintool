@@ -7,7 +7,7 @@ import EditView from '../views/editView';
 
 
 export default class editDoc extends EditView {
-  // constructoe^r zu file upload
+  // constructor zu file upload
   constructor(vnode) {
     super(vnode);
     if (!('files' in this.form.data)) {
