@@ -54,7 +54,7 @@ export default class editDoc extends EditView {
       m('h3', 'Add a New Studydocument'),
 
       // department //drop-down-list
-      // lable for RadioGroup: semester
+      // label for RadioGroup: semester
       m('div', { style: { color: '#0006', 'font-size': '16px' } }, 'Semester'),
       m(RadioGroup, {
         name: 'semester',
