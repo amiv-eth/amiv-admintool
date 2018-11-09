@@ -7,7 +7,7 @@ import EditView from '../views/editView';
 
 
 export default class editDoc extends EditView {
-  // constructoe^r zu file upload
+  // constructor zu file upload
   constructor(vnode) {
     super(vnode);
     if (!('files' in this.form.data)) {
@@ -54,7 +54,7 @@ export default class editDoc extends EditView {
       m('h3', 'Add a New Studydocument'),
 
       // department //drop-down-list
-      // lable for RadioGroup: semester
+      // label for RadioGroup: semester
       m('div', { style: { color: '#0006', 'font-size': '16px' } }, 'Semester'),
       m(RadioGroup, {
         name: 'semester',
@@ -109,15 +109,12 @@ export default class editDoc extends EditView {
             ],
           })),
         }),
-
         // additional file
         m(Button, {
           label: 'Additional File',
           className: 'blue-button',
           border: true,
-          // onclick to be enabled
           events: { onclick: () => { this.form.data.files.push({ name: 'add file' }); } },
-
         }),
       ]),
     ]);

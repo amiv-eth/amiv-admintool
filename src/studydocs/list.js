@@ -31,7 +31,7 @@ export default class StudydocTable {
       keys: config.tableKeys,
       tileContent: this.getItemData,
       titles: [
-        { text: 'Titel', width: 'calc(100% - 32em)' },
+        { text: 'Title', width: 'calc(100% - 32em)' },
         { text: 'Department', width: '6em' },
         { text: 'Semester', width: '6em' },
         { text: 'Lecture', width: '10em' },

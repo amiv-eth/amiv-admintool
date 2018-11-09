@@ -55,7 +55,7 @@ export default class EditView extends ItemView {
   submit(data) {
     let request;
     if (this.controller.modus === 'edit') {
-      // if id is known, this is a patch to an existing item
+      // this is a patch to an existing item
       request = this.controller.patch(data);
     } else {
       request = this.controller.post(data);
