@@ -7,7 +7,7 @@ import EditView from '../views/editView';
 
 
 export default class editDoc extends EditView {
-  // constructoe^r zu file upload
+  // constructor zu file upload
   constructor(vnode) {
     super(vnode);
     if (!('files' in this.form.data)) {
@@ -54,7 +54,7 @@ export default class editDoc extends EditView {
       m('h3', 'Add a New Studydocument'),
 
       // department //drop-down-list
-      // lable for RadioGroup: semester
+      // label for RadioGroup: semester
       m('div', { style: { color: '#0006', 'font-size': '16px' } }, 'Semester'),
       m(RadioGroup, {
         name: 'semester',
@@ -95,8 +95,10 @@ export default class editDoc extends EditView {
         professor: { type: 'text', label: 'Professor' },
         author: { type: 'text', label: 'Author' },
       }),
-      // file upload: unfinished
+      // file upload: work in progress, so far all files get deleted with a patch
       m('div', [
+        'WARNING: Files added here will remove all files currently uploaded. If you want to add',
+        '/edit a file in this studydoc, reupload all other files as well.',
         m(List, {
           tiles: [...this.form.data.files.entries()].map(numAndFile => m(ListTile, {
             content: [
