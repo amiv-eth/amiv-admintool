@@ -109,15 +109,12 @@ export default class editDoc extends EditView {
             ],
           })),
         }),
-
         // additional file
         m(Button, {
           label: 'Additional File',
           className: 'blue-button',
           border: true,
-          // onclick to be enabled
           events: { onclick: () => { this.form.data.files.push({ name: 'add file' }); } },
-
         }),
       ]),
     ]);
