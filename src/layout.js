@@ -143,7 +143,7 @@ export class Layout {
                 icon: icons.iconJobsSVG,
                 title: 'Job offers',
               }),
-              userRights.studydocuments.indexOf('PATCH') > -1 && m(Menupoint, {
+              m(Menupoint, {
                 href: '/studydocuments',
                 icon: icons.studydoc,
                 title: 'Studydocs',
