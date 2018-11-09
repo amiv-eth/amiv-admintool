@@ -1,18 +1,13 @@
 import m from 'mithril';
 import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
-<<<<<<< HEAD
-=======
 import { TabsCSS, ButtonCSS } from 'polythene-css';
->>>>>>> 8808eeb... Use Tabs for event edit view
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
 import { colors } from '../style';
 import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
-<<<<<<< HEAD
-=======
 ButtonCSS.addStyle('.nav-button', {
   color_light_border: 'rgba(0, 0, 0, 0.09)',
   color_light_disabled_background: 'rgba(0, 0, 0, 0.09)',
@@ -26,7 +21,6 @@ TabsCSS.addStyle('.edit-tabs', {
   color_light_selected: colors.amiv_blue,
   color_light_tab_indicator: colors.amiv_blue,
 });
->>>>>>> 8808eeb... Use Tabs for event edit view
 
 export default class newEvent extends EditView {
   constructor(vnode) {
