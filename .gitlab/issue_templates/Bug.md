@@ -22,3 +22,5 @@
 
 > Please open the "developer tools" of your browser and copy and paste any
 > printouts in the "console"
+
+/label ~bug
