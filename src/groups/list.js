@@ -76,7 +76,7 @@ export default class GroupList {
         title: 'all groups',
         groups: this.groups,
         onAdd: this.handler.rights.indexOf('POST') > -1 ?
-          () => { m.route.set('/newgroup'); } : false,
+          () => { m.route.set('/newgroup'); } : undefined,
       }),
     ]);
   }
