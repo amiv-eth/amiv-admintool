@@ -23,7 +23,9 @@ class MembersTable {
   constructor({ attrs: { group, hasPatchRights } }) {
     this.group_id = group;
     this.hasPatchRights = hasPatchRights;
-    this.ctrl = new RelationlistController('groupmemberships', 'users', { where: { group } });
+    this.ctrl = new RelationlistController({
+      primary: 'groupmemberships', secondary: 'users', query: { where: { group } },
+    });
     // true while in the modus of adding a member
     this.addmode = false;
     this.userHandler = new ResourceHandler('users');

@@ -12,12 +12,12 @@ export default class UserView extends ItemView {
   constructor(vnode) {
     super(vnode);
     // a controller to handle the groupmemberships of this user
-    this.groupmemberships = new RelationlistController('groupmemberships', 'groups', {
-      where: { user: this.data._id },
+    this.groupmemberships = new RelationlistController({
+      primary: 'groupmemberships', secondary: 'groups', query: { where: { user: this.data._id } },
     });
     // a controller to handle the eventsignups of this user
-    this.eventsignups = new RelationlistController('eventsignups', 'events', {
-      where: { user: this.data._id },
+    this.eventsignups = new RelationlistController({
+      primary: 'eventsignups', secondary: 'events', query: { where: { user: this.data._id } },
     });
     // initially, don't display the choice field for a new group
     // (this will be displayed once the user clicks on 'new')

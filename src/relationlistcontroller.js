@@ -8,15 +8,19 @@ export default class RelationlistController {
    * Controller for a list of data embedding a relationship.
    * The secondary api endpoint is embedded into the list items of the primary endpoint results.
    * Searches are applied to both resources, queries and filters need to be specified for each.
+   *
+   * @param {bool} includeWithoutRelation - Specifies what to do in case the relation is undefined.
+   *   By default, such items are excluded, if true they will be included into the list.
    */
-  constructor(
+  constructor({
     primary,
     secondary,
     query = {},
     searchKeys = false,
     secondaryQuery = {},
     secondarySearchKeys = false,
-  ) {
+    includeWithoutRelation = false,
+  }) {
     this.handler = new ResourceHandler(primary, searchKeys);
     this.handler2 = new ResourceHandler(secondary, secondarySearchKeys);
     this.secondaryKey = secondary.slice(0, -1);
@@ -24,6 +28,7 @@ export default class RelationlistController {
     this.query2 = secondaryQuery || {};
     this.filter = null;
     this.filter2 = null;
+    this.includeWithoutRelation = includeWithoutRelation;
     // state pointer that is counted up every time the table is refreshed so
     // we can tell infinite scroll that the data-version has changed.
     this.stateCounter = Stream(0);
@@ -67,9 +72,12 @@ export default class RelationlistController {
 
         console.log(data._items.map(item => item._id));
 
+        const itemsWithoutRelation = data._items.filter(item => !(this.secondaryKey in item));
+        const itemsWithRelation = data._items.filter(item => (this.secondaryKey in item));
+
         const query2 = Object.assign({}, this.query2);
         query2.where = {
-          _id: { $in: data._items.map(item => item[this.secondaryKey]) },
+          _id: { $in: itemsWithRelation.map(item => item[this.secondaryKey]) },
           ...this.filter2,
           ...this.query2.where,
         };
@@ -78,15 +86,18 @@ export default class RelationlistController {
           const secondaryIds = secondaryData._items.map(item => item._id);
           // filter the primary list to only include those items that have a relation to
           // the queried secondary IDs
-          const filteredPrimaries = data._items.filter(item =>
+          const filteredPrimaries = itemsWithRelation.filter(item =>
             secondaryIds.includes(item[this.secondaryKey]));
-          // now return the list of filteredPrimaries with the secondary data embedded
-          resolve(filteredPrimaries.map((item) => {
+          // embed the secondary data
+          const embeddedList = filteredPrimaries.map((item) => {
             const itemCopy = Object.assign({}, item);
             itemCopy[this.secondaryKey] = secondaryData._items.find(relItem =>
               relItem._id === item[this.secondaryKey]);
             return itemCopy;
-          }));
+          });
+          // now return the list of filteredPrimaries with the secondary data embedded
+          if (this.includeWithoutRelation) resolve([...embeddedList, ...itemsWithoutRelation]);
+          else resolve(embeddedList);
         });
       });
     });

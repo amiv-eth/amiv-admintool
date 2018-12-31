@@ -74,7 +74,13 @@ class DuoLangProperty {
 // waiting list.
 class ParticipantsTable {
   constructor({ attrs: { where } }) {
-    this.ctrl = new RelationlistController('eventsignups', 'users', { where }, ['email']);
+    this.ctrl = new RelationlistController({
+      primary: 'eventsignups',
+      secondary: 'users',
+      query: { where },
+      searchKeys: ['email'],
+      includeWithoutRelation: true,
+    });
   }
 
   getItemData(data) {
