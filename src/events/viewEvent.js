@@ -83,16 +83,32 @@ class ParticipantsTable {
     });
   }
 
-  getItemData(data) {
+  itemRow(data) {
     // TODO list should not have hardcoded size outside of stylesheet
+    const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
       m(
         'div',
-        { style: { width: '18em' } },
+        { style: { width: '12em' } },
         data.user ? `${data.user.firstname} ${data.user.lastname}` : '',
       ),
       m('div', { style: { width: '9em' } }, data.email),
+      m('div', { style: { 'flex-grow': '100' } }),
+      hasPatchRights ? m('div', m(Button, {
+        // Button to remove this groupmembership
+        className: 'red-row-button',
+        borders: false,
+        label: 'remove',
+        events: {
+          onclick: () => {
+            this.ctrl.handler.delete(data).then(() => {
+              this.ctrl.refresh();
+              m.redraw();
+            });
+          },
+        },
+      })) : '',
     ];
   }
 
@@ -107,7 +123,7 @@ class ParticipantsTable {
           tableHeight: '275px',
           controller: this.ctrl,
           keys: signupConfig.tableKeys,
-          tileContent: this.getItemData,
+          tileContent: data => this.itemRow(data),
           titles: [
             { text: 'Date of Signup', width: '9em' },
             { text: 'Name', width: '18em' },
