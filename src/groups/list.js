@@ -11,9 +11,7 @@ class GroupListItem {
       title: name,
       hoverable: true,
       rounded: true,
-      style: {
-        width: '250px',
-      },
+      style: { width: '250px' },
       url: {
         href: `/groups/${_id}`,
         oncreate: m.route.link,
@@ -37,7 +35,7 @@ class GroupListCard {
           }),
         ]),
         m('div', {
-          style: { display: 'flex', 'flex-wrap': 'wrap', 'margin-bottom': '5px' },
+          style: { display: 'flex', 'flex-wrap': 'wrap', margin: '0px 5px 5px 5px' },
         }, groups.map(item => m(GroupListItem, { name: item.name, _id: item._id }))),
       ]),
     }));
