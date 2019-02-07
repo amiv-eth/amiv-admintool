@@ -124,6 +124,7 @@ class ParticipantsTable {
           controller: this.ctrl,
           keys: signupConfig.tableKeys,
           tileContent: data => this.itemRow(data),
+          clickOnRows: false,
           titles: [
             { text: 'Date of Signup', width: '9em' },
             { text: 'Name', width: '18em' },
