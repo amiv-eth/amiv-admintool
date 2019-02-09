@@ -96,7 +96,7 @@ class ParticipantsTable {
       m('div', { style: { width: '9em' } }, data.email),
       m('div', { style: { 'flex-grow': '100' } }),
       hasPatchRights ? m('div', m(Button, {
-        // Button to remove this groupmembership
+        // Button to remove this eventsignup
         className: 'red-row-button',
         borders: false,
         label: 'remove',
