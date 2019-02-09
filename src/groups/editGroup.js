@@ -84,10 +84,9 @@ export default class NewGroup extends EditView {
   }
 
   beforeSubmit() {
+    const data = this.form.data;
     // exchange moderator object with string of id
-    const { moderator } = this.form.data;
-    if (moderator) { this.form.data.moderator = `${moderator._id}`; }
-    this.submit();
+    this.submit({ ...data, moderator: data.moderator ? data.moderator._id : undefined });
   }
 
   view() {

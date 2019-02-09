@@ -63,9 +63,7 @@ export default class newEvent extends EditView {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
       }
-      if (this.form.data[`img_${key}`]) {
-        delete this.form.data[`img_${key}`];
-      }
+      if (this.form.data[`img_${key}`]) delete this.form.data[`img_${key}`];
     });
 
     // Merge Options for additional fields
@@ -106,7 +104,6 @@ export default class newEvent extends EditView {
       this.form.data.additional_fields = null;
     }
 
-
     // if spots is not set, also remove 'allow_email_signup'
     if (!('spots' in this.form.data) && 'allow_email_signup' in this.form.data
         && !this.form.data.allow_email_signup) {
@@ -117,16 +114,15 @@ export default class newEvent extends EditView {
     if (this.rightSubmit) {
       // Submition tool
       if (Object.keys(images).length > 0) {
-        images._id = this.form.data._id;
-        images._etag = this.form.data._etag;
+        const imageForm = new FormData();
+        Object.keys(images).forEach(key => imageForm.append(key, images[key]));
+        imageForm.append('_id', this.form.data._id);
+        imageForm.append('_etag', this.form.data._etag);
         // first upload the images as formData, then the rest as JSON
-        this.controller.handler.patch(images, true).then(({ _etag }) => {
-          this.form.data._etag = _etag;
-          this.submit();
+        this.controller.handler.patch(imageForm).then(({ _etag }) => {
+          this.submit({ ...this.form.data, _etag });
         });
-      } else {
-        this.submit();
-      }
+      } else this.submit(this.form.data);
     } else {
       // Propose tool
       Dialog.show({
