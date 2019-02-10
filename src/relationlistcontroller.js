@@ -63,8 +63,6 @@ export default class RelationlistController {
     query.page = pageNum;
     query.where = { ...this.filter, ...this.query.where };
 
-    console.log(query.search);
-
     return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
         // update total number of pages
