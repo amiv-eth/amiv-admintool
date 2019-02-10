@@ -111,6 +111,17 @@ export class Layout {
             style: { color: '#ffffff' },
           })),
           m(ToolbarTitle, { text: 'AMIV Admintools' }),
+          m('a', {
+            href: 'https://gitlab.ethz.ch/amiv/amiv-admintool/issues/new?issuable_template=Bug',
+            target: '_blank',
+            style: {
+              color: '#888888',
+              'text-decoration': 'none',
+              'text-align': 'right',
+              width: '50em',
+              'margin-right': '100px',
+            },
+          }, 'Is something not working? Report a bug!'),
           m(Button, {
             label: 'logout',
             events: { onclick: deleteSession },
