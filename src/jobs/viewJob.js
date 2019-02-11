@@ -3,10 +3,12 @@ import m from 'mithril';
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
-import { Property } from '../views/elements';
+import { Property, chip } from '../views/elements';
 
 export default class viewJob extends ItemView {
   view() {
+    const stdMargin = { margin: '5px' };
+
     return this.layout([
       m('div', [
         // company logo if existing
@@ -20,9 +22,26 @@ export default class viewJob extends ItemView {
         }, [this.data.title_de || this.data.title_en]),
       ]),
       // below the title, most important details are listed
-      this.data.time_end ? m(Property, {
-        title: 'Offer Ends',
-      }, `${dateFormatter(this.data.time_end)}`) : '',
+      m('div', { style: { display: 'flex' } }, [
+        this.data.time_end ? m(Property, {
+          title: 'Offer Ends',
+          style: stdMargin,
+        }, `${dateFormatter(this.data.time_end)}`) : '',
+        this.data.company ? m(Property, {
+          title: 'Company',
+          style: stdMargin,
+        }, this.data.company) : '',
+      ]),
+      m('div.viewcontainer', [
+        m('div.viewcontainercolumn', m('div', [
+          m('div', { style: { color: 'rgb(031,045,084)' } }, 'en'),
+          this.data.description_en,
+        ])),
+        m('div.viewcontainercolumn', m('div', [
+          m('div', { style: { color: 'rgb(031,045,084)' } }, 'de'),
+          this.data.description_de,
+        ])),
+      ]),
     ]);
   }
 }
