@@ -10,11 +10,12 @@ import { colors } from '../style';
 // Mapper for resource vs schema-object names
 const objectNameForResource = {
   users: 'User',
-  groupmembershipds: 'Groupmembership',
+  groupmembershipds: 'Group Membership',
   groups: 'Group',
-  eventsignups: 'Eventsignup',
+  eventsignups: 'Event Signup',
   events: 'Event',
-  studydocuments: 'Studydocument',
+  studydocuments: 'Study Document',
+  joboffers: 'Job Offer',
 };
 
 export default class EditView extends ItemView {
