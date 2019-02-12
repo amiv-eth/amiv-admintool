@@ -31,9 +31,9 @@ export default class ItemController {
     });
   }
 
-  patch(data, formData = false) {
+  patch(data) {
     return new Promise((resolve, reject) => {
-      this.handler.patch(data, formData).then(() => { this.changeModus('view'); }).catch(reject);
+      this.handler.patch(data).then(() => { this.changeModus('view'); }).catch(reject);
     });
   }
 

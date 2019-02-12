@@ -5,22 +5,9 @@ import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
 
 export default class UserEdit extends EditView {
-  constructor(vnode) {
-    super(vnode);
-    this.pw = new Form();
-  }
-
-  oninit() {
-    // load schema
-    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
-      this.pw.setSchema(JSON.parse(JSON.stringify(schema.definitions.User)));
-      this.form.setSchema(schema.definitions.User);
-    }).catch((error) => { console.log(error); });
-  }
-
   beforeSubmit() {
     if ('rfid' in this.form.data && !this.form.data.rfid) delete this.form.data.rfid;
-    this.submit();
+    this.submit(this.form.data);
   }
 
   view() {
