@@ -35,7 +35,7 @@ export default class EditView extends ItemView {
     // the form is valid in case that the item controller is in edit mode
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
-    this.form = new Form({}, validInitially, Object.assign({}, this.controller.data));
+    this.form = new Form({}, validInitially, 0, Object.assign({}, this.controller.data));
   }
 
   oninit() {
@@ -102,10 +102,12 @@ export default class EditView extends ItemView {
           events: { onclick: () => { this.beforeSubmit(); } },
         }),
       ]),
-      wrapInContainer && m('div.maincontainer', {
-        style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll', padding: '10px' },
-      }, children),
-      !wrapInContainer && children,
+      ...!this.form.schema ? [''] : [
+        wrapInContainer && m('div.maincontainer', {
+          style: { height: 'calc(100vh - 130px)', 'overflow-y': 'scroll', padding: '10px' },
+        }, children),
+        !wrapInContainer && children,
+      ],
     ]);
   }
 }

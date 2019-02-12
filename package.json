@@ -18,14 +18,14 @@
     "@material/drawer": "^0.30.0",
     "@material/select": "^0.35.1",
     "ajv": "^5.5.0",
-    "amiv-web-ui-components": "git+https://git@gitlab.ethz.ch/amiv/web-ui-components.git#b1fb1eba5b149a7f083c70b949437a067fee8e5d",
+    "amiv-web-ui-components": "git+https://git@gitlab.ethz.ch/amiv/web-ui-components.git#441f87aa23892fd6e92d878aa9f7725cf9e385ea",
     "axios": "^0.17.1",
     "client-oauth2": "^4.2.0",
     "mithril": "^1.1.6",
     "mithril-infinite": "^1.2.4",
     "polythene-core-css": "^1.2.0",
     "polythene-css": "^1.2.0",
-    "polythene-mithril": "^1.2.0",
+    "polythene-mithril": "^1.5.2",
     "querystring": "^0.2.0"
   },
   "devDependencies": {
