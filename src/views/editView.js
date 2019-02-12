@@ -10,7 +10,7 @@ import { colors } from '../style';
 // Mapper for resource vs schema-object names
 const objectNameForResource = {
   users: 'User',
-  groupmembershipds: 'Group Membership',
+  groupmemberships: 'Group Membership',
   groups: 'Group',
   eventsignups: 'Event Signup',
   events: 'Event',
