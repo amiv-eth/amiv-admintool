@@ -19,7 +19,7 @@ export default class editDoc extends EditView {
     // load schema
     m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
       // remove the files list as it is impossible to validate
-      const docSchema = schema.definitions.Studydocument;
+      const docSchema = schema.definitions['Study Document'];
       delete docSchema.properties.files;
       this.form.setSchema(docSchema);
     }).catch((error) => { console.log(error); });
