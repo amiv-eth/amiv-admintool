@@ -4,7 +4,6 @@ import {
   ListTile,
   Icon,
   Toolbar,
-  ToolbarTitle,
   Dialog,
   SVG,
   Button,

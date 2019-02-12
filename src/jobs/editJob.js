@@ -1,6 +1,6 @@
 import m from 'mithril';
-import EditView from '../views/editView';
 import { FileInput } from 'amiv-web-ui-components';
+import EditView from '../views/editView';
 
 
 export default class newJob extends EditView {
