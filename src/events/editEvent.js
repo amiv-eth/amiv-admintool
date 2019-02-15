@@ -160,6 +160,8 @@ export default class newEvent extends EditView {
   }
 
   view() {
+    if (!this.form.schema) return '';
+
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
 
@@ -251,32 +253,26 @@ export default class newEvent extends EditView {
         // page 1: title & description
         m('div', {
           style: { display: (this.currentpage === 1) ? 'block' : 'none' },
-        }, this.form.renderPage({
-          title_en: { type: 'text', label: 'English Event Title' },
-          catchphrase_en: { type: 'text', label: 'English Catchphrase' },
-          description_en: {
-            type: 'text',
+        }, [
+          ...this.form.renderSchema(['title_en', 'catchphrase_en']),
+          this.form._renderField('description_en', {
+            type: 'string',
             label: 'English Description',
             multiLine: true,
             rows: 5,
-          },
-          title_de: { type: 'text', label: 'German Event Title' },
-          catchphrase_de: { type: 'text', label: 'German Catchphrase' },
-          description_de: {
-            type: 'text',
+          }),
+          ...this.form.renderSchema(['title_de', 'catchphrase_de']),
+          this.form._renderField('description_de', {
+            type: 'string',
             label: 'German Description',
             multiLine: true,
             rows: 5,
-          },
-        })),
+          }),
+        ]),
         // page 2: when & where
         m('div', {
           style: { display: (this.currentpage === 2) ? 'block' : 'none' },
-        }, this.form.renderPage({
-          time_start: { type: 'datetime', label: 'Event Start Time' },
-          time_end: { type: 'datetime', label: 'Event End Time' },
-          location: { type: 'text', label: 'Location' },
-        })),
+        }, this.form.renderSchema(['time_start', 'time_end', 'location'])),
         // page 3: registration
         m('div', {
           style: { display: (this.currentpage === 3) ? 'block' : 'none' },
@@ -294,9 +290,7 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          ...this.hasprice && this.form.renderPage({
-            price: { type: 'number', label: 'Price', min: 0, step: 0.01 },
-          }),
+          this.hasprice && this.form._renderField('price', { label: 'Price', type: 'number' }),
           m('br'),
           m(Switch, {
             label: 'people have to register to attend this event',
@@ -314,41 +308,24 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          ...this.hasregistration && this.form.renderPage({
-            spots: {
-              type: 'number',
-              label: 'Number of Spots',
-              help: '0 for open event',
-              focusHelp: true,
-              min: 0,
-            },
-            time_register_start: { type: 'datetime', label: 'Start of Registration' },
-            time_register_end: { type: 'datetime', label: 'End of Registration' },
-            add_fields_food: { type: 'checkbox', label: 'Food limitations' },
-            add_fields_sbb: { type: 'checkbox', label: 'SBB Abbonement' },
+          ...this.hasregistration && this.form.renderSchema(['spots', 'time_register_start', 'time_register_end']),
+          this.hasregistration && this.form._renderField('add_fields_food', {
+            type: 'boolean',
+            label: 'Food Limitations'
+          }),
+          this.hasregistration && this.form._renderField('add_fields_sbb', {
+            type: 'boolean',
+            label: 'SBB Abbonement',
           }),
           m('br'),
-          ...this.hasregistration && this.form.renderPage({
-            allow_email_signup: { type: 'checkbox', label: 'Allow Email Signup' },
-          }),
+          ...this.hasregistration && this.form.renderSchema(['allow_email_signup']),
           this.hasregistration && radioButtonSelectionMode,
         ]),
         // page 4: advertisement
         m('div', {
           style: { display: (this.currentpage === 4) ? 'block' : 'none' },
         }, [
-          ...this.form.renderPage({
-            time_advertising_start: {
-              type: 'datetime',
-              label: 'Start of Advertisement',
-              required: true,
-            },
-            time_advertising_end: {
-              type: 'datetime',
-              label: 'End of Advertisement',
-              required: true,
-            },
-          }),
+          ...this.form.renderSchema(['time_advertising_start', 'time_advertising_end']),
           // TODO is deactivated now
           /*
           m.trust('Priority<br>'),
@@ -361,14 +338,7 @@ export default class newEvent extends EditView {
             // onChange: ({ value }) => { this.data.priority = value; },
           }),
           */
-          ...this.form.renderPage({
-            show_website: { type: 'checkbox', label: 'Advertise on Website' },
-            show_announce: { type: 'checkbox', label: 'Advertise in Announce' },
-            show_infoscreen: {
-              type: 'checkbox',
-              label: 'Advertise on Infoscreen',
-            },
-          }),
+          ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
         ]),
         // page 5: images
         m('div', {
