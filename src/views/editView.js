@@ -35,7 +35,7 @@ export default class EditView extends ItemView {
     // the form is valid in case that the item controller is in edit mode
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
-    this.form = new Form({}, validInitially, 0, Object.assign({}, this.controller.data));
+    this.form = new Form({}, validInitially, 4, Object.assign({}, this.controller.data));
   }
 
   oninit() {
