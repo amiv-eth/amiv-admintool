@@ -1,10 +1,9 @@
 import m from 'mithril';
 import { TextField } from 'polythene-mithril';
-import { ListSelect, DatalistController } from 'amiv-web-ui-components';
+import { ListSelect, DatalistController, Select } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import { ResourceHandler } from '../auth';
-import { MDCSelect } from '../views/selectOption';
 import EditView from '../views/editView';
 
 
@@ -48,27 +47,21 @@ class PermissionEditor {
       }, m('div', {
         style: { display: 'flex', width: '100%', 'flex-flow': 'row wrap' },
       }, this.apiEndpoints.map(apiEndpoint => m('div', {
-        style: { display: 'flex', width: '330px', 'padding-right': '20px' },
+        style: { display: 'flex', width: '220px', 'padding-right': '20px' },
       }, [
-        m(TextField, {
+        m(Select, {
           label: apiEndpoint.title,
-          disabled: true,
-          style: { width: '60%' },
-        }),
-        m('div', { style: { width: '40%' } }, m(MDCSelect, {
-          name: apiEndpoint.href,
-          options: ['no permission', 'read', 'readwrite'],
-          onchange: (newVal) => {
-            if (newVal === 'no permission') {
-              // the api equivalent to no permission if to delete the key out of the dict
+          options: ['read', 'readwrite'],
+          style: { width: '200px' },
+          onChange: ({ newVal }) => {
+            if (newVal === '') {
+              // the api equivalent to no permission is to delete the key out of the dict
               if (internalPerm[apiEndpoint.href]) delete internalPerm[apiEndpoint.href];
-            } else {
-              internalPerm[apiEndpoint.href] = newVal;
-            }
+            } else internalPerm[apiEndpoint.href] = newVal;
             onChange(internalPerm);
           },
           value: internalPerm[apiEndpoint.href],
-        })),
+        }),
       ])))),
     ]);
   }
@@ -90,18 +83,9 @@ export default class NewGroup extends EditView {
   }
 
   view() {
+    if (!this.form.schema) return '';
     return this.layout([
-      ...this.form.renderPage({
-        name: { type: 'text', label: 'Group Name' },
-        allow_self_enrollment: {
-          type: 'checkbox',
-          label: 'the group can be seen by all users and they can subscribe themselves',
-        },
-        requires_storage: {
-          type: 'checkbox',
-          label: "the group shares a folder with it's members in the AMIV Cloud",
-        },
-      }),
+      ...this.form.renderSchema(['name', 'allow_self_enrollment', 'requires_storage']),
       m('div', { style: { display: 'flex' } }, [
         m(TextField, { label: 'Group Moderator: ', disabled: true, style: { width: '160px' } }),
         m('div', { style: { 'flex-grow': 1 } }, m(ListSelect, {
