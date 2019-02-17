@@ -1,5 +1,6 @@
 import m from 'mithril';
 import { FileInput } from 'amiv-web-ui-components';
+import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 
@@ -25,34 +26,26 @@ export default class newJob extends EditView {
   }
 
   view() {
+    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       m('h3', 'Add a New Job Offer'),
-      ...this.form.renderPage({ company: { type: 'text', label: 'Company' } }),
+      ...this.form.renderSchema(['company']),
       m(FileInput, this.form.bind({
         name: 'logo',
         label: 'Company Logo',
         accept: 'image/png, image/jpeg',
       })),
-      ...this.form.renderPage({
-        time_end: {
-          type: 'datetime',
-          label: 'End of Advertisement',
-          required: true,
-        },
-        title_en: { type: 'text', label: 'English Title' },
-        description_en: {
-          type: 'text',
-          label: 'English Text',
-          multiLine: true,
-          rows: 5,
-        },
-        title_de: { type: 'text', label: 'German Title' },
-        description_de: {
-          type: 'text',
-          label: 'German Text',
-          multiLine: true,
-          rows: 5,
-        },
+      ...this.form.renderSchema(['time_end', 'title_en']),
+      this.form._renderField('description_en', {
+        multiLine: true,
+        rows: 5,
+        ...this.form.schema.properties.description_en,
+      }),
+      ...this.form.renderSchema(['title_de']),
+      this.form._renderField('description_de', {
+        multiLine: true,
+        rows: 5,
+        ...this.form.schema.properties.description_de,
       }),
       m(FileInput, this.form.bind({
         name: 'pdf',
