@@ -39,6 +39,10 @@ export default class newJob extends EditView {
           label: 'End of Advertisement',
           required: true,
         },
+        show_website: {
+          type: 'checkbox',
+          label: 'Show on Website',
+        },
         title_en: { type: 'text', label: 'English Title' },
         description_en: {
           type: 'text',
