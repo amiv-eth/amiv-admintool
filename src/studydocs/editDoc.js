@@ -1,9 +1,10 @@
 import m from 'mithril';
 import { FileInput } from 'amiv-web-ui-components';
-import { RadioGroup, Button, List, ListTile, Snackbar } from 'polythene-mithril';
+import { Button, List, ListTile, Snackbar } from 'polythene-mithril';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
+import { loadingScreen } from '../layout';
 
 
 export default class editDoc extends EditView {
@@ -19,7 +20,7 @@ export default class editDoc extends EditView {
     // load schema
     m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
       // remove the files list as it is impossible to validate
-      const docSchema = schema.definitions.Studydocument;
+      const docSchema = schema.definitions['Study Document'];
       delete docSchema.properties.files;
       this.form.setSchema(docSchema);
     }).catch((error) => { console.log(error); });
@@ -50,51 +51,14 @@ export default class editDoc extends EditView {
   }
 
   view() {
+    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       m('h3', 'Add a New Studydocument'),
-
-      // department //drop-down-list
-      // label for RadioGroup: semester
-      m('div', { style: { color: '#0006', 'font-size': '16px' } }, 'Semester'),
-      m(RadioGroup, {
-        name: 'semester',
-        buttons: [
-          { value: '1', label: '1.', defaultChecked: this.form.data.gender === '1' },
-          { value: '2', label: '2', defaultChecked: this.form.data.gender === '2' },
-          { value: '3', label: '3', defaultChecked: this.form.data.gender === '3' },
-          { value: '4', label: '4', defaultChecked: this.form.data.gender === '4' },
-          { value: '5', label: '5+', defaultChecked: this.form.data.gender === '5' },
-        ],
-        onChange: ({ value }) => { console.log(value); this.form.data.semester = value; },
+      this.form._renderField('semester', {
+        ...this.form.schema.properties.semester,
+        style: { width: '100px' },
       }),
-      m(RadioGroup, {
-        name: 'type',
-        buttons: [{
-          value: 'exames',
-          label: 'exames',
-          defaultChecked: this.form.data.gender === 'exames',
-        }, {
-          value: 'cheat_sheet',
-          label: 'cheat sheet',
-          defaultChecked: this.form.data.gender === 'cheat_sheet',
-        }, {
-          value: 'lecture_documents',
-          label: 'lecture documents',
-          defaultChecked: this.form.data.gender === 'lecture_documents',
-        }, {
-          value: 'exercise',
-          label: 'exercise',
-          defaultChecked: this.form.data.gender === 'exercise',
-        }],
-        onChange: ({ value }) => { console.log(value); this.form.data.gender = value; },
-      }),
-      ...this.form.renderPage({
-        lecture: { type: 'text', label: 'Lecture' },
-        title: { type: 'text', label: 'Title' },
-        course_year: { type: 'number', label: 'Year' },
-        professor: { type: 'text', label: 'Professor' },
-        author: { type: 'text', label: 'Author' },
-      }),
+      ...this.form.renderSchema(['type', 'lecture', 'title', 'course_year', 'professor', 'author']),
       // file upload: work in progress, so far all files get deleted with a patch
       m('div', [
         'WARNING: Files added here will remove all files currently uploaded. If you want to add',
