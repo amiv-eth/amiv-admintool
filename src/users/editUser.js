@@ -1,5 +1,6 @@
 import m from 'mithril';
-import { RadioGroup, TextInput } from 'amiv-web-ui-components';
+import { TextInput } from 'amiv-web-ui-components';
+import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 export default class UserEdit extends EditView {
@@ -9,7 +10,7 @@ export default class UserEdit extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return '';
+    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       ...this.form.renderSchema(['lastname', 'firstname', 'email', 'nethz']),
       m(TextInput, this.form.bind({

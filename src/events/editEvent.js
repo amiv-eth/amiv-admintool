@@ -5,6 +5,7 @@ import { TabsCSS, ButtonCSS } from 'polythene-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
 import { colors } from '../style';
+import { loadingScreen } from '../layout';
 import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
@@ -160,7 +161,7 @@ export default class newEvent extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return '';
+    if (!this.form.schema) return m(loadingScreen);
 
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
@@ -308,10 +309,11 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          ...this.hasregistration && this.form.renderSchema(['spots', 'time_register_start', 'time_register_end']),
+          ...this.hasregistration && this.form.renderSchema([
+            'spots', 'time_register_start', 'time_register_end']),
           this.hasregistration && this.form._renderField('add_fields_food', {
             type: 'boolean',
-            label: 'Food Limitations'
+            label: 'Food Limitations',
           }),
           this.hasregistration && this.form._renderField('add_fields_sbb', {
             type: 'boolean',
