@@ -4,7 +4,6 @@ import {
   ListTile,
   Icon,
   Toolbar,
-  ToolbarTitle,
   Dialog,
   SVG,
   Button,
@@ -110,7 +109,7 @@ export class Layout {
             events: { onclick: () => { toggleDrawer(); } },
             style: { color: '#ffffff' },
           })),
-          m(ToolbarTitle, { text: 'AMIV Admintools' }),
+          m('div', { style: { 'font-size': '18px', 'margin-left': '20px' } }, 'AMIV Admintools'),
           m('a', {
             href: 'https://gitlab.ethz.ch/amiv/amiv-admintool/issues/new?issuable_template=Bug',
             target: '_blank',
@@ -118,8 +117,8 @@ export class Layout {
               color: '#888888',
               'text-decoration': 'none',
               'text-align': 'right',
-              width: '50em',
-              'margin-right': '100px',
+              'margin-right': '20px',
+              'margin-left': 'auto',
             },
           }, 'Is something not working? Report a bug!'),
           m(Button, {
