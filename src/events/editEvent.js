@@ -44,9 +44,15 @@ export default class newEvent extends EditView {
     // read additional_fields to make it editable
     if (this.form.data.additional_fields) {
       const copy = JSON.parse(this.form.data.additional_fields);
-      this.form.data.add_fields_sbb = 'SBB_Abo' in copy.properties;
-      this.form.data.add_fields_food = 'Food' in copy.properties;
+      this.form.data.add_fields_sbb = 'sbb_abo' in copy.properties;
+      this.form.data.add_fields_food = 'food' in copy.properties;
       this.form.data.additional_fields = null;
+      let i = 0;
+      while (`text${i}` in copy.properties) {
+        this.form.data[`add_fields_text${i}`] = copy.properties[`text${i}`].title;
+        i += 1;
+      }
+      this.form.data.add_fields_text_index = i;
     }
 
     // price can either not be set or set to null
@@ -77,25 +83,43 @@ export default class newEvent extends EditView {
       required: [],
     };
     if (this.form.data.add_fields_sbb) {
-      additionalFields.properties.SBB_Abo = {
+      additionalFields.properties.sbb_abo = {
         type: 'string',
+        title: 'SBB Abonnement',
         enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
       };
-      additionalFields.required.push('SBB_Abo');
+      additionalFields.required.push('sbb_abo');
     }
 
     if (this.form.data.add_fields_food) {
-      additionalFields.properties.Food = {
+      additionalFields.properties.food = {
         type: 'string',
+        title: 'Food',
         enum: ['Omnivor', 'Vegi', 'Vegan', 'Other'],
       };
-      additionalFields.properties['Special Food Requirements'] = {
+      additionalFields.properties.food_special = {
         type: 'string',
+        title: 'Special Food Requirements',
       };
-      additionalFields.required.push('Food');
+      additionalFields.required.push('food');
     }
+
+    let i = 0;
+    while (`add_fields_text${i}` in this.form.data) {
+      const fieldName = `text${i}`;
+      additionalFields.properties[fieldName] = {
+        type: 'string',
+        minLength: 1,
+        title: this.form.data[`add_fields_text${i}`],
+      };
+      additionalFields.required.push(fieldName);
+      delete this.form.data[`add_fields_text${i}`];
+      i += 1;
+    }
+
     if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
     if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
+    if ('add_fields_text_index' in this.form.data) delete this.form.data.add_fields_text_index;
 
     // if the properties are empty, we null the whole field, otherwise we send a json string
     // of the additional fields object
@@ -227,6 +251,33 @@ export default class newEvent extends EditView {
       return false;
     }).includes(true));
 
+    const addFieldsText = [];
+    let i = 0;
+    while (`add_fields_text${i}` in this.form.data) {
+      addFieldsText.push(this.form._renderField(`add_fields_text${i}`, {
+        type: 'string',
+        label: `Label for Textfield ${i}`,
+      }));
+      const fieldIndex = i;
+      addFieldsText.push(m(Button, {
+        label: `Remove Textfield ${i}`,
+        className: 'red-row-button',
+        events: {
+          onclick: () => {
+            let index = fieldIndex;
+            while (`add_fields_text${index + 1}` in this.form.data) {
+              this.form.data[`add_fields_text${index}`] =
+                this.form.data[`add_fields_text${index + 1}`];
+              index += 1;
+            }
+            delete this.form.data[`add_fields_text${index}`];
+            this.form.data.add_fields_text_index = index;
+          },
+        },
+      }));
+      i += 1;
+    }
+
     // checks currentPage and selects the fitting page
     return this.layout([
       // navigation bar
@@ -317,7 +368,21 @@ export default class newEvent extends EditView {
           }),
           this.hasregistration && this.form._renderField('add_fields_sbb', {
             type: 'boolean',
-            label: 'SBB Abbonement',
+            label: 'SBB Abonnement',
+          }),
+          m('br'),
+          ...this.hasregistration && addFieldsText,
+          m('br'),
+          this.hasregistration && m(Button, {
+            label: 'Additional Textfield',
+            className: 'blue-button',
+            border: true,
+            events: {
+              onclick: () => {
+                this.form.data[`add_fields_text${this.form.data.add_fields_text_index}`] = '';
+                this.form.data.add_fields_text_index += 1;
+              },
+            },
           }),
           m('br'),
           ...this.hasregistration && this.form.renderSchema(['allow_email_signup']),
