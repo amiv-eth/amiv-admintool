@@ -35,7 +35,7 @@ export default class newJob extends EditView {
         label: 'Company Logo',
         accept: 'image/png, image/jpeg',
       })),
-      ...this.form.renderSchema(['time_end', 'title_en']),
+      ...this.form.renderSchema(['show_website', 'time_end', 'title_en']),
       this.form._renderField('description_en', {
         multiLine: true,
         rows: 5,

@@ -52,10 +52,11 @@ class PermissionEditor {
       }, [
         m(Select, {
           label: apiEndpoint.title,
-          options: ['read', 'readwrite'],
+          options: ['no permission', 'read', 'readwrite'],
+          default: 'no permission',
           style: { width: '200px' },
           onChange: ({ newVal }) => {
-            if (newVal === '') {
+            if (newVal === 'no permission') {
               // the api equivalent to no permission is to delete the key out of the dict
               if (internalPerm[apiEndpoint.href]) delete internalPerm[apiEndpoint.href];
             } else internalPerm[apiEndpoint.href] = newVal;

@@ -34,6 +34,16 @@ export default class viewJob extends ItemView {
           title: 'Offer Ends',
           style: stdMargin,
         }, `${dateFormatter(this.data.time_end)}`) : '',
+        m(Property, {
+          title: 'Show on Website',
+          style: stdMargin,
+        }, this.data.show_website ? 'visible' : 'not visible'),
+        m(Property, {
+          title: 'PDF',
+          style: stdMargin,
+        }, this.data.pdf
+          ? m('a', { href: `${apiUrl}${this.data.pdf.file}`, target: '_blank' }, this.data.pdf.name)
+          : 'not available'),
       ]),
       m('div.viewcontainer', [
         m('div.viewcontainercolumn', m(Card, {
