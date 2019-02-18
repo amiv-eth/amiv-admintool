@@ -64,7 +64,7 @@ export default class newEvent extends EditView {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
       }
-      if (this.form.data[`img_${key}`]) delete this.form.data[`img_${key}`];
+      if (this.form.data[`img_${key}`] !== undefined) delete this.form.data[`img_${key}`];
     });
 
     // Merge Options for additional fields
