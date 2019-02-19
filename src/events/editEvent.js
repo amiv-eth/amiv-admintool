@@ -52,6 +52,7 @@ export default class newEvent extends EditView {
         this.form.data[`add_fields_text${i}`] = copy.properties[`text${i}`].title;
         i += 1;
       }
+      // TODO: find a better solution to keep track of the additional textfields
       this.add_fields_text_index = i;
     } else {
       this.add_fields_text_index = 0;
