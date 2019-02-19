@@ -52,7 +52,9 @@ export default class newEvent extends EditView {
         this.form.data[`add_fields_text${i}`] = copy.properties[`text${i}`].title;
         i += 1;
       }
-      this.form.data.add_fields_text_index = i;
+      this.add_fields_text_index = i;
+    } else {
+      this.add_fields_text_index = 0;
     }
 
     // price can either not be set or set to null
@@ -119,7 +121,6 @@ export default class newEvent extends EditView {
 
     if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
     if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
-    if ('add_fields_text_index' in this.form.data) delete this.form.data.add_fields_text_index;
 
     // if the properties are empty, we null the whole field, otherwise we send a json string
     // of the additional fields object
@@ -271,7 +272,7 @@ export default class newEvent extends EditView {
               index += 1;
             }
             delete this.form.data[`add_fields_text${index}`];
-            this.form.data.add_fields_text_index = index;
+            this.add_fields_text_index = index;
           },
         },
       }));
@@ -379,8 +380,8 @@ export default class newEvent extends EditView {
             border: true,
             events: {
               onclick: () => {
-                this.form.data[`add_fields_text${this.form.data.add_fields_text_index}`] = '';
-                this.form.data.add_fields_text_index += 1;
+                this.form.data[`add_fields_text${this.add_fields_text_index}`] = '';
+                this.add_fields_text_index += 1;
               },
             },
           }),
