@@ -88,12 +88,11 @@ class ParticipantsTable {
     const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
-      m(
-        'div',
-        { style: { width: '12em' } },
-        data.user ? `${data.user.firstname} ${data.user.lastname}` : '',
-      ),
-      m('div', { style: { width: '9em' } }, data.email),
+      m('div', { style: { width: '16em' } }, [
+        ...data.user ? [`${data.user.firstname} ${data.user.lastname}`, m('br')] : '',
+        data.email,
+      ]),
+      m('div', { style: { width: '9em' } }, data.additional_fields),
       m('div', { style: { 'flex-grow': '100' } }),
       hasPatchRights ? m('div', m(Button, {
         // Button to remove this eventsignup
@@ -127,8 +126,8 @@ class ParticipantsTable {
           clickOnRows: false,
           titles: [
             { text: 'Date of Signup', width: '9em' },
-            { text: 'Name', width: '18em' },
-            { text: 'Email', width: '9em' },
+            { text: 'Participant', width: '16em' },
+            { text: 'Additional Info', width: '9em' },
           ],
         }),
       ]),
