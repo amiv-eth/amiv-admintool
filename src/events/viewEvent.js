@@ -73,7 +73,7 @@ class DuoLangProperty {
 // Helper class to either display the signed up participants or those on the
 // waiting list.
 class ParticipantsTable {
-  constructor({ attrs: { where } }) {
+  constructor({ attrs: { where, additional_fields_schema } }) {
     this.ctrl = new RelationlistController({
       primary: 'eventsignups',
       secondary: 'users',
@@ -81,18 +81,21 @@ class ParticipantsTable {
       searchKeys: ['email'],
       includeWithoutRelation: true,
     });
+    this.add_fields_schema = JSON.parse(additional_fields_schema).properties;
   }
 
   itemRow(data) {
     // TODO list should not have hardcoded size outside of stylesheet
     const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
+    const additional_fields = data.additional_fields && JSON.parse(data.additional_fields);
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
       m('div', { style: { width: '16em' } }, [
         ...data.user ? [`${data.user.firstname} ${data.user.lastname}`, m('br')] : '',
         data.email,
       ]),
-      m('div', { style: { width: '9em' } }, data.additional_fields),
+      m('div', { style: { width: '16em' } }, additional_fields ? Object.keys(additional_fields).map(key =>
+        m('div', `${this.add_fields_schema[key].title}: ${additional_fields[key]}`)) : ''),
       m('div', { style: { 'flex-grow': '100' } }),
       hasPatchRights ? m('div', m(Button, {
         // Button to remove this eventsignup
@@ -127,7 +130,7 @@ class ParticipantsTable {
           titles: [
             { text: 'Date of Signup', width: '9em' },
             { text: 'Participant', width: '16em' },
-            { text: 'Additional Info', width: '9em' },
+            { text: 'Additional Info', width: '16em' },
           ],
         }),
       ]),
@@ -383,14 +386,16 @@ export default class viewEvent extends ItemView {
             ]),
           ]),
         ]),
-        m('div.viewcontainercolumn', [
+        m('div.viewcontainercolumn', { style: { width: '50em' } }, [
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: true, event: this.data._id },
             title: 'Accepted Participants',
+            additional_fields_schema: this.data.additional_fields,
           }) : '',
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: false, event: this.data._id },
             title: 'Participants on Waiting List',
+            additional_fields_schema: this.data.additional_fields,
           }) : '',
         ]),
       ]),
