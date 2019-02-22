@@ -73,7 +73,7 @@ class DuoLangProperty {
 // Helper class to either display the signed up participants or those on the
 // waiting list.
 class ParticipantsTable {
-  constructor({ attrs: { where, additional_fields_schema } }) {
+  constructor({ attrs: { where, additional_fields_schema: additionalFieldsSchema } }) {
     this.ctrl = new RelationlistController({
       primary: 'eventsignups',
       secondary: 'users',
@@ -81,21 +81,24 @@ class ParticipantsTable {
       searchKeys: ['email'],
       includeWithoutRelation: true,
     });
-    this.add_fields_schema = JSON.parse(additional_fields_schema).properties;
+    this.add_fields_schema = JSON.parse(additionalFieldsSchema).properties;
   }
 
   itemRow(data) {
     // TODO list should not have hardcoded size outside of stylesheet
     const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
-    const additional_fields = data.additional_fields && JSON.parse(data.additional_fields);
+    const additionalFields = data.additional_fields && JSON.parse(data.additional_fields);
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
       m('div', { style: { width: '16em' } }, [
         ...data.user ? [`${data.user.firstname} ${data.user.lastname}`, m('br')] : '',
         data.email,
       ]),
-      m('div', { style: { width: '16em' } }, additional_fields ? Object.keys(additional_fields).map(key =>
-        m('div', `${this.add_fields_schema[key].title}: ${additional_fields[key]}`)) : ''),
+      m(
+        'div', { style: { width: '16em' } },
+        additionalFields ? Object.keys(additionalFields).map(key =>
+          m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`)) : '',
+      ),
       m('div', { style: { 'flex-grow': '100' } }),
       hasPatchRights ? m('div', m(Button, {
         // Button to remove this eventsignup
