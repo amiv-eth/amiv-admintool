@@ -54,14 +54,6 @@ build:
   except:
     - master
 
-deploy_prod:
-  stage: deploy
-  image: amiveth/service-update-helper
-  script:
-    - /update.py
-  only:
-    - master
-
 deploy_dev_cluster:
   stage: deploy
   image: amiveth/service-update-helper
