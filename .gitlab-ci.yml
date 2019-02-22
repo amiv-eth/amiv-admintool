@@ -21,6 +21,9 @@ build_master_dev:
   script:
     - docker build --build-arg NPM_BUILD_COMMAND=build-dev --pull -t "$CI_REGISTRY_IMAGE:dev" ./
     - docker push "$CI_REGISTRY_IMAGE:dev"
+  environment:
+    name: production
+    url: https://admin-dev.amiv.ethz.ch
   only:
     - master
 
@@ -34,6 +37,9 @@ build_master_prod:
   script:
     - docker build --pull -t "$CI_REGISTRY_IMAGE" ./
     - docker push "$CI_REGISTRY_IMAGE"
+  environment:
+    name: production
+    url: https://admin.amiv.ethz.ch
   only:
     - master
 
@@ -56,20 +62,33 @@ deploy_prod:
   only:
     - master
 
-deploy_dev:
+deploy_dev_cluster:
   stage: deploy
   image: amiveth/service-update-helper
-  script:
+  before_script:
     - export CI_DEPLOY_SERVICE="$CI_DEPLOY_SERVICE_DEV"
+  script:
     - /update.py
   only:
     - master
 
-deploy_prod:
+deploy_prod_cluster:
   stage: deploy
   image: amiveth/service-update-helper
-  script:
+  before_script:
     - export CI_DEPLOY_SERVICE="$CI_DEPLOY_SERVICE_PROD"
+  script:
+    - /update.py
+  only:
+    - master
+
+deploy_prod_pazuzu:
+  stage: deploy
+  image: amiveth/service-update-helper
+  before_script:
+    - export CI_DEPLOY_URL="$CI_DEPLOY_URL_PAZUZU"
+    - export CI_DEPLOY_SERVICE="$CI_DEPLOY_SERVICE_PROD"
+  script:
     - /update.py
   only:
     - master
