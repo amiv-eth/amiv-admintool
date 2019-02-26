@@ -81,7 +81,8 @@ class ParticipantsTable {
       searchKeys: ['email'],
       includeWithoutRelation: true,
     });
-    this.add_fields_schema = JSON.parse(additionalFieldsSchema).properties;
+    this.add_fields_schema = additionalFieldsSchema ?
+      JSON.parse(additionalFieldsSchema).properties : null;
   }
 
   itemRow(data) {
