@@ -408,6 +408,8 @@ export default class newEvent extends EditView {
           }),
           */
           ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
+          m('div', 'Please send your announce text additionally via email to info@amiv.ch ' +
+          'until the new announce tool is ready.'),
         ]),
         // page 5: images
         m('div', {
