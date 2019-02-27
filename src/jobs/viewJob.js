@@ -5,7 +5,7 @@ import { Card } from 'polythene-mithril';
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
-import { Property } from '../views/elements';
+import { icons, Property, chip } from '../views/elements';
 
 export default class viewJob extends ItemView {
   constructor(vnode) {
@@ -28,16 +28,15 @@ export default class viewJob extends ItemView {
           style: { 'line-height': '50px', 'margin-top': '0px' },
         }, this.data.company),
       ]),
+      m('div.maincontainer', [
+        m(chip, { svg: this.data.show_website ? icons.checked : icons.clear }, 'website'),
+      ]),
       // below the title, most important details are listed
       m('div', { style: { display: 'flex', margin: '5px 0px 0px 5px' } }, [
         this.data.time_end ? m(Property, {
           title: 'Offer Ends',
           style: stdMargin,
         }, `${dateFormatter(this.data.time_end)}`) : '',
-        m(Property, {
-          title: 'Show on Website',
-          style: stdMargin,
-        }, this.data.show_website ? 'visible' : 'not visible'),
         m(Property, {
           title: 'PDF',
           style: stdMargin,
