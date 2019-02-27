@@ -89,7 +89,7 @@ export default class newEvent extends EditView {
       additionalFields.properties.sbb_abo = {
         type: 'string',
         title: 'SBB Abonnement',
-        enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
+        enum: ['None', 'GA', 'Halbtax', 'Gleis 7', 'HT + Gleis 7'],
       };
       additionalFields.required.push('sbb_abo');
     }
