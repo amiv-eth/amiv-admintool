@@ -68,7 +68,7 @@ export default class newEvent extends EditView {
   beforeSubmit() {
     // Collect images seperate from everything else
     const images = {};
-    ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
+    ['thumbnail', 'infoscreen', 'poster'].forEach((key) => {
       if (this.form.data[`new_${key}`]) {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
@@ -413,7 +413,7 @@ export default class newEvent extends EditView {
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
         }, [
-          ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+          ['thumbnail', 'poster', 'infoscreen'].map(key => [
             this.form.data[`img_${key}`] ? m('img', {
               src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
               style: { 'max-height': '50px', 'max-width': '100px' },

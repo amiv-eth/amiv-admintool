@@ -416,17 +416,6 @@ export default class viewEvent extends ItemView {
                     },
                   }),
                 ]),
-                m('div', [
-                  this.data.img_banner && m('div', 'Banner'),
-                  this.data.img_banner && m('img', {
-                    src: `${apiUrl}${this.data.img_banner.file}`,
-                    width: '100%',
-                    onclick: () => {
-                      this.modalDisplay('block');
-                      modalImg.src = `${apiUrl}${this.data.img_banner.file}`;
-                    },
-                  }),
-                ]),
               ]),
             ]),
           ]),
