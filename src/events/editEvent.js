@@ -344,7 +344,7 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          this.hasprice && this.form._renderField('price', { label: 'Price', type: 'number' }),
+          ...this.hasprice && this.form.renderSchema(['price']),
           m('br'),
           m(Switch, {
             label: 'people have to register to attend this event',
