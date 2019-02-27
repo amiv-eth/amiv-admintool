@@ -14,9 +14,10 @@ export default class StudydocTable {
 
   getItemData(data) {
     return [
-      m('div', { style: { width: 'calc(100% - 32em)' } }, data.title),
-      m('div', { style: { width: '6em' } }, data.department && data.department.toUpperCase()),
-      m('div', { style: { width: '6em' } }, data.semester),
+      m('div', { style: { width: 'calc(100% - 36em)' } }, data.title),
+      m('div', { style: { width: '8em' } }, data.author),
+      m('div', { style: { width: '4em' } }, data.year),
+      m('div', { style: { width: '4em' } }, data.semester),
       m('div', { style: { width: '10em' } }, data.lecture),
       m('div', { style: { width: '10em' } }, data.files.map((file) => {
         const splittedFilenames = file.name.split('.');
@@ -31,9 +32,10 @@ export default class StudydocTable {
       keys: config.tableKeys,
       tileContent: this.getItemData,
       titles: [
-        { text: 'Title', width: 'calc(100% - 32em)' },
-        { text: 'Department', width: '6em' },
-        { text: 'Semester', width: '6em' },
+        { text: 'Title', width: 'calc(100% - 36em)' },
+        { text: 'Author', width: '8em' },
+        { text: 'Year', width: '4em' },
+        { text: 'Sem.', width: '4em' },
         { text: 'Lecture', width: '10em' },
         { text: 'Files', width: '10em' },
       ],
