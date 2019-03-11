@@ -85,6 +85,40 @@ class ParticipantsTable {
       JSON.parse(additionalFieldsSchema).properties : null;
   }
 
+  exportAsCSV(filePrefix) {
+    this.ctrl.getFullList().then((list) => {
+      const csvData = (list.map((item) => {
+        const additionalFields = item.additional_fields && JSON.parse(item.additional_fields);
+
+        return [
+          item.position,
+          item._created,
+          item.user ? item.user.firstname : '',
+          item.user ? item.user.lastname : '',
+          item.user ? item.user.membership : 'none',
+          item.email,
+          item.accepted,
+          item.confirmed,
+          ...Object.keys(this.add_fields_schema).map(key =>
+            (additionalFields && additionalFields[key] ? additionalFields[key] : '')),
+        ].join(',');
+      })).join('\n');
+
+      const header = [
+        'Position', 'Date', 'Firstname', 'Lastname', 'Membership', 'Email', 'Accepted', 'Confirmed',
+        ...Object.keys(this.add_fields_schema).map(key => this.add_fields_schema[key].title),
+      ].join(',');
+
+      const filename = `${filePrefix}_participants_export.csv`;
+      const fileContent = `data:text/csv;charset=utf-8,${header}\n${csvData}`;
+
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(fileContent));
+      link.setAttribute('download', filename);
+      link.click();
+    });
+  }
+
   itemRow(data) {
     // TODO list should not have hardcoded size outside of stylesheet
     const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
@@ -118,12 +152,18 @@ class ParticipantsTable {
     ];
   }
 
-  view({ attrs: { title } }) {
+  view({ attrs: { title, filePrefix } }) {
     return m(Card, {
       style: { height: '400px', 'margin-bottom': '10px' },
       content: m('div', [
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: title }),
+          m(Button, {
+            className: 'blue-button',
+            borders: true,
+            label: 'export CSV',
+            events: { onclick: () => this.exportAsCSV(filePrefix) },
+          }),
         ]),
         m(TableView, {
           tableHeight: '275px',
@@ -394,11 +434,13 @@ export default class viewEvent extends ItemView {
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: true, event: this.data._id },
             title: 'Accepted Participants',
+            filePrefix: 'accepted',
             additional_fields_schema: this.data.additional_fields,
           }) : '',
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: false, event: this.data._id },
             title: 'Participants on Waiting List',
+            filePrefix: 'waitinglist',
             additional_fields_schema: this.data.additional_fields,
           }) : '',
         ]),
