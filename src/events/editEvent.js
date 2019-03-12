@@ -68,7 +68,7 @@ export default class newEvent extends EditView {
   beforeSubmit() {
     // Collect images seperate from everything else
     const images = {};
-    ['thumbnail', 'banner', 'infoscreen', 'poster'].forEach((key) => {
+    ['thumbnail', 'infoscreen', 'poster'].forEach((key) => {
       if (this.form.data[`new_${key}`]) {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
@@ -89,7 +89,7 @@ export default class newEvent extends EditView {
       additionalFields.properties.sbb_abo = {
         type: 'string',
         title: 'SBB Abonnement',
-        enum: ['None', 'GA', 'Halbtax', 'Gleis 7'],
+        enum: ['None', 'GA', 'Halbtax', 'Gleis 7', 'HT + Gleis 7'],
       };
       additionalFields.required.push('sbb_abo');
     }
@@ -344,7 +344,7 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          this.hasprice && this.form._renderField('price', { label: 'Price', type: 'number' }),
+          ...this.hasprice && this.form.renderSchema(['price']),
           m('br'),
           m(Switch, {
             label: 'people have to register to attend this event',
@@ -408,12 +408,16 @@ export default class newEvent extends EditView {
           }),
           */
           ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
+          m('div', 'Please send your announce text additionally via email to info@amiv.ch ' +
+          'until the new announce tool is ready.'),
+          m('div', 'Please send an email to info@amiv.ch in order to show your event on' +
+            'the infoscreen until the new infoscreen tool is ready.'),
         ]),
         // page 5: images
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
         }, [
-          ['thumbnail', 'banner', 'poster', 'infoscreen'].map(key => [
+          ['thumbnail', 'poster', 'infoscreen'].map(key => [
             this.form.data[`img_${key}`] ? m('img', {
               src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
               style: { 'max-height': '50px', 'max-width': '100px' },
