@@ -218,6 +218,7 @@ export default class viewEvent extends ItemView {
       // only show accepted
       where.accepted = true;
     }
+    this.signupCtrl.setQuery({ where });
     this.signupCtrl.getFullList().then((list) => {
       this.emaillist = (list.map(item => item.email));
       m.redraw();
