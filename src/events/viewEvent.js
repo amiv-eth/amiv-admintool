@@ -99,14 +99,14 @@ class ParticipantsTable {
           item.email,
           item.accepted,
           item.confirmed,
-          ...Object.keys(this.add_fields_schema).map(key =>
+          ...Object.keys(this.add_fields_schema || {}).map(key =>
             (additionalFields && additionalFields[key] ? additionalFields[key] : '')),
         ].join(',');
       })).join('\n');
 
       const header = [
         'Position', 'Date', 'Firstname', 'Lastname', 'Membership', 'Email', 'Accepted', 'Confirmed',
-        ...Object.keys(this.add_fields_schema).map(key => this.add_fields_schema[key].title),
+        ...Object.keys(this.add_fields_schema || {}).map(key => this.add_fields_schema[key].title),
       ].join(',');
 
       const filename = `${filePrefix}_participants_export.csv`;
