@@ -80,8 +80,13 @@ class ParticipantsSummary {
       (this.onlyAccepted ? participant.accepted : true));
 
     // check which additional fields should get summarized
-    const hasSBB = 'sbb_abo' in JSON.parse(additionalFields).properties;
-    const hasFood = 'food' in JSON.parse(additionalFields).properties;
+    let hasSBB = false;
+    let hasFood = false;
+    if (additionalFields) {
+      hasSBB = 'sbb_abo' in JSON.parse(additionalFields).properties;
+      hasFood = 'food' in JSON.parse(additionalFields).properties;
+    }
+
 
     return m('div', [
       m('div', {
@@ -324,10 +329,12 @@ export default class viewEvent extends ItemView {
       ]),
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
-        ('signup_count' in this.data && this.data.signup_count !== null) && m(Property, {
-          style: stdMargin,
-          title: 'Signups',
-        }, `${this.data.signup_count} / ${displaySpots}`),
+        (this.data.spots !== null && 'signup_count' in this.data
+         && this.data.signup_count !== null) ?
+          m(Property, {
+            style: stdMargin,
+            title: 'Signups',
+          }, `${this.data.signup_count} / ${displaySpots}`) : '',
         this.data.location && m(Property, {
           style: stdMargin,
           title: 'Location',
@@ -404,13 +411,13 @@ export default class viewEvent extends ItemView {
           ]),
 
           // a list of email adresses of all participants, easy to copy-paste
-          m(DropdownCard, {
+          this.data.spots !== null ? m(DropdownCard, {
             title: 'Participants Summary',
             style: { margin: '10px 0' },
           }, m(ParticipantsSummary, {
             participants: this.allParticipants,
             additionalFields: this.data.additional_fields,
-          })),
+          })) : '',
 
           m(DropdownCard, { title: 'Images' }, [
             m('div', {
