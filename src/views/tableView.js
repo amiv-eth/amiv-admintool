@@ -110,7 +110,7 @@ export default class TableView {
   }
 
   arrowOrNot(controller, title) {
-    let titleText = title.width ? title.text : title;
+    const titleText = title.width ? title.text : title;
     if (!controller.sort) return false;
     if (controller.sort[0][0] === 'semester' && titleText === 'Sem.') return true;
     if (controller.sort[0][0] === 'firstname' && titleText === 'First Name') return true;
@@ -216,7 +216,9 @@ export default class TableView {
                   },
                   style: { width: title.width || `${98 / this.tableKeys.length}%` },
                 },
-                [title.width ? title.text : title, this.arrowOrNot(controller, title) ? m(Icon, { svg: { content: m.trust(icons.sortingArrow) } }) : ''],
+                [title.width ? title.text : title,
+                  this.arrowOrNot(controller, title) ?
+                    m(Icon, { svg: { content: m.trust(icons.sortingArrow) } }) : ''],
               )),
             ),
           }),
