@@ -170,16 +170,33 @@ export class ResourceHandler {
       // translate search into where, we just look if any field contains search
       // The search-string may match any of the keys in the object specified in the
       // constructor
-      const searchQuery = {
-        $or: this.searchKeys.map((key) => {
-          const fieldQuery = {};
-          fieldQuery[key] = {
-            $regex: `${query.search}`,
-            $options: 'i',
-          };
-          return fieldQuery;
-        }),
-      };
+      let searchQuery;
+      if (query.search.split(' ').length > 1) {
+        searchQuery = {
+          $and: query.search.split(' ').map(searchPhrase => ({
+            $or: this.searchKeys.map((key) => {
+              const fieldQuery = {};
+              fieldQuery[key] = {
+                $regex: `${searchPhrase}`,
+                $options: 'i',
+              };
+              return fieldQuery;
+            }),
+          })),
+        };
+      } else {
+        searchQuery = {
+          $or: this.searchKeys.map((key) => {
+            const fieldQuery = {};
+            fieldQuery[key] = {
+              $regex: `${query.search}`,
+              $options: 'i',
+            };
+            return fieldQuery;
+          }),
+        };
+      }
+
 
       // if there exists already a where-filter, AND them together
       if ('where' in query) {
