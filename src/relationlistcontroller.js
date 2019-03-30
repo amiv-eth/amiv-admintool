@@ -51,6 +51,7 @@ export default class RelationlistController {
       item,
       pageData: pageNum => this.getPageData(pageNum),
       pageKey: pageNum => `${pageNum}-${this.stateCounter()}`,
+      maxPages: this.totalPages ? this.totalPages : undefined,
     };
   }
 
@@ -161,4 +162,3 @@ export default class RelationlistController {
     this.refresh();
   }
 }
-
