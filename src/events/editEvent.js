@@ -447,7 +447,9 @@ export default class newEvent extends EditView {
         // page 5: images
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+
         }, [
+          m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
           m('div', { style: { width: '90%', display: 'flex' } }, [
             m('div.imgPlaceholder', { style: { width: '30%', 'padding-bottom': '30%' } }, [
               this.form.data[`img_thumbnail`] ?
@@ -484,6 +486,7 @@ export default class newEvent extends EditView {
               events: { onclick: () => { this.form.data[`img_${key}`] = null; } },
             }),
           ]),
+
         ]),
         // bottom back & forth
         m('div', {
