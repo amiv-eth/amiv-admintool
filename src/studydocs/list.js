@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { DatalistController } from 'amiv-web-ui-components';
-import { studydocuments as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import { ResourceHandler } from '../auth';
 
@@ -8,7 +7,7 @@ import { ResourceHandler } from '../auth';
 /* Table of all studydocuments */
 export default class StudydocTable {
   constructor() {
-    this.handler = new ResourceHandler('studydocuments', config.tableKeys);
+    this.handler = new ResourceHandler('studydocuments');
     this.ctrl = new DatalistController((query, search) => this.handler.get({ search, ...query }));
   }
 
@@ -29,7 +28,7 @@ export default class StudydocTable {
   view() {
     return m(TableView, {
       controller: this.ctrl,
-      keys: config.tableKeys,
+      keys: ['title', 'author', 'course_year', 'semester', 'lecture'],
       tileContent: this.getItemData,
       titles: [
         { text: 'Title', width: 'calc(100% - 36em)' },

@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { DatalistController } from 'amiv-web-ui-components';
-import { events as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import { dateFormatter } from '../utils';
 import { ResourceHandler } from '../auth';
@@ -26,11 +25,11 @@ export default class EventTable {
     ];
   }
 
-  view() {
+  view(data) {
     const now = new Date();
     return m(TableView, {
       controller: this.ctrl,
-      keys: config.tableKeys,
+      keys: [(data.titel_de) ? 'titel_de' : 'titel_en', 'time_start', 'time_end'],
       tileContent: this.getItemData,
       titles: [
         { text: 'Titel', width: 'calc(100% - 18em)' },

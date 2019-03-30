@@ -202,6 +202,7 @@ export default class TableView {
               // or it is a list of objects with text and width
               titles.map((title, i) => m('div', {
                 onclick: () => {
+                  console.log(title, i, this.tableKeys[i]);
                   if (this.clickOnTitles) this.clickOnTitles(controller, this.tableKeys[i]);
                 },
                 style: { width: title.width || `${98 / this.tableKeys.length}%` },

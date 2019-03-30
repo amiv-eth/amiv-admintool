@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { DatalistController } from 'amiv-web-ui-components';
-import { joboffers as config } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import { dateFormatter } from '../utils';
 import { ResourceHandler } from '../auth';
@@ -14,7 +13,7 @@ import { ResourceHandler } from '../auth';
 
 export default class JobTable {
   constructor() {
-    this.handler = new ResourceHandler('joboffers', config.tableKeys);
+    this.handler = new ResourceHandler('joboffers');
     this.ctrl = new DatalistController((query, search) => this.handler.get({ search, ...query }));
   }
 
@@ -26,10 +25,10 @@ export default class JobTable {
     ];
   }
 
-  view() {
+  view(data) {
     return m(TableView, {
       controller: this.ctrl,
-      keys: config.tableKeys,
+      keys: [(data.title_de) ? 'title_de' : 'title_en', 'company', 'time_end'],
       tileContent: this.getItemData,
       titles: [
         { text: 'Titel', width: 'calc(100% - 30em)' },
