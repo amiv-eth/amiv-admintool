@@ -198,7 +198,7 @@ class ParticipantsTable {
       ]),
       m(
         'div', { style: { width: '16em' } },
-        additionalFields ? Object.keys(additionalFields).map(key =>
+        (additionalFields && this.add_fields_schema) ? Object.keys(additionalFields).map(key =>
           m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`)) : '',
       ),
       m('div', { style: { 'flex-grow': '100' } }),
