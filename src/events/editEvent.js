@@ -71,7 +71,9 @@ export default class newEvent extends EditView {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
       }
-      if (this.form.data[`img_${key}`] !== undefined) delete this.form.data[`img_${key}`];
+      if (this.form.data[`img_${key}`] !== undefined && this.form.data[`img_${key}`] !== null) {
+        delete this.form.data[`img_${key}`];
+      }
     });
 
     // Merge Options for additional fields
@@ -426,6 +428,12 @@ export default class newEvent extends EditView {
               label: `New ${key} Image`,
               accept: 'image/png, image/jpeg',
             })),
+            m(Button, {
+              className: 'red-row-button',
+              borders: false,
+              label: 'remove',
+              events: { onclick: () => { this.form.data[`img_${key}`] = null; } },
+            }),
           ]),
         ]),
         // bottom back & forth
