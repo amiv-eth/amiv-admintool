@@ -63,7 +63,7 @@ class DuoLangProperty {
   }
 }
 
-class ParticipandsSummary {
+class ParticipantsSummary {
   constructor() {
     this.onlyAccepted = true;
   }
@@ -407,7 +407,7 @@ export default class viewEvent extends ItemView {
           m(DropdownCard, {
             title: 'Participants Summary',
             style: { margin: '10px 0' },
-          }, m(ParticipandsSummary, {
+          }, m(ParticipantsSummary, {
             participants: this.allParticipants,
             additionalFields: this.data.additional_fields,
           })),
