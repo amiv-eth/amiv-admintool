@@ -7,8 +7,8 @@ import {
   TextField,
   Icon,
 } from 'polythene-mithril';
-import { DatalistController, ListSelect, DropdownCard } from 'amiv-web-ui-components';
-import { icons, Property, chip } from '../views/elements';
+import { DatalistController, ListSelect, DropdownCard, Chip } from 'amiv-web-ui-components';
+import { icons, Property } from '../views/elements';
 import { colors } from '../style';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
@@ -200,7 +200,7 @@ export default class viewGroup extends ItemView {
       // this div is the title line
       m('div.maincontainer', [
         m('h1', this.data.name),
-        this.data.requires_storage && m(chip, {
+        this.data.requires_storage && m(Chip, {
           svg: icons.cloud,
           svgColor: '#ffffff',
           svgBackground: colors.orange,

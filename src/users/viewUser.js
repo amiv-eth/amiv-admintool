@@ -1,11 +1,11 @@
 import m from 'mithril';
 import { Card, Toolbar, ToolbarTitle, Button, Snackbar } from 'polythene-mithril';
-import { ListSelect, DatalistController } from 'amiv-web-ui-components';
+import { ListSelect, DatalistController, Chip } from 'amiv-web-ui-components';
 import ItemView from '../views/itemView';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
 import { ResourceHandler } from '../auth';
-import { chip, icons, Property } from '../views/elements';
+import { icons, Property } from '../views/elements';
 import { colors } from '../style';
 
 export default class UserView extends ItemView {
@@ -44,25 +44,25 @@ export default class UserView extends ItemView {
   view() {
     const stdMargin = { margin: '5px' };
 
-    let membership = m(chip, {
+    let membership = m(Chip, {
       svg: icons.clear,
       svgBackground: colors.amiv_red,
       ...stdMargin,
     }, 'No Member');
     if (this.data.membership === 'regular') {
-      membership = m(chip, {
+      membership = m(Chip, {
         svg: icons.checked,
         svgBackground: colors.green,
         ...stdMargin,
       }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
-      membership = m(chip, {
+      membership = m(Chip, {
         svg: icons.checked,
         svgBackground: colors.green,
         ...stdMargin,
       }, 'Extraordinary Member');
     } else if (this.data.membership === 'honorary') {
-      membership = m(chip, {
+      membership = m(Chip, {
         svg: icons.star,
         svgBackground: colors.orange,
         ...stdMargin,
@@ -95,11 +95,11 @@ export default class UserView extends ItemView {
         m('h1', `${this.data.firstname} ${this.data.lastname}`),
         membership,
         this.data.department && m(
-          chip,
+          Chip,
           { svg: icons.department, ...stdMargin },
           this.data.department,
         ),
-        this.data.gender && m(chip, { margin: '5px' }, this.data.gender),
+        this.data.gender && m(Chip, { margin: '5px' }, this.data.gender),
         m('div', { style: { display: 'flex' } }, [
           this.data.nethz && m(Property, { title: 'NETHZ', style: stdMargin }, this.data.nethz),
           this.data.email && m(Property, { title: 'Email', style: stdMargin }, this.data.email),
