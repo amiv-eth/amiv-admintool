@@ -1,6 +1,6 @@
 import m from 'mithril';
 import infinite from 'mithril-infinite';
-import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
+import { List, ListTile, Toolbar, Search, Button, Icon } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
 import { FilterChip } from './elements';
@@ -200,13 +200,15 @@ export default class TableView {
               { style: { width: '100%', display: 'flex' } },
               // Either titles is a list of titles that are distributed equally,
               // or it is a list of objects with text and width
-              titles.map((title, i) => m('div', {
-                onclick: () => {
-                  console.log(title, i, this.tableKeys[i]);
-                  if (this.clickOnTitles) this.clickOnTitles(controller, this.tableKeys[i]);
+              titles.map((title, i) => m(
+                'div', {
+                  onclick: () => {
+                    if (this.clickOnTitles) this.clickOnTitles(controller, this.tableKeys[i]);
+                  },
+                  style: { width: title.width || `${98 / this.tableKeys.length}%` },
                 },
-                style: { width: title.width || `${98 / this.tableKeys.length}%` },
-              }, title.width ? title.text : title)),
+                [title.width ? title.text : title, m(Icon, { svg: { content: m.trust(icons.sortingArrow) } })],
+              )),
             ),
           }),
           m(infinite, controller.infiniteScrollParams(this.item())),
