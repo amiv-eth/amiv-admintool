@@ -129,11 +129,8 @@ export default class newEvent extends EditView {
       this.form.data.additional_fields = null;
     }
 
-    if (this.form.data.high_priority === true) {
-      this.form.data.priority = 10;
-    } else {
-      this.form.data.priority = 1;
-    }
+    if (this.form.data.high_priority === true) this.form.data.priority = 10;
+    else this.form.data.priority = 1;
     delete this.form.data.high_priority;
 
     // if spots is not set, also remove 'allow_email_signup'
@@ -402,19 +399,6 @@ export default class newEvent extends EditView {
           style: { display: (this.currentpage === 4) ? 'block' : 'none' },
         }, [
           ...this.form.renderSchema(['time_advertising_start', 'time_advertising_end']),
-          // TODO is deactivated now
-          /*
-          m.trust('Priority<br>'),
-          m(Slider, {
-            min: 1,
-            max: 10,
-            stepSize: 1,
-
-            // value: this.data.priority || 1,
-            // onChange: ({ value }) => { this.data.priority = value; },
-          }),
-          */
-
           ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
           // pritority update
           this.form._renderField('high_priority', {
