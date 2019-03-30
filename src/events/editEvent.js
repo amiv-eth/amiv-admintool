@@ -431,7 +431,9 @@ export default class newEvent extends EditView {
         // page 5: images
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+
         }, [
+          m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
           ['thumbnail', 'poster', 'infoscreen'].map(key => [
             this.form.data[`img_${key}`] ? m('img', {
               src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
@@ -443,6 +445,7 @@ export default class newEvent extends EditView {
               accept: 'image/png, image/jpeg',
             })),
           ]),
+
         ]),
         // bottom back & forth
         m('div', {
