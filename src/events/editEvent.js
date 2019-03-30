@@ -86,7 +86,15 @@ export default class newEvent extends EditView {
   }
 
   beforeSubmit() {
-    // Collect images seperate from everything else
+    // Here comes all the processing from the state of our input form into data send to the api.
+    // In particular, we have to:
+    // - remove images from the patch that should not get changed, add images in right format that
+    //   should be changed
+    // - transfer states like add_fields_sbb etc. into actual additional_fields
+    // -
+
+    // Images that should be changed have new_{key} set, this needs to get uploaded to the API
+    // All the other images should be removed from the upload to not overwrite them.
     const images = {};
     ['thumbnail', 'infoscreen', 'poster'].forEach((key) => {
       if (this.form.data[`new_${key}`]) {
@@ -99,6 +107,7 @@ export default class newEvent extends EditView {
     });
 
     // Merge Options for additional fields
+    // This is the scelleton schema:
     const additionalFields = {
       $schema: 'http://json-schema.org/draft-04/schema#',
       additionalProperties: false,
@@ -115,7 +124,6 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('sbb_abo');
     }
-
     if (this.form.data.add_fields_food) {
       additionalFields.properties.food = {
         type: 'string',
@@ -128,7 +136,7 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('food');
     }
-
+    // There can be an arbitrary number of text fields added.
     let i = 0;
     while (`add_fields_text${i}` in this.form.data) {
       const fieldName = `text${i}`;
@@ -141,18 +149,19 @@ export default class newEvent extends EditView {
       delete this.form.data[`add_fields_text${i}`];
       i += 1;
     }
-
+    // Remove our intermediate from states from the the data that is uploaded
     if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
     if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
 
-    // if the properties are empty, we null the whole field, otherwise we send a json string
-    // of the additional fields object
+    // If there are no additional_fields, the properties are empty, and we null the whole field,
+    // otherwise we send a json string of the additional fields object
     if (Object.keys(additionalFields.properties).length > 0) {
       this.form.data.additional_fields = JSON.stringify(additionalFields);
     } else {
       this.form.data.additional_fields = null;
     }
 
+    // Translate state high_priority into a priority for the event
     if (this.form.data.high_priority === true) this.form.data.priority = 10;
     else this.form.data.priority = 1;
     delete this.form.data.high_priority;
@@ -163,7 +172,7 @@ export default class newEvent extends EditView {
       delete this.form.data.allow_email_signup;
     }
 
-    // Propose <=> Submit desicion due to rights
+    // Propose Eveent <=> Submit Changes dependent on the user rights
     if (this.rightSubmit) {
       // Submition tool
       if (Object.keys(images).length > 0) {
@@ -215,17 +224,39 @@ export default class newEvent extends EditView {
   view() {
     if (!this.form.schema) return m(loadingScreen);
 
-    // load image urls
+    // load image urls from the API data
     ['thumbnail', 'poster', 'infoscreen'].forEach((key) => {
       const img = this.form.data[`img_${key}`];
       if (typeof (img) === 'object' && img !== null && 'file' in img) {
+        // the data from the API has a weird format, we only need the url to display the image
         this.form.data[`img_${key}`] = `${apiUrl}${img.file}`;
       }
     });
 
+    // Define the number of Tabs and their titles
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
+    // Data fields of the event in the different tabs. Ordered the same way as the titles
+    const keysPages = [[
+      'title_en',
+      'catchphrase_en',
+      'description_en',
+      'title_de',
+      'catchphrase_de',
+      'description_de',
+    ],
+    ['time_start', 'time_end', 'location'],
+    ['price', 'spots', 'time_register_start', 'time_register_end'],
+    ['time_advertising_start', 'time_advertising_end'],
+    [],
+    ];
+    // Look which Tabs have errors
+    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
+      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
+      return false;
+    }).includes(true));
 
+    // Navigation Buttons to go to next/previous page
     const buttonRight = m(Button, {
       label: m('div.pe-button__label', m(Icon, {
         svg: { content: m.trust(icons.ArrowRight) },
@@ -237,7 +268,6 @@ export default class newEvent extends EditView {
       className: 'nav-button',
       events: { onclick: () => { this.currentpage = Math.min(this.currentpage + 1, 5); } },
     });
-
     const buttonLeft = m(Button, {
       label: m('div.pe-button__label', m(Icon, {
         svg: { content: m.trust(icons.ArrowLeft) },
@@ -249,6 +279,7 @@ export default class newEvent extends EditView {
       className: 'nav-button',
       events: { onclick: () => { this.currentpage = Math.max(1, this.currentpage - 1); } },
     });
+
 
     const radioButtonSelectionMode = m(RadioGroup, {
       name: 'Selection Mode',
@@ -269,24 +300,7 @@ export default class newEvent extends EditView {
       value: this.selection_strategy,
     });
 
-    const keysPages = [[
-      'title_en',
-      'catchphrase_en',
-      'description_en',
-      'title_de',
-      'catchphrase_de',
-      'description_de',
-    ],
-    ['time_start', 'time_end', 'location'],
-    ['price', 'spots', 'time_register_start', 'time_register_end'],
-    ['time_advertising_start', 'time_advertising_end'],
-    [],
-    ];
-    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
-      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
-      return false;
-    }).includes(true));
-
+    // Processing for additional text fields users have to fill in for the signup.
     const addFieldsText = [];
     let i = 0;
     while (`add_fields_text${i}` in this.form.data) {
@@ -386,6 +400,7 @@ export default class newEvent extends EditView {
             onChange: ({ checked }) => {
               this.hasregistration = checked;
               if (!checked) {
+                // remove all the data connected to registration
                 delete this.form.data.spots;
                 delete this.form.data.time_register_start;
                 delete this.form.data.time_register_end;
@@ -495,7 +510,7 @@ export default class newEvent extends EditView {
           ]),
 
         ]),
-        // bottom back & forth
+        // bottom back & forth Buttons
         m('div', {
           style: {
             display: 'flex',
