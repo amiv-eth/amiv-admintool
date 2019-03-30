@@ -36,7 +36,7 @@ const styles = [
       bottom: 0,
       left: 0,
       right: 0,
-      'font-size': '24px',
+      'font-size': '16px',
       display: 'flex',
       'justify-content': 'center',
       'align-items': 'center',
@@ -234,9 +234,11 @@ export default class newEvent extends EditView {
       const img = this.form.data[`img_${key}`];
       if (typeof (img) === 'object' && img !== null && 'file' in img) {
         // the data from the API has a weird format, we only need the url to display the image
-        this.form.data[`img_${key}`] = `${apiUrl}${img.file}`;
+        this.form.data[`img_${key}`] = { url: `${apiUrl}${img.file}` };
       }
     });
+
+    console.log(this.form.errors, this.form.valid);
 
     // Define the number of Tabs and their titles
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
@@ -480,7 +482,7 @@ export default class newEvent extends EditView {
                 // inside, we display the image. if it has a wrong aspect ratio, grey areas
                 // from the imgPlaceholder will be visible behind the image
                 this.form.data.img_poster ? m('div.imgBackground', {
-                  style: { 'background-image': `url(${this.form.data.img_poster})` },
+                  style: { 'background-image': `url(${this.form.data.img_poster.url})` },
                 // Placeholder in case that there is no image
                 }) : m('div', 'No Poster'),
               ]),
@@ -499,7 +501,7 @@ export default class newEvent extends EditView {
                 // inside, we display the image. if it has a wrong aspect ratio, grey areas
                 // from the imgPlaceholder will be visible behind the image
                 this.form.data.img_infoscreen ? m('div.imgBackground', {
-                  style: { 'background-image': `url(${this.form.data.img_infoscreen})` },
+                  style: { 'background-image': `url(${this.form.data.img_infoscreen.url})` },
                   // Placeholder in case that there is no image
                 }) : m('div', 'No Infoscreen Image'),
               ]),
@@ -518,7 +520,7 @@ export default class newEvent extends EditView {
                 // inside, we display the image. if it has a wrong aspect ratio, grey areas
                 // from the imgPlaceholder will be visible behind the image
                 this.form.data.img_thumbnail ? m('div.imgBackground', {
-                  style: { 'background-image': `url(${this.form.data.img_thumbnail})` },
+                  style: { 'background-image': `url(${this.form.data.img_thumbnail.url})` },
                   // Placeholder in case that there is no image
                 }) : m('div', 'No Thumbnail'),
               ]),
@@ -541,10 +543,11 @@ export default class newEvent extends EditView {
                 // if a new image file is selected, we display it using a data encoded url
                 const reader = new FileReader();
                 reader.onload = ({ target: { result } }) => {
-                  this.form.data[`img_${key}`] = result;
+                  this.form.data[`img_${key}`] = { url: result };
                   m.redraw();
                 };
                 reader.readAsDataURL(value);
+                this.form.data[`new_${key}`] = value;
               },
             })),
           ]),
