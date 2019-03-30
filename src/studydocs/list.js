@@ -16,7 +16,7 @@ export default class StudydocTable {
     return [
       m('div', { style: { width: 'calc(100% - 36em)' } }, data.title),
       m('div', { style: { width: '8em' } }, data.author),
-      m('div', { style: { width: '4em' } }, data.year),
+      m('div', { style: { width: '4em' } }, data.course_year),
       m('div', { style: { width: '4em' } }, data.semester),
       m('div', { style: { width: '10em' } }, data.lecture),
       m('div', { style: { width: '10em' } }, data.files.map((file) => {
