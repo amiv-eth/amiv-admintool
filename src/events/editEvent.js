@@ -450,27 +450,33 @@ export default class newEvent extends EditView {
 
         }, [
           m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
+          // Work-in-progress example for thumbnail
           m('div', { style: { width: '90%', display: 'flex' } }, [
+            // imgPlaceholder has exactly a 1:1 aspect ratio
             m('div.imgPlaceholder', { style: { width: '30%', 'padding-bottom': '30%' } }, [
-              this.form.data[`img_thumbnail`] ?
-                m('div', { style: {
-                  'background-image': `url(${this.form.data[`img_thumbnail`]})`,
-                  'background-size': 'contain',
-                  'background-position': 'center',
-                  'background-repeat': 'no-repeat',
-                }}) : m('div', 'Thumbnail'),
+              // inside, we display the image. if it has a wrong aspect ratio, grey areas
+              // from the imgPlaceholder will be visible behind the image
+              this.form.data.img_thumbnail ?
+                m('div', {
+                  style: {
+                    'background-image': `url(${this.form.data.img_thumbnail})`,
+                    'background-size': 'contain',
+                    'background-position': 'center',
+                    'background-repeat': 'no-repeat',
+                  },
+                // Placeholder in case that there is no image
+                }) : m('div', 'No Thumbnail'),
             ]),
           ]),
+          // old stuff, goes through all images
           ['thumbnail', 'poster', 'infoscreen'].map(key => [
-            this.form.data[`img_${key}`] ? m('img', {
-              src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
-              style: { 'max-height': '50px', 'max-width': '100px' },
-            }) : m('div', `currently no ${key} image set`),
+            // input to upload a new image
             m(FileInput, this.form.bind({
               name: `new_${key}`,
               label: `New ${key} Image`,
               accept: 'image/png, image/jpeg',
               onChange: ({ value }) => {
+                // if a new image file is selected, we display it using a data encoded url
                 const reader = new FileReader();
                 reader.onload = ({ target: { result } }) => {
                   this.form.data[`img_${key}`] = result;
@@ -479,6 +485,7 @@ export default class newEvent extends EditView {
                 reader.readAsDataURL(value);
               },
             })),
+            // button to remive the image
             m(Button, {
               className: 'red-row-button',
               borders: false,
