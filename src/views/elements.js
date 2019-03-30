@@ -28,8 +28,8 @@ export const icons = {
 // attrs is the title, children the text
 // therefore, you can call it with m(Property, title, text)
 export class Property {
-  view({ attrs: { title, ...restAttrs }, children }) {
-    return m('div', restAttrs, [
+  view({ attrs: { title, leftAlign = true, ...restAttrs }, children }) {
+    return m('div', { style: { margin: '5px' }, ...restAttrs }, [
       m('span', {
         style: {
           'margin-top': '10px',
@@ -37,7 +37,12 @@ export class Property {
           color: 'rgba(0, 0, 0, 0.54)',
         },
       }, m.trust(title)),
-      m('p', { style: { color: 'rgba(0, 0, 0, 0.87)' } }, children),
+      m('p', {
+        style: {
+          color: 'rgba(0, 0, 0, 0.87)',
+          'text-align': leftAlign ? 'left' : 'right',
+        },
+      }, children),
     ]);
   }
 }

@@ -87,7 +87,6 @@ class ParticipantsSummary {
       hasFood = 'food' in JSON.parse(additionalFields).properties;
     }
 
-
     return m('div', [
       m('div', {
         style: {
@@ -103,29 +102,28 @@ class ParticipantsSummary {
           onclick: () => { this.onlyAccepted = !this.onlyAccepted; },
         }, 'accepted users'),
       ])),
-      hasSBB ? m('div', [
-        m('div', `Without SBB: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'None').length}`),
-        m('div', `With GA: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'GA').length}`),
-        m('div', `With Halbtax: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'Halbtax').length}`),
-        m('div', `With Gleis 7: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'Gleis 7').length}`),
+      hasSBB ? m('div', { style: { display: 'flex' } }, [
+        m(Property, { title: 'Without SBB', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'None').length),
+        m(Property, { title: 'GA', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'GA').length),
+        m(Property, { title: 'Halbtax', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'Halbtax').length),
+        m(Property, { title: 'Gleis 7', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'Gleis 7').length),
       ]) : '',
-      hasFood ? m('div', [
-        m('div', `Omnivors: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Omnivor').length}`),
-        m('div', `Vegis: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Vegi').length}`),
-        m('div', `Vegans: ${filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Vegan').length}`),
+      hasFood ? m('div', { style: { display: 'flex' } }, [
+        m(Property, { title: 'Omnivors', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Omnivor').length),
+        m(Property, { title: 'Vegis', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Vegi').length),
+        m(Property, { title: 'Vegans', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Vegan').length),
       ]) : '',
-      m('input', {
-        style: { float: 'left', width: '200px', height: '20px', margin: '15px 5px' },
-        value: filteredParticipants.map(signup => signup.email).toString().replace(/,/g, '; '),
+      m('textarea', {
+        style: { opacity: '0', width: '0px' },
         id: 'participantsemails',
-      }, ''),
+      }, filteredParticipants.map(signup => signup.email).toString().replace(/,/g, '; ')),
       m(Button, {
         label: 'Copy Emails',
         events: {
