@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { styler } from 'polythene-core-css';
 import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
 import { TabsCSS, ButtonCSS } from 'polythene-css';
@@ -22,6 +23,27 @@ TabsCSS.addStyle('.edit-tabs', {
   color_light_selected: colors.amiv_blue,
   color_light_tab_indicator: colors.amiv_blue,
 });
+
+const styles = [
+  {
+    '.imgPlaceholder': {
+      background: '#999',
+      position: 'relative',
+    },
+    '.imgPlaceholder > div': {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      'font-size': '24px',
+      display: 'flex',
+      'justify-content': 'center',
+      'align-items': 'center',
+    },
+  },
+];
+styler.add('eventEdit', styles);
 
 export default class newEvent extends EditView {
   constructor(vnode) {
@@ -192,6 +214,14 @@ export default class newEvent extends EditView {
 
   view() {
     if (!this.form.schema) return m(loadingScreen);
+
+    // load image urls
+    ['thumbnail', 'poster', 'infoscreen'].forEach((key) => {
+      const img = this.form.data[`img_${key}`];
+      if (typeof (img) === 'object' && img !== null && 'file' in img) {
+        this.form.data[`img_${key}`] = `${apiUrl}${img.file}`;
+      }
+    });
 
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
@@ -418,6 +448,17 @@ export default class newEvent extends EditView {
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
         }, [
+          m('div', { style: { width: '90%', display: 'flex' } }, [
+            m('div.imgPlaceholder', { style: { width: '30%', 'padding-bottom': '30%' } }, [
+              this.form.data[`img_thumbnail`] ?
+                m('div', { style: {
+                  'background-image': `url(${this.form.data[`img_thumbnail`]})`,
+                  'background-size': 'contain',
+                  'background-position': 'center',
+                  'background-repeat': 'no-repeat',
+                }}) : m('div', 'Thumbnail'),
+            ]),
+          ]),
           ['thumbnail', 'poster', 'infoscreen'].map(key => [
             this.form.data[`img_${key}`] ? m('img', {
               src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
@@ -427,6 +468,14 @@ export default class newEvent extends EditView {
               name: `new_${key}`,
               label: `New ${key} Image`,
               accept: 'image/png, image/jpeg',
+              onChange: ({ value }) => {
+                const reader = new FileReader();
+                reader.onload = ({ target: { result } }) => {
+                  this.form.data[`img_${key}`] = result;
+                  m.redraw();
+                };
+                reader.readAsDataURL(value);
+              },
             })),
             m(Button, {
               className: 'red-row-button',
