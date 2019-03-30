@@ -9,10 +9,11 @@ export default class UserEdit extends EditView {
     this.submit(this.form.data);
   }
 
+
   view() {
     if (!this.form.schema) return m(loadingScreen);
     return this.layout([
-      ...this.form.renderSchema(['lastname', 'firstname', 'email', 'nethz']),
+      ...this.form.renderSchema(['lastname', 'firstname', 'email', 'nethz', 'legi']),
       m(TextInput, this.form.bind({
         type: 'password',
         name: 'password',
