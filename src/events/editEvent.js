@@ -41,6 +41,11 @@ const styles = [
       'justify-content': 'center',
       'align-items': 'center',
     },
+    '.imgBackground': {
+      'background-size': 'contain',
+      'background-position': 'center',
+      'background-repeat': 'no-repeat',
+    },
   },
 ];
 styler.add('eventEdit', styles);
@@ -467,20 +472,62 @@ export default class newEvent extends EditView {
           m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
           // Work-in-progress example for thumbnail
           m('div', { style: { width: '90%', display: 'flex' } }, [
-            // imgPlaceholder has exactly a 1:1 aspect ratio
-            m('div.imgPlaceholder', { style: { width: '30%', 'padding-bottom': '30%' } }, [
-              // inside, we display the image. if it has a wrong aspect ratio, grey areas
-              // from the imgPlaceholder will be visible behind the image
-              this.form.data.img_thumbnail ?
-                m('div', {
-                  style: {
-                    'background-image': `url(${this.form.data.img_thumbnail})`,
-                    'background-size': 'contain',
-                    'background-position': 'center',
-                    'background-repeat': 'no-repeat',
-                  },
+            // POSTER
+            m('div', { style: { width: '30%' } }, [
+              m('div', 'Poster'),
+              // imgPlaceholder has exactly a 1:1 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '141%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_poster ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_poster})` },
                 // Placeholder in case that there is no image
+                }) : m('div', 'No Poster'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_poster = null; } },
+              }),
+            ]),
+            // INFOSCREEN
+            m('div', { style: { width: '50%', 'margin-left': '5%' } }, [
+              m('div', 'Infoscreen'),
+              // imgPlaceholder has exactly a 16:9 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '56.25%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_infoscreen ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_infoscreen})` },
+                  // Placeholder in case that there is no image
+                }) : m('div', 'No Infoscreen Image'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_infoscreen = null; } },
+              }),
+            ]),
+            // THUMBNAIL
+            m('div', { style: { width: '10%', 'margin-left': '5%' } }, [
+              m('div', 'Thumbnail'),
+              // imgPlaceholder has exactly a 16:9 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '100%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_thumbnail ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_thumbnail})` },
+                  // Placeholder in case that there is no image
                 }) : m('div', 'No Thumbnail'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_thumbnail = null; } },
+              }),
             ]),
           ]),
           // old stuff, goes through all images
@@ -500,13 +547,6 @@ export default class newEvent extends EditView {
                 reader.readAsDataURL(value);
               },
             })),
-            // button to remive the image
-            m(Button, {
-              className: 'red-row-button',
-              borders: false,
-              label: 'remove',
-              events: { onclick: () => { this.form.data[`img_${key}`] = null; } },
-            }),
           ]),
 
         ]),
