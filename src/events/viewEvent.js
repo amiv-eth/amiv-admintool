@@ -103,7 +103,7 @@ class ParticipantsSummary {
         }, 'accepted users'),
       ])),
       hasSBB ? m('div', { style: { display: 'flex' } }, [
-        m(Property, { title: 'Without SBB', leftAlign: false }, filteredParticipants.filter(signup =>
+        m(Property, { title: 'No SBB', leftAlign: false }, filteredParticipants.filter(signup =>
           signup.additional_fields.sbb_abo === 'None').length),
         m(Property, { title: 'GA', leftAlign: false }, filteredParticipants.filter(signup =>
           signup.additional_fields.sbb_abo === 'GA').length),
