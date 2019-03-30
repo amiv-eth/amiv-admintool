@@ -124,7 +124,8 @@
             "lecture",
             "professor",
             "author",
-            "uploader"
+            "uploader",
+            "department"
         ],
         "notPatchableKeys": ["uploader"]
     }

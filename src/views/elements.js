@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Icon } from 'polythene-mithril';
+import { Chip } from 'amiv-web-ui-components';
 
 export const icons = {
   search: '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>',
@@ -28,8 +28,8 @@ export const icons = {
 // attrs is the title, children the text
 // therefore, you can call it with m(Property, title, text)
 export class Property {
-  view({ attrs: { title, ...restAttrs }, children }) {
-    return m('div', restAttrs, [
+  view({ attrs: { title, leftAlign = true, ...restAttrs }, children }) {
+    return m('div', { style: { margin: '5px' }, ...restAttrs }, [
       m('span', {
         style: {
           'margin-top': '10px',
@@ -37,7 +37,12 @@ export class Property {
           color: 'rgba(0, 0, 0, 0.54)',
         },
       }, m.trust(title)),
-      m('p', { style: { color: 'rgba(0, 0, 0, 0.87)' } }, children),
+      m('p', {
+        style: {
+          color: 'rgba(0, 0, 0, 0.87)',
+          'text-align': leftAlign ? 'left' : 'right',
+        },
+      }, children),
     ]);
   }
 }
@@ -55,46 +60,6 @@ export class selectGroup {
   }
 }
 
-export class chip {
-  view({
-    attrs: {
-      svg,
-      background = '#ffffff',
-      textColor = '#000000',
-      svgColor = '#000000',
-      svgBackground = '#dddddd',
-      ...attrs
-    },
-    children,
-  }) {
-    return m('div', {
-      style: {
-        height: '32px',
-        'background-color': background,
-        color: textColor,
-        'border-radius': '16px',
-        // if there is a border, things are weirdly shifted
-        padding: attrs.border ? '3px 8px 4px 6px' : '4px 8px',
-        display: 'inline-flex',
-        ...attrs,
-      },
-      ...attrs.onclick ? { onclick: attrs.onclick } : {},
-    }, [
-      svg && m('div', {
-        style: {
-          'background-color': svgBackground,
-          'border-radius': '12px',
-          margin: '0px 4px 0px -2px',
-          height: '24px',
-          width: '24px',
-          padding: '2px 2px 2px 4px',
-        },
-      }, m(Icon, { svg: { content: m.trust(svg) }, size: 'small', style: { svgColor } })),
-      m('div', { style: { 'line-height': '24px' } }, children),
-    ]);
-  }
-}
-
 export class submitButton {
   view({ attrs: { args, active, text } }) {
     const argsCopy = args;
@@ -102,5 +67,21 @@ export class submitButton {
       argsCopy.disabled = 'disabled';
     }
     return m('div.btn', argsCopy, text);
+  }
+}
+
+export class FilterChip {
+  view({ attrs: { selected = false, onclick = () => { } }, children }) {
+    return m(Chip, {
+      'margin-left': '5px',
+      'margin-right': '5px',
+      background: selected ? '#aaaaaa' : '#dddddd',
+      svgBackground: '#aaaaaa',
+      textColor: selected ? '#000000' : '#999999',
+      svgColor: '#000000',
+      svg: selected ? icons.checked : null,
+      onclick,
+      onClick: onclick,
+    }, children);
   }
 }

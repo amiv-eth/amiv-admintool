@@ -1,15 +1,8 @@
 import m from 'mithril';
-import {
-  Switch,
-  Toolbar,
-  ToolbarTitle,
-  Card,
-  TextField,
-  Button,
-} from 'polythene-mithril';
+import { Toolbar, ToolbarTitle, Card, Button } from 'polythene-mithril';
 import Stream from 'mithril/stream';
 import { styler } from 'polythene-core-css';
-import { DropdownCard, DatalistController } from 'amiv-web-ui-components';
+import { DropdownCard, DatalistController, Chip } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
@@ -17,7 +10,7 @@ import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
 import { dateFormatter } from '../utils';
-import { icons, Property, chip } from '../views/elements';
+import { Property, FilterChip, icons } from '../views/elements';
 import { ResourceHandler } from '../auth';
 import { colors } from '../style';
 
@@ -67,6 +60,80 @@ class DuoLangProperty {
         m('p', en),
       ]) : '',
     );
+  }
+}
+
+class ParticipantsSummary {
+  constructor() {
+    this.onlyAccepted = true;
+  }
+
+  view({ attrs: { participants, additionalFields = "{'properties': {}}" } }) {
+    // Parse the JSON from additional fields into an object
+    const parsedParticipants = participants.map(signup => ({
+      ...signup,
+      additional_fields: signup.additional_fields ?
+        JSON.parse(signup.additional_fields) : {},
+    }));
+    // Filter if only accepted participants should be shown
+    const filteredParticipants = parsedParticipants.filter(participant =>
+      (this.onlyAccepted ? participant.accepted : true));
+
+    // check which additional fields should get summarized
+    let hasSBB = false;
+    let hasFood = false;
+    if (additionalFields) {
+      hasSBB = 'sbb_abo' in JSON.parse(additionalFields).properties;
+      hasFood = 'food' in JSON.parse(additionalFields).properties;
+    }
+
+    return m('div', [
+      m('div', {
+        style: {
+          height: '50px',
+          'overflow-x': 'auto',
+          'overflow-y': 'hidden',
+          'white-space': 'nowrap',
+          padding: '0px 5px',
+        },
+      }, [].concat(['Filters: '], ...[
+        m(FilterChip, {
+          selected: this.onlyAccepted,
+          onclick: () => { this.onlyAccepted = !this.onlyAccepted; },
+        }, 'accepted users'),
+      ])),
+      hasSBB ? m('div', { style: { display: 'flex' } }, [
+        m(Property, { title: 'No SBB', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'None').length),
+        m(Property, { title: 'GA', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'GA').length),
+        m(Property, { title: 'Halbtax', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'Halbtax').length),
+        m(Property, { title: 'Gleis 7', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.sbb_abo === 'Gleis 7').length),
+      ]) : '',
+      hasFood ? m('div', { style: { display: 'flex' } }, [
+        m(Property, { title: 'Omnivors', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Omnivor').length),
+        m(Property, { title: 'Vegis', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Vegi').length),
+        m(Property, { title: 'Vegans', leftAlign: false }, filteredParticipants.filter(signup =>
+          signup.additional_fields.food === 'Vegan').length),
+      ]) : '',
+      m('textarea', {
+        style: { opacity: '0', width: '0px' },
+        id: 'participantsemails',
+      }, filteredParticipants.map(signup => signup.email).toString().replace(/,/g, '; ')),
+      m(Button, {
+        label: 'Copy Emails',
+        events: {
+          onclick: () => {
+            document.getElementById('participantsemails').select();
+            document.execCommand('copy');
+          },
+        },
+      }),
+    ]);
   }
 }
 
@@ -182,15 +249,6 @@ class ParticipantsTable {
   }
 }
 
-class EmailList {
-  view({ attrs: { list } }) {
-    const emails = list.toString().replace(/,/g, '; ');
-    return m(Card, {
-      content: m(TextField, { value: emails, label: '', multiLine: true }, ''),
-    });
-  }
-}
-
 export default class viewEvent extends ItemView {
   constructor(vnode) {
     super(vnode);
@@ -201,30 +259,14 @@ export default class viewEvent extends ItemView {
     this.description = false;
     this.advertisement = false;
     this.registration = false;
-    this.emailAdresses = false;
-    this.emaillist = [''];
-    this.showAllEmails = false;
+    this.allParticipants = [];
     this.modalDisplay = Stream('none');
   }
 
   oninit() {
-    this.setUpEmailList(this.showAllEmails);
+    this.signupCtrl.setQuery({ where: { event: this.data._id } });
+    this.signupCtrl.getFullList().then((list) => { this.allParticipants = list; });
   }
-
-  setUpEmailList(showAll) {
-    // setup where query
-    const where = { event: this.data._id };
-    if (!showAll) {
-      // only show accepted
-      where.accepted = true;
-    }
-    this.signupCtrl.setQuery({ where });
-    this.signupCtrl.getFullList().then((list) => {
-      this.emaillist = (list.map(item => item.email));
-      m.redraw();
-    });
-  }
-
 
   cloneEvent() {
     const event = Object.assign({}, this.data);
@@ -285,10 +327,12 @@ export default class viewEvent extends ItemView {
       ]),
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
-        ('signup_count' in this.data && this.data.signup_count !== null) && m(Property, {
-          style: stdMargin,
-          title: 'Signups',
-        }, `${this.data.signup_count} / ${displaySpots}`),
+        (this.data.spots !== null && 'signup_count' in this.data
+         && this.data.signup_count !== null) ?
+          m(Property, {
+            style: stdMargin,
+            title: 'Signups',
+          }, `${this.data.signup_count} / ${displaySpots}`) : '',
         this.data.location && m(Property, {
           style: stdMargin,
           title: 'Location',
@@ -316,16 +360,16 @@ export default class viewEvent extends ItemView {
 
           m(DropdownCard, { title: 'advertisement', style: { margin: '10px 0' } }, [
             [
-              m(chip, {
+              m(Chip, {
                 svg: this.data.show_annonce ? icons.checked : icons.clear,
                 border: '1px #aaaaaa solid',
               }, 'announce'),
-              m(chip, {
+              m(Chip, {
                 svg: this.data.show_infoscreen ? icons.checked : icons.clear,
                 border: '1px #aaaaaa solid',
                 margin: '4px',
               }, 'infoscreen'),
-              m(chip, {
+              m(Chip, {
                 svg: this.data.show_website ? icons.checked : icons.clear,
                 border: '1px #aaaaaa solid',
               }, 'website'),
@@ -365,17 +409,13 @@ export default class viewEvent extends ItemView {
           ]),
 
           // a list of email adresses of all participants, easy to copy-paste
-          m(DropdownCard, { title: 'Email Adresses', style: { margin: '10px 0' } }, [
-            m(Switch, {
-              defaultChecked: false,
-              label: 'show unaccepted',
-              onChange: () => {
-                this.showAllEmails = !this.showAllEmails;
-                this.setUpEmailList(this.showAllEmails);
-              },
-            }),
-            m(EmailList, { list: this.emaillist }),
-          ]),
+          this.data.spots !== null ? m(DropdownCard, {
+            title: 'Participants Summary',
+            style: { margin: '10px 0' },
+          }, m(ParticipantsSummary, {
+            participants: this.allParticipants,
+            additionalFields: this.data.additional_fields,
+          })) : '',
 
           m(DropdownCard, { title: 'Images' }, [
             m('div', {
