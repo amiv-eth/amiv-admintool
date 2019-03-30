@@ -37,9 +37,7 @@ export default class newEvent extends EditView {
       console.log(data);
       this.form.data = data;
     }
-
-
-    if (!this.form.data.priority) this.form.data.priority = 1;
+    if (this.form.data.priority === 10) this.form.data.high_priority = true;
 
     // read additional_fields to make it editable
     if (this.form.data.additional_fields) {
@@ -130,6 +128,10 @@ export default class newEvent extends EditView {
     } else {
       this.form.data.additional_fields = null;
     }
+
+    if (this.form.data.high_priority === true) this.form.data.priority = 10;
+    else this.form.data.priority = 1;
+    delete this.form.data.high_priority;
 
     // if spots is not set, also remove 'allow_email_signup'
     if (!('spots' in this.form.data) && 'allow_email_signup' in this.form.data
@@ -372,6 +374,8 @@ export default class newEvent extends EditView {
             type: 'boolean',
             label: 'SBB Abonnement',
           }),
+
+
           m('br'),
           ...this.hasregistration && addFieldsText,
           m('br'),
@@ -395,24 +399,19 @@ export default class newEvent extends EditView {
           style: { display: (this.currentpage === 4) ? 'block' : 'none' },
         }, [
           ...this.form.renderSchema(['time_advertising_start', 'time_advertising_end']),
-          // TODO is deactivated now
-          /*
-          m.trust('Priority<br>'),
-          m(Slider, {
-            min: 1,
-            max: 10,
-            stepSize: 1,
-
-            // value: this.data.priority || 1,
-            // onChange: ({ value }) => { this.data.priority = value; },
-          }),
-          */
           ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
+          // pritority update
+          this.form._renderField('high_priority', {
+            type: 'boolean',
+            label: 'Set high Priority',
+          }),
           m('div', 'Please send your announce text additionally via email to info@amiv.ch ' +
           'until the new announce tool is ready.'),
           m('div', 'Please send an email to info@amiv.ch in order to show your event on' +
             'the infoscreen until the new infoscreen tool is ready.'),
+
         ]),
+
         // page 5: images
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
