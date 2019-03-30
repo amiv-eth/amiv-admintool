@@ -131,7 +131,7 @@ export default class newEvent extends EditView {
 
     if (this.form.data.high_priority === true) {
       this.form.data.priority = 10;
-    } else {git 
+    } else {
       this.form.data.priority = 1;
     }
     delete this.form.data.high_priority;
