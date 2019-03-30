@@ -47,12 +47,12 @@
     },
     "users": {
         "keyDescriptors": {
-            "legi": "Legi Number",
+            "legi": "Legi",
             "firstname": "First Name",
             "lastname": "Last Name",
             "rfid": "RFID",
             "phone": "Phone",
-            "nethz": "nethz Account",
+            "nethz": "nethz",
             "gender": "Gender",
             "department": "Department",
             "email": "Email"

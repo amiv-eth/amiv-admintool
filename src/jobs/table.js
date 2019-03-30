@@ -31,7 +31,7 @@ export default class JobTable {
       keys: [(data.title_de) ? 'title_de' : 'title_en', 'company', 'time_end'],
       tileContent: this.getItemData,
       titles: [
-        { text: 'Titel', width: 'calc(100% - 30em)' },
+        { text: 'Title', width: 'calc(100% - 30em)' },
         { text: 'Company', width: '21em' },
         { text: 'End', width: '9em' },
       ],
