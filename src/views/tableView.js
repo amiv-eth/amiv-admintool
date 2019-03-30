@@ -3,7 +3,7 @@ import infinite from 'mithril-infinite';
 import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
-import { chip, icons } from './elements';
+import { FilterChip } from './elements';
 
 const tableStyles = [
   {
@@ -20,22 +20,6 @@ const tableStyles = [
 ];
 
 styler.add('tableview', tableStyles);
-
-
-class FilterChip {
-  view({ attrs: { selected = false, onclick = () => {} }, children }) {
-    return m(chip, {
-      'margin-left': '5px',
-      'margin-right': '5px',
-      background: selected ? '#aaaaaa' : '#dddddd',
-      svgBackground: '#aaaaaa',
-      textColor: selected ? '#000000' : '#999999',
-      svgColor: '#000000',
-      svg: selected ? icons.checked : null,
-      onclick,
-    }, children);
-  }
-}
 
 export default class TableView {
   /* Shows a table of objects for a given API resource.
