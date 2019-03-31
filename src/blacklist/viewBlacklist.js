@@ -18,7 +18,7 @@ export default class BlacklistTable {
   getItemData(data) {
     return [
       m(
-        'div', { style: { width: '14em' } },
+        'div', { style: { width: '18em' } },
         m(
           'div', { style: { 'font-weight': 'bold' } },
           `${data.user.firstname} ${data.user.lastname}`,
@@ -33,7 +33,8 @@ export default class BlacklistTable {
         data.price && m('div', `price: ${data.price}`),
       ),
       m('div', { style: { 'flex-grow': '100' } }),
-      m('div', !data.end_time && m(Button, {
+      m('div', (!data.end_time &&
+                this.ctrl.handler.rights.includes('POST')) && m(Button, {
         // Button to mark this entry as resolved
         className: 'blue-row-button',
         borders: false,
@@ -51,22 +52,21 @@ export default class BlacklistTable {
           },
         },
       })),
-      // m('div', { style: { width: '9em' } }, dateFormatter(data.time_start)),
-      // m('div', { style: { width: '9em' } }, dateFormatter(data.time_end)),
     ];
   }
 
   view() {
     return m(TableView, {
+      clickOnRows: false,
       controller: this.ctrl,
-      keys: ['user'],
+      keys: [],
       tileContent: data => this.getItemData(data),
       titles: [
-        // { text: 'User', width: '18em' },
-        // { text: 'mail', width: '9em' },
-        // // { text: 'End', width: '9em' },
+        { text: 'User', width: '18em' },
+        { text: 'Detail', width: '9em' },
       ],
-      onAdd: () => { m.route.set('/newblacklistentry'); },
+      onAdd: (this.ctrl.handler.rights.includes('POST')) ?
+        () => { m.route.set('/newblacklistentry'); } : false,
     });
   }
 }
