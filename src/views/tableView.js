@@ -40,6 +40,7 @@ export default class TableView {
   constructor({// 62 69 213 220-222
     attrs: {
       keys,
+      titles,
       tileContent,
       filters = null,
       clickOnRows = (data) => { m.route.set(`/${data._links.self.href}`); },
@@ -48,6 +49,7 @@ export default class TableView {
   }) {
     this.search = '';
     this.tableKeys = keys || [];
+    this.tableTitles = titles;
     this.tileContent = tileContent;
     this.clickOnRows = clickOnRows;
     this.clickOnTitles = clickOnTitles;
@@ -112,10 +114,13 @@ export default class TableView {
   arrowOrNot(controller, title) {
     const titleText = title.width ? title.text : title;
     if (!controller.sort) return false;
-    if (controller.sort[0][0] === 'semester' && titleText === 'Sem.') return true;
-    if (controller.sort[0][0] === 'firstname' && titleText === 'First Name') return true;
-    if (controller.sort[0][0] === 'lastname' && titleText === 'Last Name') return true;
-    return ((controller.sort[0][0]).toUpperCase().includes(titleText.toUpperCase()));
+    let i;
+    for (i = 0; i < this.tableTitles.length; i += 1) {
+      const tableTitlei = this.tableTitles[i].width ?
+        this.tableTitles[i].text : this.tableTitles[i];
+      if (tableTitlei === titleText) break;
+    }
+    return this.tableKeys[i] === controller.sort[0][0];
   }
 
   view({
