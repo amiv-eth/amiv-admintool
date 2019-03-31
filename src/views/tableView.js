@@ -3,7 +3,7 @@ import infinite from 'mithril-infinite';
 import { List, ListTile, Toolbar, Search, Button, Icon } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
-import { FilterChip } from './elements';
+import { FilterChip, icons } from './elements';
 
 const tableStyles = [
   {
