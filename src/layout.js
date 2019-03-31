@@ -158,6 +158,11 @@ export class Layout {
                 icon: icons.studydoc,
                 title: 'Studydocs',
               }),
+              m(Menupoint, {
+                href: '/blacklist',
+                icon: icons.blacklist,
+                title: 'Blacklist',
+              }),
             ],
           }),
         ),

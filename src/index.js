@@ -2,6 +2,8 @@ import m from 'mithril';
 import { OauthRedirect } from './auth';
 import GroupList from './groups/list';
 import GroupItem from './groups/item';
+import BlacklistTable from './blacklist/viewBlacklist';
+import NewBlacklist from './blacklist/editBlacklist';
 import { UserItem, UserTable } from './users/userTool';
 import MembershipView from './membershipTool';
 import EventTable from './events/table';
@@ -36,6 +38,8 @@ m.route(root, '/events', {
   '/groups': layoutWith(GroupList),
   '/groups/:id': layoutWith(GroupItem),
   '/newgroup': layoutWith(GroupItem),
+  '/blacklist': layoutWith(BlacklistTable),
+  '/newblacklistentry': layoutWith(NewBlacklist),
   '/oauthcallback': OauthRedirect,
   '/joboffers': layoutWith(JobTable),
   '/newjoboffer': layoutWith(JobItem),
