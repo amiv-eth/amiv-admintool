@@ -59,7 +59,7 @@ export default class BlacklistTable {
     return m(TableView, {
       clickOnRows: false,
       controller: this.ctrl,
-      keys: [],
+      keys: [null, null],
       tileContent: data => this.getItemData(data),
       titles: [
         { text: 'User', width: '18em' },

@@ -25,11 +25,11 @@ export default class EventTable {
     ];
   }
 
-  view(data) {
+  view() {
     const now = new Date();
     return m(TableView, {
       controller: this.ctrl,
-      keys: [(data.titel_de) ? 'titel_de' : 'titel_en', 'time_start', 'time_end'],
+      keys: ['titel_en', 'time_start', 'time_end'],
       tileContent: this.getItemData,
       titles: [
         { text: 'Titel', width: 'calc(100% - 18em)' },

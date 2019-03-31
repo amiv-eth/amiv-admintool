@@ -37,7 +37,7 @@ export default class TableView {
    *       A filter can have properties 'name', 'query' and optionally 'selected' for
    *       the initial selection state.
    */
-  constructor({// 62 69 213 220-222
+  constructor({
     attrs: {
       keys,
       titles,
@@ -111,6 +111,7 @@ export default class TableView {
     return Object.assign({}, ...selectedFilters);
   }
 
+  // Display an arrow at the table title that allows sorting
   arrowOrNot(controller, title) {
     const titleText = title.width ? title.text : title;
     if (!controller.sort) return false;
@@ -216,8 +217,9 @@ export default class TableView {
               titles.map((title, i) => m(
                 'div', {
                   onclick: () => {
-                    if (title.text === 'Files') return;
-                    if (this.clickOnTitles) this.clickOnTitles(controller, this.tableKeys[i]);
+                    if (this.clickOnTitles && this.tableKeys[i]) {
+                      this.clickOnTitles(controller, this.tableKeys[i]);
+                    }
                   },
                   style: { width: title.width || `${98 / this.tableKeys.length}%` },
                 },
