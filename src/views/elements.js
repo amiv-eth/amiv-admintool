@@ -22,6 +22,7 @@ export const icons = {
   studydoc: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>',
   blacklist: '<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#000000" d="M22.5,2.09C21.6,3 20.13,3.73 18.31,4.25C16.59,2.84 14.39,2 12,2C9.61,2 7.41,2.84 5.69,4.25C3.87,3.73 2.4,3 1.5,2.09C1.53,3.72 2.35,5.21 3.72,6.4C2.63,8 2,9.92 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,9.92 21.37,8 20.28,6.4C21.65,5.21 22.47,3.72 22.5,2.09M7.5,8.5L10.5,10C10.5,10.8 9.8,11.5 9,11.5C8.2,11.5 7.5,10.8 7.5,10V8.5M12,17.23C10.25,17.23 8.71,16.5 7.81,15.42L9.23,14C9.68,14.72 10.75,15.23 12,15.23C13.25,15.23 14.32,14.72 14.77,14L16.19,15.42C15.29,16.5 13.75,17.23 12,17.23M16.5,10C16.5,10.8 15.8,11.5 15,11.5C14.2,11.5 13.5,10.8 13.5,10L16.5,8.5V10Z" /></svg>',
   error: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>',
+  sortingArrow: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>',
 };
 
 // Property as specified by material design: small, grey title and larger

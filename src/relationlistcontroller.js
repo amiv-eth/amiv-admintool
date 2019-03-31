@@ -28,6 +28,7 @@ export default class RelationlistController {
     this.query2 = secondaryQuery || {};
     this.filter = null;
     this.filter2 = null;
+    this.sort = null;
     this.includeWithoutRelation = includeWithoutRelation;
     // state pointer that is counted up every time the table is refreshed so
     // we can tell infinite scroll that the data-version has changed.
@@ -63,6 +64,7 @@ export default class RelationlistController {
     query.max_results = 10;
     query.page = pageNum;
     query.where = { ...this.filter, ...this.query.where };
+    query.sort = this.sort || query.sort;
 
     return new Promise((resolve) => {
       this.handler.get(query).then((data) => {
@@ -159,6 +161,11 @@ export default class RelationlistController {
 
   setQuery(query) {
     this.query = Object.assign({}, query, { search: this.query.search });
+    this.refresh();
+  }
+
+  setSort(sort) {
+    this.sort = sort;
     this.refresh();
   }
 }
