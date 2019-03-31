@@ -18,10 +18,11 @@ export function debounce(func, wait, immediate) {
   };
 }
 
-export function dateFormatter(datestring) {
+export function dateFormatter(datestring, time = true) {
   // converts an API datestring into the standard format 01.01.1990, 10:21
   if (!datestring) return '';
   const date = new Date(datestring);
+  if (!time) return date.toLocaleDateString('de-DE');
   return date.toLocaleString('de-DE', {
     day: '2-digit',
     month: '2-digit',

@@ -128,5 +128,11 @@
             "department"
         ],
         "notPatchableKeys": ["uploader"]
+    },
+    "blacklist": {
+        "searchKeys": [
+          "reason",
+          "price"
+        ]
     }
 }

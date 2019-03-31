@@ -16,6 +16,7 @@ const objectNameForResource = {
   events: 'Event',
   studydocuments: 'Study Document',
   joboffers: 'Job Offer',
+  blacklist: 'Blacklist',
 };
 
 export default class EditView extends ItemView {
