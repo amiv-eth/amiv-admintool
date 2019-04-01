@@ -37,7 +37,8 @@
             "priority"
         ],
         "notPatchableKeys": [
-            "signup_count"
+            "signup_count",
+            "unaccepted_count"
         ],
         "searchKeys": [
             "title_de",
