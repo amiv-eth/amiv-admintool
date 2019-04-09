@@ -96,7 +96,7 @@ export default class newEvent extends EditView {
     // - remove images from the patch that should not get changed, add images in right format that
     //   should be changed
     // - transfer states like add_fields_sbb etc. into actual additional_fields
-    // -
+    // - dependent on user rights, either submit to API or create an event proposal link
 
     // Images that should be changed have new_{key} set, this needs to get uploaded to the API
     // All the other images should be removed from the upload to not overwrite them.
@@ -112,7 +112,7 @@ export default class newEvent extends EditView {
     });
 
     // Merge Options for additional fields
-    // This is the scelleton schema:
+    // This is the sceleton schema:
     const additionalFields = {
       $schema: 'http://json-schema.org/draft-04/schema#',
       additionalProperties: false,
@@ -154,7 +154,7 @@ export default class newEvent extends EditView {
       delete this.form.data[`add_fields_text${i}`];
       i += 1;
     }
-    // Remove our intermediate from states from the the data that is uploaded
+    // Remove our intermediate form states from the the data that is uploaded
     if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
     if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
 
@@ -177,7 +177,7 @@ export default class newEvent extends EditView {
       delete this.form.data.allow_email_signup;
     }
 
-    // Propose Eveent <=> Submit Changes dependent on the user rights
+    // Propose Event <=> Submit Changes dependent on the user rights
     if (this.rightSubmit) {
       // Submition tool
       if (Object.keys(images).length > 0) {
@@ -472,7 +472,7 @@ export default class newEvent extends EditView {
 
         }, [
           m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
-          // Work-in-progress example for thumbnail
+          // All images and placeholders are placed next to each other in the following div:
           m('div', { style: { width: '90%', display: 'flex' } }, [
             // POSTER
             m('div', { style: { width: '30%' } }, [
