@@ -239,8 +239,8 @@ export class ResourceHandler {
         if (Object.keys(query).length > 0) url += this.buildQuerystring(query);
         api.get(url).then((response) => {
           if (response.status >= 400) {
-            resetSession();
             Snackbar.show({ title: response.data, style: { color: 'red' } });
+            if (response.status === 401) resetSession();
             reject();
           } else {
             this.rights = response.data._links.self.methods;
@@ -269,6 +269,7 @@ export class ResourceHandler {
             m.route.set('/404');
           } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
+            if (response.status === 401) resetSession();
             reject();
           } else {
             resolve(response.data);
@@ -293,7 +294,7 @@ export class ResourceHandler {
             reject(response.data);
           } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
-            resetSession();
+            if (response.status === 401) resetSession();
             reject();
           } else {
             resolve(response.data);
@@ -330,7 +331,7 @@ export class ResourceHandler {
             reject(response.data);
           } else if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
-            resetSession();
+            if (response.status === 401) resetSession();
             reject();
           } else {
             this.successful('Change successful.');
@@ -352,7 +353,7 @@ export class ResourceHandler {
         }).then((response) => {
           if (response.status >= 400) {
             Snackbar.show({ title: response.data, style: { color: 'red' } });
-            resetSession();
+            if (response.status === 401) resetSession();
             reject();
           } else {
             this.successful('Delete successful.');

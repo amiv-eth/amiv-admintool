@@ -1,9 +1,9 @@
 import m from 'mithril';
 import infinite from 'mithril-infinite';
-import { List, ListTile, Toolbar, Search, Button } from 'polythene-mithril';
+import { List, ListTile, Toolbar, Search, Button, Icon } from 'polythene-mithril';
 import 'polythene-css';
 import { styler } from 'polythene-core-css';
-import { FilterChip } from './elements';
+import { FilterChip, icons } from './elements';
 
 const tableStyles = [
   {
@@ -40,15 +40,19 @@ export default class TableView {
   constructor({
     attrs: {
       keys,
+      titles,
       tileContent,
       filters = null,
       clickOnRows = (data) => { m.route.set(`/${data._links.self.href}`); },
+      clickOnTitles = (controller, title) => { controller.setSort([[title, 1]]); },
     },
   }) {
     this.search = '';
     this.tableKeys = keys || [];
+    this.tableTitles = titles;
     this.tileContent = tileContent;
     this.clickOnRows = clickOnRows;
+    this.clickOnTitles = clickOnTitles;
     this.searchValue = '';
     // make a copy of filters so we can toggle the selected status
     this.filters = filters ? filters.map(filterGroup =>
@@ -107,6 +111,18 @@ export default class TableView {
     return Object.assign({}, ...selectedFilters);
   }
 
+  // Display an arrow at the table title that allows sorting
+  arrowOrNot(controller, title) {
+    const titleText = title.width ? title.text : title;
+    if (!controller.sort) return false;
+    let i;
+    for (i = 0; i < this.tableTitles.length; i += 1) {
+      const tableTitlei = this.tableTitles[i].width ?
+        this.tableTitles[i].text : this.tableTitles[i];
+      if (tableTitlei === titleText) break;
+    }
+    return this.tableKeys[i] === controller.sort[0][0];
+  }
 
   view({
     attrs: {
@@ -192,14 +208,25 @@ export default class TableView {
         tiles: [
           m(ListTile, {
             className: 'tableTile',
+            hoverable: this.clickOnTitles,
             content: m(
               'div',
               { style: { width: '100%', display: 'flex' } },
               // Either titles is a list of titles that are distributed equally,
               // or it is a list of objects with text and width
-              titles.map(title => m('div', {
-                style: { width: title.width || `${98 / this.tableKeys.length}%` },
-              }, title.width ? title.text : title)),
+              titles.map((title, i) => m(
+                'div', {
+                  onclick: () => {
+                    if (this.clickOnTitles && this.tableKeys[i]) {
+                      this.clickOnTitles(controller, this.tableKeys[i]);
+                    }
+                  },
+                  style: { width: title.width || `${98 / this.tableKeys.length}%` },
+                },
+                [title.width ? title.text : title,
+                  this.arrowOrNot(controller, title) ?
+                    m(Icon, { svg: { content: m.trust(icons.sortingArrow) } }) : ''],
+              )),
             ),
           }),
           m(infinite, controller.infiniteScrollParams(this.item())),
@@ -208,4 +235,3 @@ export default class TableView {
     ]);
   }
 }
-
