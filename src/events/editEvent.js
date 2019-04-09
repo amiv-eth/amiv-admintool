@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { styler } from 'polythene-core-css';
 import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
 import { FileInput } from 'amiv-web-ui-components';
 import { TabsCSS, ButtonCSS } from 'polythene-css';
@@ -22,6 +23,32 @@ TabsCSS.addStyle('.edit-tabs', {
   color_light_selected: colors.amiv_blue,
   color_light_tab_indicator: colors.amiv_blue,
 });
+
+const styles = [
+  {
+    '.imgPlaceholder': {
+      background: '#999',
+      position: 'relative',
+    },
+    '.imgPlaceholder > div': {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      'font-size': '16px',
+      display: 'flex',
+      'justify-content': 'center',
+      'align-items': 'center',
+    },
+    '.imgBackground': {
+      'background-size': 'contain',
+      'background-position': 'center',
+      'background-repeat': 'no-repeat',
+    },
+  },
+];
+styler.add('eventEdit', styles);
 
 export default class newEvent extends EditView {
   constructor(vnode) {
@@ -64,17 +91,28 @@ export default class newEvent extends EditView {
   }
 
   beforeSubmit() {
-    // Collect images seperate from everything else
+    // Here comes all the processing from the state of our input form into data send to the api.
+    // In particular, we have to:
+    // - remove images from the patch that should not get changed, add images in right format that
+    //   should be changed
+    // - transfer states like add_fields_sbb etc. into actual additional_fields
+    // - dependent on user rights, either submit to API or create an event proposal link
+
+    // Images that should be changed have new_{key} set, this needs to get uploaded to the API
+    // All the other images should be removed from the upload to not overwrite them.
     const images = {};
     ['thumbnail', 'infoscreen', 'poster'].forEach((key) => {
       if (this.form.data[`new_${key}`]) {
         images[`img_${key}`] = this.form.data[`new_${key}`];
         delete this.form.data[`new_${key}`];
       }
-      if (this.form.data[`img_${key}`] !== undefined) delete this.form.data[`img_${key}`];
+      if (this.form.data[`img_${key}`] !== undefined && this.form.data[`img_${key}`] !== null) {
+        delete this.form.data[`img_${key}`];
+      }
     });
 
     // Merge Options for additional fields
+    // This is the sceleton schema:
     const additionalFields = {
       $schema: 'http://json-schema.org/draft-04/schema#',
       additionalProperties: false,
@@ -91,7 +129,6 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('sbb_abo');
     }
-
     if (this.form.data.add_fields_food) {
       additionalFields.properties.food = {
         type: 'string',
@@ -104,7 +141,7 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('food');
     }
-
+    // There can be an arbitrary number of text fields added.
     let i = 0;
     while (`add_fields_text${i}` in this.form.data) {
       const fieldName = `text${i}`;
@@ -117,18 +154,19 @@ export default class newEvent extends EditView {
       delete this.form.data[`add_fields_text${i}`];
       i += 1;
     }
-
+    // Remove our intermediate form states from the the data that is uploaded
     if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
     if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
 
-    // if the properties are empty, we null the whole field, otherwise we send a json string
-    // of the additional fields object
+    // If there are no additional_fields, the properties are empty, and we null the whole field,
+    // otherwise we send a json string of the additional fields object
     if (Object.keys(additionalFields.properties).length > 0) {
       this.form.data.additional_fields = JSON.stringify(additionalFields);
     } else {
       this.form.data.additional_fields = null;
     }
 
+    // Translate state high_priority into a priority for the event
     if (this.form.data.high_priority === true) this.form.data.priority = 10;
     else this.form.data.priority = 1;
     delete this.form.data.high_priority;
@@ -139,7 +177,7 @@ export default class newEvent extends EditView {
       delete this.form.data.allow_email_signup;
     }
 
-    // Propose <=> Submit desicion due to rights
+    // Propose Event <=> Submit Changes dependent on the user rights
     if (this.rightSubmit) {
       // Submition tool
       if (Object.keys(images).length > 0) {
@@ -191,9 +229,41 @@ export default class newEvent extends EditView {
   view() {
     if (!this.form.schema) return m(loadingScreen);
 
+    // load image urls from the API data
+    ['thumbnail', 'poster', 'infoscreen'].forEach((key) => {
+      const img = this.form.data[`img_${key}`];
+      if (typeof (img) === 'object' && img !== null && 'file' in img) {
+        // the data from the API has a weird format, we only need the url to display the image
+        this.form.data[`img_${key}`] = { url: `${apiUrl}${img.file}` };
+      }
+    });
+
+    console.log(this.form.errors, this.form.valid);
+
+    // Define the number of Tabs and their titles
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
     if (this.rightSubmit) titles.push('Images');
+    // Data fields of the event in the different tabs. Ordered the same way as the titles
+    const keysPages = [[
+      'title_en',
+      'catchphrase_en',
+      'description_en',
+      'title_de',
+      'catchphrase_de',
+      'description_de',
+    ],
+    ['time_start', 'time_end', 'location'],
+    ['price', 'spots', 'time_register_start', 'time_register_end'],
+    ['time_advertising_start', 'time_advertising_end'],
+    [],
+    ];
+    // Look which Tabs have errors
+    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
+      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
+      return false;
+    }).includes(true));
 
+    // Navigation Buttons to go to next/previous page
     const buttonRight = m(Button, {
       label: m('div.pe-button__label', m(Icon, {
         svg: { content: m.trust(icons.ArrowRight) },
@@ -205,7 +275,6 @@ export default class newEvent extends EditView {
       className: 'nav-button',
       events: { onclick: () => { this.currentpage = Math.min(this.currentpage + 1, 5); } },
     });
-
     const buttonLeft = m(Button, {
       label: m('div.pe-button__label', m(Icon, {
         svg: { content: m.trust(icons.ArrowLeft) },
@@ -217,6 +286,7 @@ export default class newEvent extends EditView {
       className: 'nav-button',
       events: { onclick: () => { this.currentpage = Math.max(1, this.currentpage - 1); } },
     });
+
 
     const radioButtonSelectionMode = m(RadioGroup, {
       name: 'Selection Mode',
@@ -237,24 +307,7 @@ export default class newEvent extends EditView {
       value: this.selection_strategy,
     });
 
-    const keysPages = [[
-      'title_en',
-      'catchphrase_en',
-      'description_en',
-      'title_de',
-      'catchphrase_de',
-      'description_de',
-    ],
-    ['time_start', 'time_end', 'location'],
-    ['price', 'spots', 'time_register_start', 'time_register_end'],
-    ['time_advertising_start', 'time_advertising_end'],
-    [],
-    ];
-    const errorPages = keysPages.map(keysOfOnePage => keysOfOnePage.map((key) => {
-      if (this.form.errors && key in this.form.errors) return this.form.errors[key].length > 0;
-      return false;
-    }).includes(true));
-
+    // Processing for additional text fields users have to fill in for the signup.
     const addFieldsText = [];
     let i = 0;
     while (`add_fields_text${i}` in this.form.data) {
@@ -354,6 +407,7 @@ export default class newEvent extends EditView {
             onChange: ({ checked }) => {
               this.hasregistration = checked;
               if (!checked) {
+                // remove all the data connected to registration
                 delete this.form.data.spots;
                 delete this.form.data.time_register_start;
                 delete this.form.data.time_register_end;
@@ -415,20 +469,91 @@ export default class newEvent extends EditView {
         // page 5: images
         m('div', {
           style: { display: (this.currentpage === 5) ? 'block' : 'none' },
+
         }, [
+          m('div', 'Formats for the files: Thumbnail: 1:1, Poster: Any DIN-A, Infoscreen: 16:9'),
+          // All images and placeholders are placed next to each other in the following div:
+          m('div', { style: { width: '90%', display: 'flex' } }, [
+            // POSTER
+            m('div', { style: { width: '30%' } }, [
+              m('div', 'Poster'),
+              // imgPlaceholder has exactly a 1:1 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '141%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_poster ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_poster.url})` },
+                // Placeholder in case that there is no image
+                }) : m('div', 'No Poster'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_poster = null; } },
+              }),
+            ]),
+            // INFOSCREEN
+            m('div', { style: { width: '50%', 'margin-left': '5%' } }, [
+              m('div', 'Infoscreen'),
+              // imgPlaceholder has exactly a 16:9 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '56.25%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_infoscreen ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_infoscreen.url})` },
+                  // Placeholder in case that there is no image
+                }) : m('div', 'No Infoscreen Image'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_infoscreen = null; } },
+              }),
+            ]),
+            // THUMBNAIL
+            m('div', { style: { width: '10%', 'margin-left': '5%' } }, [
+              m('div', 'Thumbnail'),
+              // imgPlaceholder has exactly a 16:9 aspect ratio
+              m('div.imgPlaceholder', { style: { width: '100%', 'padding-bottom': '100%' } }, [
+                // inside, we display the image. if it has a wrong aspect ratio, grey areas
+                // from the imgPlaceholder will be visible behind the image
+                this.form.data.img_thumbnail ? m('div.imgBackground', {
+                  style: { 'background-image': `url(${this.form.data.img_thumbnail.url})` },
+                  // Placeholder in case that there is no image
+                }) : m('div', 'No Thumbnail'),
+              ]),
+              m(Button, {
+                className: 'red-row-button',
+                borders: false,
+                label: 'remove',
+                events: { onclick: () => { this.form.data.img_thumbnail = null; } },
+              }),
+            ]),
+          ]),
+          // old stuff, goes through all images
           ['thumbnail', 'poster', 'infoscreen'].map(key => [
-            this.form.data[`img_${key}`] ? m('img', {
-              src: `${apiUrl}${this.form.data[`img_${key}`].file}`,
-              style: { 'max-height': '50px', 'max-width': '100px' },
-            }) : m('div', `currently no ${key} image set`),
+            // input to upload a new image
             m(FileInput, this.form.bind({
               name: `new_${key}`,
               label: `New ${key} Image`,
               accept: 'image/png, image/jpeg',
+              onChange: ({ value }) => {
+                // if a new image file is selected, we display it using a data encoded url
+                const reader = new FileReader();
+                reader.onload = ({ target: { result } }) => {
+                  this.form.data[`img_${key}`] = { url: result };
+                  m.redraw();
+                };
+                reader.readAsDataURL(value);
+                this.form.data[`new_${key}`] = value;
+              },
             })),
           ]),
+
         ]),
-        // bottom back & forth
+        // bottom back & forth Buttons
         m('div', {
           style: {
             display: 'flex',
