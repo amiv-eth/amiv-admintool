@@ -196,7 +196,6 @@ class ParticipantsTable {
         ...data.user ? [`${data.user.firstname} ${data.user.lastname}`, m('br')] : '',
         data.email,
       ]),
-      m('div', { style: { width: '8em' } }, ...data.user ? data.user.membership : ''),
       m(
         'div', { style: { width: '16em' } },
         m('div', ...data.user ? `Membership: ${data.user.membership}` : ''),
@@ -243,7 +242,6 @@ class ParticipantsTable {
           titles: [
             { text: 'Date of Signup', width: '9em' },
             { text: 'Participant', width: '16em' },
-            { text: 'Membership', width: '8em' },
             { text: 'Additional Info', width: '16em' },
           ],
         }),
