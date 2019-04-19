@@ -342,6 +342,11 @@ export default class viewEvent extends ItemView {
           title: 'Time',
           style: stdMargin,
         }, `${dateFormatter(this.data.time_start)} - ${dateFormatter(this.data.time_end)}`),
+        this.data.moderator && m(Property, {
+          title: 'Moderator',
+          style: stdMargin,
+        }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}
+         (${this.data.moderator.email})`),
       ]),
       // everything else is not listed in DropdownCards, which open only on request
       m('div.viewcontainer', [
