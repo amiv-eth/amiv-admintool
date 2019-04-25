@@ -345,8 +345,8 @@ export default class viewEvent extends ItemView {
         this.data.moderator && m(Property, {
           title: 'Moderator',
           style: stdMargin,
-        }, `${this.data.moderator.firstname} ${this.data.moderator.lastname}
-         (${this.data.moderator.email})`),
+        }, m.trust(`${this.data.moderator.firstname} ${this.data.moderator.lastname}
+         (<a href='mailto:${this.data.moderator.email}'>${this.data.moderator.email}</a>)`)),
       ]),
       // everything else is not listed in DropdownCards, which open only on request
       m('div.viewcontainer', [

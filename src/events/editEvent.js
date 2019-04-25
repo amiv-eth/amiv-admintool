@@ -459,12 +459,17 @@ export default class newEvent extends EditView {
           ...this.hasregistration && this.form.renderSchema(['allow_email_signup']),
           this.hasregistration && radioButtonSelectionMode,
         ]),
-        // page 4: advertisement
+        // PAGE 4: Internal Info
         m('div', {
           style: { display: (this.currentpage === 4) ? 'block' : 'none' },
         }, [
-          m('div', { style: { display: 'flex' } }, [
-            m(TextField, { label: 'Moderator: ', disabled: true, style: { width: '160px' } }),
+          m('div', { style: { display: 'flex', 'margin-top': '5px' } }, [
+            m(TextField, {
+              label: 'Moderator: ',
+              disabled: true,
+              style: { width: '200px' },
+              help: 'Can edit the event and see signups.',
+            }),
             m('div', { style: { 'flex-grow': 1 } }, m(ListSelect, {
               controller: this.userController,
               selection: this.form.data.moderator,

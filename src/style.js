@@ -72,6 +72,9 @@ const style = [
     p: {
       margin: '0',
     },
+    a: {
+      color: 'rgba(0, 0, 0, 0.87)',
+    },
   },
 ];
 styler.add('containers', style);
