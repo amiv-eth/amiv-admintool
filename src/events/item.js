@@ -6,7 +6,7 @@ import { loadingScreen } from '../layout';
 
 export default class EventItem {
   constructor() {
-    this.controller = new ItemController('events');
+    this.controller = new ItemController('events', { moderator: 1 });
   }
 
   view() {

@@ -1,10 +1,13 @@
 import m from 'mithril';
 import { styler } from 'polythene-core-css';
-import { RadioGroup, Switch, Dialog, Button, Tabs, Icon } from 'polythene-mithril';
-import { FileInput } from 'amiv-web-ui-components';
+import {
+  RadioGroup, Switch, Dialog, Button, Tabs, Icon, TextField,
+} from 'polythene-mithril';
+import { FileInput, ListSelect, DatalistController } from 'amiv-web-ui-components';
 import { TabsCSS, ButtonCSS } from 'polythene-css';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl } from 'networkConfig';
+import { ResourceHandler } from '../auth';
 import { colors } from '../style';
 import { loadingScreen } from '../layout';
 import { icons } from '../views/elements';
@@ -54,6 +57,11 @@ export default class newEvent extends EditView {
   constructor(vnode) {
     super(vnode);
     this.currentpage = 1;
+
+    // Create a usercontroller to handle the moderator field
+    this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
+    this.userController = new DatalistController((query, search) =>
+      this.userHandler.get({ search, ...query }));
 
     // check whether the user has the right to create events or can only propose
     this.rightSubmit = !m.route.get().startsWith('/proposeevent');
@@ -171,6 +179,9 @@ export default class newEvent extends EditView {
     else this.form.data.priority = 1;
     delete this.form.data.high_priority;
 
+    // Change moderator from user object to user id
+    if (this.form.data.moderator) this.form.data.moderator = this.form.data.moderator._id;
+
     // if spots is not set, also remove 'allow_email_signup'
     if (!('spots' in this.form.data) && 'allow_email_signup' in this.form.data
         && !this.form.data.allow_email_signup) {
@@ -241,7 +252,7 @@ export default class newEvent extends EditView {
     console.log(this.form.errors, this.form.valid);
 
     // Define the number of Tabs and their titles
-    const titles = ['Event Description', 'When and Where?', 'Signups', 'Advertisement'];
+    const titles = ['Event Description', 'When and Where?', 'Signups', 'Internal Info'];
     if (this.rightSubmit) titles.push('Images');
     // Data fields of the event in the different tabs. Ordered the same way as the titles
     const keysPages = [[
@@ -254,7 +265,7 @@ export default class newEvent extends EditView {
     ],
     ['time_start', 'time_end', 'location'],
     ['price', 'spots', 'time_register_start', 'time_register_end'],
-    ['time_advertising_start', 'time_advertising_end'],
+    ['moderator', 'time_advertising_start', 'time_advertising_end'],
     [],
     ];
     // Look which Tabs have errors
@@ -448,10 +459,28 @@ export default class newEvent extends EditView {
           ...this.hasregistration && this.form.renderSchema(['allow_email_signup']),
           this.hasregistration && radioButtonSelectionMode,
         ]),
-        // page 4: advertisement
+        // PAGE 4: Internal Info
         m('div', {
           style: { display: (this.currentpage === 4) ? 'block' : 'none' },
         }, [
+          m('div', { style: { display: 'flex', 'margin-top': '5px' } }, [
+            m(TextField, {
+              label: 'Moderator: ',
+              disabled: true,
+              style: { width: '200px' },
+              help: 'Can edit the event and see signups.',
+            }),
+            m('div', { style: { 'flex-grow': 1 } }, m(ListSelect, {
+              controller: this.userController,
+              selection: this.form.data.moderator,
+              listTileAttrs: user => Object.assign(
+                {},
+                { title: `${user.firstname} ${user.lastname}` },
+              ),
+              selectedText: user => `${user.firstname} ${user.lastname}`,
+              onSelect: (data) => { this.form.data.moderator = data; },
+            })),
+          ]),
           ...this.form.renderSchema(['time_advertising_start', 'time_advertising_end']),
           ...this.form.renderSchema(['show_website', 'show_announce', 'show_infoscreen']),
           // pritority update
