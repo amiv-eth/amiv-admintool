@@ -198,6 +198,7 @@ class ParticipantsTable {
       ]),
       m(
         'div', { style: { width: '16em' } },
+        m('div', ...data.user ? `Membership: ${data.user.membership}` : ''),
         (additionalFields && this.add_fields_schema) ? Object.keys(additionalFields).map(key =>
           m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`)) : '',
       ),
