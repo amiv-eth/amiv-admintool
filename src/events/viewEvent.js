@@ -280,6 +280,7 @@ export default class viewEvent extends ItemView {
       '_links',
       '_updated',
       'signup_count',
+      'unaccepted_count',
       '__proto__',
     ];
     const now = new Date();

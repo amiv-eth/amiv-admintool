@@ -106,16 +106,18 @@ export default class newEvent extends EditView {
     // - transfer states like add_fields_sbb etc. into actual additional_fields
     // - dependent on user rights, either submit to API or create an event proposal link
 
+    const { data } = JSON.parse(JSON.stringify(this.form));
+
     // Images that should be changed have new_{key} set, this needs to get uploaded to the API
     // All the other images should be removed from the upload to not overwrite them.
     const images = {};
     ['thumbnail', 'infoscreen', 'poster'].forEach((key) => {
       if (this.form.data[`new_${key}`]) {
         images[`img_${key}`] = this.form.data[`new_${key}`];
-        delete this.form.data[`new_${key}`];
+        delete data[`new_${key}`];
       }
-      if (this.form.data[`img_${key}`] !== undefined && this.form.data[`img_${key}`] !== null) {
-        delete this.form.data[`img_${key}`];
+      if (data[`img_${key}`] !== undefined && data[`img_${key}`] !== null) {
+        delete data[`img_${key}`];
       }
     });
 
@@ -129,7 +131,7 @@ export default class newEvent extends EditView {
       properties: {},
       required: [],
     };
-    if (this.form.data.add_fields_sbb) {
+    if (data.add_fields_sbb) {
       additionalFields.properties.sbb_abo = {
         type: 'string',
         title: 'SBB Abonnement',
@@ -137,7 +139,7 @@ export default class newEvent extends EditView {
       };
       additionalFields.required.push('sbb_abo');
     }
-    if (this.form.data.add_fields_food) {
+    if (data.add_fields_food) {
       additionalFields.properties.food = {
         type: 'string',
         title: 'Food',
@@ -151,46 +153,46 @@ export default class newEvent extends EditView {
     }
     // There can be an arbitrary number of text fields added.
     let i = 0;
-    while (`add_fields_text${i}` in this.form.data) {
+    while (`add_fields_text${i}` in data) {
       const fieldName = `text${i}`;
       additionalFields.properties[fieldName] = {
         type: 'string',
         minLength: 1,
-        title: this.form.data[`add_fields_text${i}`],
+        title: data[`add_fields_text${i}`],
       };
       additionalFields.required.push(fieldName);
-      delete this.form.data[`add_fields_text${i}`];
+      delete data[`add_fields_text${i}`];
       i += 1;
     }
     // Remove our intermediate form states from the the data that is uploaded
-    if ('add_fields_sbb' in this.form.data) delete this.form.data.add_fields_sbb;
-    if ('add_fields_food' in this.form.data) delete this.form.data.add_fields_food;
+    if ('add_fields_sbb' in data) delete data.add_fields_sbb;
+    if ('add_fields_food' in data) delete data.add_fields_food;
 
     // If there are no additional_fields, the properties are empty, and we null the whole field,
     // otherwise we send a json string of the additional fields object
     if (Object.keys(additionalFields.properties).length > 0) {
-      this.form.data.additional_fields = JSON.stringify(additionalFields);
+      data.additional_fields = JSON.stringify(additionalFields);
     } else {
-      this.form.data.additional_fields = null;
+      data.additional_fields = null;
     }
 
     // Translate state high_priority into a priority for the event
-    if (this.form.data.high_priority === true) this.form.data.priority = 10;
-    else this.form.data.priority = 1;
-    delete this.form.data.high_priority;
-
-    // Change moderator from user object to user id
-    if (this.form.data.moderator) this.form.data.moderator = this.form.data.moderator._id;
+    if (data.high_priority === true) data.priority = 10;
+    else data.priority = 1;
+    delete data.high_priority;
 
     // if spots is not set, also remove 'allow_email_signup'
-    if (!('spots' in this.form.data) && 'allow_email_signup' in this.form.data
-        && !this.form.data.allow_email_signup) {
-      delete this.form.data.allow_email_signup;
+    if (!('spots' in data) && 'allow_email_signup' in data
+        && !data.allow_email_signup) {
+      delete data.allow_email_signup;
     }
 
     // Propose Event <=> Submit Changes dependent on the user rights
     if (this.rightSubmit) {
       // Submition tool
+
+      // Change moderator from user object to user id
+      if (data.moderator) data.moderator = data.moderator._id;
       if (Object.keys(images).length > 0) {
         const imageForm = new FormData();
         Object.keys(images).forEach(key => imageForm.append(key, images[key]));
@@ -200,7 +202,7 @@ export default class newEvent extends EditView {
           imageForm.append('_etag', _etag);
           this.controller.patch(imageForm, true);
         });
-      } else this.submit(this.form.data);
+      } else this.submit(data);
     } else {
       // Propose tool
       Dialog.show({
