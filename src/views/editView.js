@@ -55,27 +55,33 @@ export default class EditView extends ItemView {
    *                   changes.
    */
   submit(data) {
-    let request;
-    if (this.controller.modus === 'edit') {
-      // this is a patch to an existing item
-      request = this.controller.patch(data);
-    } else {
-      request = this.controller.post(data);
-    }
-    request.catch((error) => {
-      console.log(error);
-      // Process the API error
-      if ('_issues' in error) {
-        // there are problems with some fields, display them
-        Object.keys(error._issues).forEach((field) => {
-          this.form.errors[field] = [error._issues[field]];
-          this.form.valid = false;
-        });
-        console.log(this.form.errors);
-        m.redraw();
+    return new Promise((resolve, reject) => {
+      let request;
+      if (this.controller.modus === 'edit') {
+        // this is a patch to an existing item
+        request = this.controller.patch(data);
       } else {
-        console.log(error);
+        request = this.controller.post(data);
       }
+      request.then((response) => {
+        console.log(response);
+        resolve(response);
+      }).catch((error) => {
+        console.log(error);
+        // Process the API error
+        if ('_issues' in error) {
+          // there are problems with some fields, display them
+          Object.keys(error._issues).forEach((field) => {
+            this.form.errors[field] = [error._issues[field]];
+            this.form.valid = false;
+          });
+          console.log(this.form.errors);
+          m.redraw();
+          reject(error);
+        } else {
+          console.log(error);
+        }
+      });
     });
   }
 

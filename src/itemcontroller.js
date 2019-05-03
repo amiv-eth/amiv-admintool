@@ -27,13 +27,17 @@ export default class ItemController {
       this.handler.post(data).then((response) => {
         this.id = response._id;
         this.changeModus('view');
+        resolve(response);
       }).catch(reject);
     });
   }
 
   patch(data, formData = false) {
     return new Promise((resolve, reject) => {
-      this.handler.patch(data, formData).then(() => { this.changeModus('view'); }).catch(reject);
+      this.handler.patch(data, formData).then((response) => {
+        this.changeModus('view');
+        resolve(response);
+      }).catch(reject);
     });
   }
 

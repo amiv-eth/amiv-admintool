@@ -194,11 +194,11 @@ export default class newEvent extends EditView {
       if (Object.keys(images).length > 0) {
         const imageForm = new FormData();
         Object.keys(images).forEach(key => imageForm.append(key, images[key]));
-        imageForm.append('_id', this.form.data._id);
-        imageForm.append('_etag', this.form.data._etag);
-        // first upload the images as formData, then the rest as JSON
-        this.controller.handler.patch(imageForm).then(({ _etag }) => {
-          this.submit({ ...this.form.data, _etag });
+        // first upload the data as JSON, then the images as form data
+        this.submit(this.form.data).then(({ _id, _etag }) => {
+          imageForm.append('_id', _id);
+          imageForm.append('_etag', _etag);
+          this.controller.patch(imageForm, true);
         });
       } else this.submit(this.form.data);
     } else {
