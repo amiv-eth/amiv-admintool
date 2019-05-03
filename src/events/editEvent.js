@@ -194,13 +194,13 @@ export default class newEvent extends EditView {
       // Change moderator from user object to user id
       if (data.moderator) data.moderator = data.moderator._id;
       if (Object.keys(images).length > 0) {
-        const imageForm = new FormData();
-        Object.keys(images).forEach(key => imageForm.append(key, images[key]));
         // first upload the data as JSON, then the images as form data
-        this.submit(this.form.data).then(({ _id, _etag }) => {
+        this.submit(data).then(({ _id, _etag }) => {
+          const imageForm = new FormData();
+          Object.keys(images).forEach(key => imageForm.append(key, images[key]));
           imageForm.append('_id', _id);
           imageForm.append('_etag', _etag);
-          this.controller.patch(imageForm, true);
+          this.controller.patch(imageForm);
         });
       } else this.submit(data);
     } else {
