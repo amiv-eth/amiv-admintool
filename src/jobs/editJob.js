@@ -22,7 +22,7 @@ export default class newJob extends EditView {
     Object.keys(this.form.data).forEach((key) => {
       submitData.append(key, this.form.data[key]);
     });
-    this.submit(submitData);
+    this.submit(submitData).then(() => this.controller.changeModus('view'));
   }
 
   view() {

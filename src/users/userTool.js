@@ -14,7 +14,9 @@ export class UserItem {
   }
 
   view() {
-    if (!this.controller || !this.controller.data) return m(loadingScreen);
+    if (!this.controller || (!this.controller.data && this.controller.modus !== 'new')) {
+      return m(loadingScreen);
+    }
     if (this.controller.modus !== 'view') return m(EditUser, { controller: this.controller });
     return m(ViewUser, { controller: this.controller });
   }

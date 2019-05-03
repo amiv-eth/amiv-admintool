@@ -47,7 +47,7 @@ export default class editDoc extends EditView {
       if (key !== 'files') submitData.append(key, this.form.data[key]);
     });
     files.forEach((file) => { submitData.append('files', file); });
-    this.submit(submitData);
+    this.submit(submitData).then(() => this.controller.changeModus('view'));
   }
 
   view() {

@@ -10,7 +10,7 @@ export default class ItemController {
       this.modus = 'view';
     } else {
       this.modus = 'new';
-      this.data = {};
+      this.data = undefined;
     }
     this.handler = new ResourceHandler(resource, false);
     this.embedded = embedded || {};
@@ -26,7 +26,6 @@ export default class ItemController {
     return new Promise((resolve, reject) => {
       this.handler.post(data).then((response) => {
         this.id = response._id;
-        this.changeModus('view');
         resolve(response);
       }).catch(reject);
     });
@@ -36,7 +35,6 @@ export default class ItemController {
     return new Promise((resolve, reject) => {
       this.handler.patch(data).then((response) => {
         resolve(response);
-        this.changeModus('view');
       }).catch(reject);
     });
   }

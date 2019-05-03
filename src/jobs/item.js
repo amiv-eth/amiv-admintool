@@ -10,7 +10,9 @@ export default class jobModal {
   }
 
   view() {
-    if (!this.controller || !this.controller.data) return m(loadingScreen);
+    if (!this.controller || (!this.controller.data && this.controller.modus !== 'new')) {
+      return m(loadingScreen);
+    }
     if (this.controller.modus !== 'view') return m(editJob, { controller: this.controller });
     return m(viewJob, { controller: this.controller });
   }

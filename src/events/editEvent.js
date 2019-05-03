@@ -200,9 +200,9 @@ export default class newEvent extends EditView {
           Object.keys(images).forEach(key => imageForm.append(key, images[key]));
           imageForm.append('_id', _id);
           imageForm.append('_etag', _etag);
-          this.controller.patch(imageForm);
+          this.controller.patch(imageForm).then(() => this.controller.changeModus('view'));
         });
-      } else this.submit(data);
+      } else this.submit(data).then(() => this.controller.changeModus('view'));
     } else {
       // Propose tool
       Dialog.show({

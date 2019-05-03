@@ -10,7 +10,9 @@ export default class GroupItem {
   }
 
   view() {
-    if (!this.controller || !this.controller.data) return m(loadingScreen);
+    if (!this.controller || (!this.controller.data && this.controller.modus !== 'new')) {
+      return m(loadingScreen);
+    }
     if (this.controller.modus !== 'view') return m(editGroup, { controller: this.controller });
     return m(viewGroup, { controller: this.controller });
   }

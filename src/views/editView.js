@@ -86,7 +86,7 @@ export default class EditView extends ItemView {
 
   beforeSubmit() {
     if (Object.keys(this.form.data).length > 0) {
-      this.submit(this.form.data);
+      this.submit(this.form.data).then(() => this.controller.changeModus('view'));
     } else {
       this.controller.changeModus('view');
     }

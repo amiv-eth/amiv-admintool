@@ -42,7 +42,9 @@ export default class NewBlacklist extends EditView {
   beforeSubmit() {
     const { data } = this.form;
     // exchange user object with string of id
-    this.submit({ ...data, user: data.user ? data.user._id : undefined });
+    this.submit({ ...data, user: data.user ? data.user._id : undefined }).then(() => {
+      this.controller.changeModus('view');
+    });
   }
 
   view() {
