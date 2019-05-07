@@ -1,11 +1,12 @@
 import m from 'mithril';
 import { Converter } from 'showdown';
 import { Card } from 'polythene-mithril';
+import { Chip } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
 import { dateFormatter } from '../utils';
-import { icons, Property, chip } from '../views/elements';
+import { icons, Property } from '../views/elements';
 
 export default class viewJob extends ItemView {
   constructor(vnode) {
@@ -29,7 +30,7 @@ export default class viewJob extends ItemView {
         }, this.data.company),
       ]),
       m('div.maincontainer', [
-        m(chip, { svg: this.data.show_website ? icons.checked : icons.clear }, 'website'),
+        m(Chip, { svg: this.data.show_website ? icons.checked : icons.clear }, 'website'),
       ]),
       // below the title, most important details are listed
       m('div', { style: { display: 'flex', margin: '5px 0px 0px 5px' } }, [
