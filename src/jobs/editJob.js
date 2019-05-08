@@ -28,7 +28,6 @@ export default class newJob extends EditView {
   view() {
     if (!this.form.schema) return m(loadingScreen);
     return this.layout([
-      m('h3', 'Add a New Job Offer'),
       ...this.form.renderSchema(['company']),
       m(FileInput, this.form.bind({
         name: 'logo',
