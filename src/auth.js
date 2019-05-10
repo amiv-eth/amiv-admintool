@@ -12,12 +12,17 @@ const APISession = {
   authenticated: false,
   token: '',
   userID: null,
+  schema: null,
   rights: {
     users: [],
     joboffers: [],
     studydocuments: [],
   },
 };
+
+if (!APISession.schema) {
+  m.request(`${apiUrl}/docs/api-docs`).then((schema) => { APISession.schema = schema; });
+}
 
 const amivapi = axios.create({
   baseURL: apiUrl,
@@ -126,6 +131,10 @@ export function getCurrentUser() {
 
 export function getUserRights() {
   return APISession.rights;
+}
+
+export function getSchema() {
+  return APISession.schema;
 }
 
 export class ResourceHandler {
