@@ -9,7 +9,6 @@ import { TabsCSS, ButtonCSS } from 'polythene-css';
 import { apiUrl, ownUrl } from 'networkConfig';
 import { ResourceHandler } from '../auth';
 import { colors } from '../style';
-import { loadingScreen } from '../layout';
 import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
@@ -243,8 +242,6 @@ export default class newEvent extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
-
     // load image urls from the API data
     ['thumbnail', 'poster', 'infoscreen'].forEach((key) => {
       const img = this.form.data[`img_${key}`];

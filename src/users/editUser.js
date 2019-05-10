@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { TextInput } from 'amiv-web-ui-components';
-import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 export default class UserEdit extends EditView {
@@ -11,7 +10,6 @@ export default class UserEdit extends EditView {
 
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       ...this.form.renderSchema(['lastname', 'firstname', 'email', 'nethz', 'legi']),
       m(TextInput, this.form.bind({

@@ -2,7 +2,6 @@ import m from 'mithril';
 import { TextField } from 'polythene-mithril';
 import { ListSelect, DatalistController } from 'amiv-web-ui-components';
 import { ResourceHandler } from '../auth';
-import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 class NanoController {
@@ -48,7 +47,6 @@ export default class NewBlacklist extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       m('div', { style: { display: 'flex' } }, [
         m(TextField, { label: 'User: ', disabled: true, style: { width: '160px' } }),

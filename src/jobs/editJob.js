@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { FileInput } from 'amiv-web-ui-components';
-import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 
@@ -26,7 +25,6 @@ export default class newJob extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       ...this.form.renderSchema(['company']),
       m(FileInput, this.form.bind({

@@ -1,11 +1,10 @@
 import m from 'mithril';
 import { IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import { Form } from 'amiv-web-ui-components';
-// eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
 import { icons } from './elements';
 import { colors } from '../style';
+import { getSchema } from '../auth';
 
 // Mapper for resource vs schema-object names
 const objectNameForResource = {
@@ -38,13 +37,8 @@ export default class EditView extends ItemView {
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
     this.form = new Form({}, validInitially, 4, Object.assign({}, this.controller.data));
-  }
-
-  oninit() {
-    // load schema
-    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
-      this.form.setSchema(schema.definitions[objectNameForResource[this.resource]]);
-    }).catch((error) => { console.log(error); });
+    this.form.setSchema(JSON.parse(JSON.stringify(getSchema().definitions[
+      objectNameForResource[this.resource]])));
   }
 
   /**

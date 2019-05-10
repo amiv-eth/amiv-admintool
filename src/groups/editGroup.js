@@ -4,7 +4,6 @@ import { ListSelect, DatalistController, Select } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import { ResourceHandler } from '../auth';
-import { loadingScreen } from '../layout';
 import EditView from '../views/editView';
 
 
@@ -88,7 +87,6 @@ export default class NewGroup extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       ...this.form.renderSchema(['name', 'allow_self_enrollment', 'requires_storage']),
       m('div', { style: { display: 'flex' } }, [
