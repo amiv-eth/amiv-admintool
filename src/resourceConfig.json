@@ -36,10 +36,6 @@
             "show_website",
             "priority"
         ],
-        "notPatchableKeys": [
-            "signup_count",
-            "unaccepted_count"
-        ],
         "searchKeys": [
             "title_de",
             "title_en",
@@ -71,9 +67,6 @@
             "nethz",
             "legi",
             "email"
-        ],
-        "notPatchableKeys": [
-            "password_set"
         ]
     },
     "joboffers":{
@@ -127,8 +120,7 @@
             "author",
             "uploader",
             "department"
-        ],
-        "notPatchableKeys": ["uploader"]
+        ]
     },
     "blacklist": {
         "searchKeys": [

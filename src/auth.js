@@ -162,12 +162,11 @@ export class ResourceHandler {
     this.rights = [];
     this.schema = JSON.parse(JSON.stringify(getSchema().definitions[
       objectNameForResource[this.resource]]));
+    this.noPatchKeys = Object.keys(this.schema.properties).filter(key =>
+      this.schema.properties[key].readOnly);
     // special case for users
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
     else this.searchKeys = searchKeys || config[resource].searchKeys;
-    this.noPatchKeys = [
-      '_etag', '_id', '_created', '_links', '_updated',
-      ...(config[resource].notPatchableKeys || [])];
     checkAuthenticated().then(() => {
       // again special case for users
       if (resource === 'users' && APISession.isUserAdmin) {
