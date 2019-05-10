@@ -137,6 +137,18 @@ export function getSchema() {
   return APISession.schema;
 }
 
+// Mapper for resource vs schema-object names
+const objectNameForResource = {
+  users: 'User',
+  groupmemberships: 'Group Membership',
+  groups: 'Group',
+  eventsignups: 'Event Signup',
+  events: 'Event',
+  studydocuments: 'Study Document',
+  joboffers: 'Job Offer',
+  blacklist: 'Blacklist',
+};
+
 export class ResourceHandler {
   /* Handler to get and manipulate resource items
    *
@@ -148,6 +160,8 @@ export class ResourceHandler {
   constructor(resource, searchKeys = false) {
     this.resource = resource;
     this.rights = [];
+    this.schema = JSON.parse(JSON.stringify(getSchema().definitions[
+      objectNameForResource[this.resource]]));
     // special case for users
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
     else this.searchKeys = searchKeys || config[resource].searchKeys;

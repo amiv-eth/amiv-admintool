@@ -4,19 +4,6 @@ import { Form } from 'amiv-web-ui-components';
 import ItemView from './itemView';
 import { icons } from './elements';
 import { colors } from '../style';
-import { getSchema } from '../auth';
-
-// Mapper for resource vs schema-object names
-const objectNameForResource = {
-  users: 'User',
-  groupmemberships: 'Group Membership',
-  groups: 'Group',
-  eventsignups: 'Event Signup',
-  events: 'Event',
-  studydocuments: 'Study Document',
-  joboffers: 'Job Offer',
-  blacklist: 'Blacklist',
-};
 
 export default class EditView extends ItemView {
   /**
@@ -37,8 +24,7 @@ export default class EditView extends ItemView {
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
     this.form = new Form({}, validInitially, 4, Object.assign({}, this.controller.data));
-    this.form.setSchema(JSON.parse(JSON.stringify(getSchema().definitions[
-      objectNameForResource[this.resource]])));
+    this.form.setSchema(this.handler.schema);
   }
 
   /**
