@@ -47,25 +47,25 @@ export default class UserView extends ItemView {
     let membership = m(Chip, {
       svg: icons.clear,
       svgBackground: colors.amiv_red,
-      ...stdMargin,
+      style: stdMargin,
     }, 'No Member');
     if (this.data.membership === 'regular') {
       membership = m(Chip, {
         svg: icons.checked,
         svgBackground: colors.green,
-        ...stdMargin,
+        style: stdMargin,
       }, 'Regular Member');
     } else if (this.data.membership === 'extraordinary') {
       membership = m(Chip, {
         svg: icons.checked,
         svgBackground: colors.green,
-        ...stdMargin,
+        style: stdMargin,
       }, 'Extraordinary Member');
     } else if (this.data.membership === 'honorary') {
       membership = m(Chip, {
         svg: icons.star,
         svgBackground: colors.orange,
-        ...stdMargin,
+        style: stdMargin,
       }, 'Honorary Member');
     }
 
@@ -96,15 +96,19 @@ export default class UserView extends ItemView {
         membership,
         this.data.department && m(
           Chip,
-          { svg: icons.department, ...stdMargin },
+          { svg: icons.department, style: stdMargin },
           this.data.department,
         ),
-        this.data.gender && m(Chip, { margin: '5px' }, this.data.gender),
+        this.data.gender && m(Chip, { style: stdMargin }, this.data.gender),
+        m(Chip, {
+          svg: this.data.send_newsletter ? icons.checked : icons.clear,
+          style: stdMargin,
+        }, 'newsletter'),
         m('div', { style: { display: 'flex' } }, [
           this.data.nethz && m(Property, { title: 'NETHZ', style: stdMargin }, this.data.nethz),
           this.data.email && m(Property, { title: 'Email', style: stdMargin }, this.data.email),
-          this.data.legi && m(Property, { title: 'Legi', style: stdMargin }, this.data.legi),
-          this.data.rfid && m(Property, { title: 'RFID', style: stdMargin }, this.data.rfid),
+          m(Property, { title: 'Legi', style: stdMargin }, this.data.legi ? this.data.legi : '-'),
+          m(Property, { title: 'RFID', style: stdMargin }, this.data.rfid ? this.data.rfid : '-'),
           this.data.phone && m(Property, { title: 'Phone', style: stdMargin }, this.data.phone),
         ]),
       ]),
@@ -119,7 +123,7 @@ export default class UserView extends ItemView {
               tableHeight: '175px',
               controller: this.eventsignups,
               tileContent: item => m('div', item.event.title_en || item.event.title_de),
-              titles: ['event'],
+              titles: ['Event'],
               clickOnRows: (data) => { m.route.set(`/events/${data.event._id}`); },
               filters: [[{
                 name: 'upcoming',
@@ -149,7 +153,7 @@ export default class UserView extends ItemView {
               tableHeight: '225px',
               controller: this.groupmemberships,
               keys: ['group.name', 'expiry'],
-              titles: ['groupname', 'expiry'],
+              titles: ['Group Name', 'Expires'],
               clickOnRows: (data) => { m.route.set(`/groups/${data.group._id}`); },
             }),
           ]),
