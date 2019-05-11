@@ -10,14 +10,14 @@ export default class UserEdit extends EditView {
 
   view() {
     return this.layout([
-      ...this.form.renderSchema(['lastname', 'firstname', 'email', 'nethz', 'legi']),
+      ...this.form.renderSchema(['lastname', 'firstname', 'email', 'phone', 'nethz', 'legi']),
       m(TextInput, this.form.bind({
         type: 'password',
         name: 'password',
         label: 'New password',
         floatingLabel: true,
       })),
-      ...this.form.renderSchema(['rfid', 'membership', 'gender', 'department']),
+      ...this.form.renderSchema(['rfid', 'send_newsletter', 'membership', 'gender', 'department']),
     ]);
   }
 }

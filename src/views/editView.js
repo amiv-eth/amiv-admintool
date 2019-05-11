@@ -24,7 +24,7 @@ export default class EditView extends ItemView {
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
     this.form = new Form({}, validInitially, 4, Object.assign({}, this.controller.data));
-    this.form.setSchema(this.handler.schema);
+    this.form.setSchema(JSON.parse(JSON.stringify(this.handler.schema)));
   }
 
   /**
