@@ -1,29 +1,20 @@
 import m from 'mithril';
 import { FileInput } from 'amiv-web-ui-components';
 import { Button, List, ListTile, Snackbar } from 'polythene-mithril';
-// eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
 import EditView from '../views/editView';
-import { loadingScreen } from '../layout';
+import { getSchema } from '../auth';
 
 
 export default class editDoc extends EditView {
   // constructor zu file upload
   constructor(vnode) {
+    // remove the files list as it is impossible to validate
+    const docSchema = getSchema().definitions['Study Document'];
+    delete docSchema.properties.files;
     super(vnode);
     if (!('files' in this.form.data)) {
       this.form.data.files = [{ name: 'add file' }];
     }
-  }
-
-  oninit() {
-    // load schema
-    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
-      // remove the files list as it is impossible to validate
-      const docSchema = schema.definitions['Study Document'];
-      delete docSchema.properties.files;
-      this.form.setSchema(docSchema);
-    }).catch((error) => { console.log(error); });
   }
 
   beforeSubmit() {
@@ -51,7 +42,6 @@ export default class editDoc extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
     return this.layout([
       m('h3', 'Add a New Studydocument'),
       this.form._renderField('semester', {

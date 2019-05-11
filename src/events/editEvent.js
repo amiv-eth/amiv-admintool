@@ -9,7 +9,6 @@ import { TabsCSS, ButtonCSS } from 'polythene-css';
 import { apiUrl, ownUrl } from 'networkConfig';
 import { ResourceHandler } from '../auth';
 import { colors } from '../style';
-import { loadingScreen } from '../layout';
 import { icons } from '../views/elements';
 import EditView from '../views/editView';
 
@@ -69,7 +68,6 @@ export default class newEvent extends EditView {
     // proposition URL-link decoder
     if (this.rightSubmit && m.route.param('proposition')) {
       const data = JSON.parse(window.atob(m.route.param('proposition')));
-      console.log(data);
       this.form.data = data;
     }
     if (this.form.data.priority === 10) this.form.data.high_priority = true;
@@ -243,8 +241,6 @@ export default class newEvent extends EditView {
   }
 
   view() {
-    if (!this.form.schema) return m(loadingScreen);
-
     // load image urls from the API data
     ['thumbnail', 'poster', 'infoscreen'].forEach((key) => {
       const img = this.form.data[`img_${key}`];
@@ -253,8 +249,6 @@ export default class newEvent extends EditView {
         this.form.data[`img_${key}`] = { url: `${apiUrl}${img.file}` };
       }
     });
-
-    console.log(this.form.errors, this.form.valid);
 
     // Define the number of Tabs and their titles
     const titles = ['Event Description', 'When and Where?', 'Signups', 'Internal Info'];

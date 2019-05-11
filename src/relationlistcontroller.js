@@ -71,8 +71,6 @@ export default class RelationlistController {
         // update total number of pages
         this.totalPages = Math.ceil(data._meta.total / 10);
 
-        console.log(data._items.map(item => item._id));
-
         const itemsWithoutRelation = data._items.filter(item => !(this.secondaryKey in item));
         const itemsWithRelation = data._items.filter(item => (this.secondaryKey in item));
 
@@ -115,7 +113,6 @@ export default class RelationlistController {
         // save totalPages as a constant to avoid race condition with pages added during this
         // process
         const { totalPages } = this;
-        console.log(totalPages);
 
         if (totalPages === 1) {
           resolve(firstPage);
@@ -128,6 +125,7 @@ export default class RelationlistController {
             // look if all pages were collected
             const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(i =>
               !(i in pages));
+            // eslint-disable-next-line no-console
             console.log('missingPages', missingPages);
             if (missingPages.length === 0) {
               // collect all the so-far loaded pages in order (sorted keys)

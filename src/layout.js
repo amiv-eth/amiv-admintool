@@ -12,7 +12,7 @@ import {
 } from 'polythene-mithril';
 import { styler } from 'polythene-core-css';
 import { icons } from './views/elements';
-import { deleteSession, getUserRights } from './auth';
+import { deleteSession, getUserRights, getSchema } from './auth';
 import { colors } from './style';
 
 const layoutStyle = [
@@ -93,8 +93,40 @@ class Menupoint {
   }
 }
 
+export class loadingScreen {
+  view() {
+    return m('div', {
+      style: {
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        'flex-direction': 'column',
+        'justify-content': 'center',
+        'align-items': 'center',
+        'animation-name': 'popup',
+        'animation-duration': '2000ms',
+      },
+    }, m('div', { style: { height: '5vh', 'font-size': '4em' } }, 'Loading...'), m('div', {
+      style: {
+        height: '20vh',
+        width: '20vh',
+        'animation-name': 'spin',
+        'animation-duration': '2500ms',
+        'animation-iteration-count': 'infinite',
+        'animation-timing-function': 'linear',
+      },
+    }, m('div', {
+      style: { height: '20vh', width: '20vh', display: 'inline-block' },
+    }, m(SVG, {
+      style: { width: 'inherit', height: 'inherit' },
+      content: m.trust(icons.amivWheel),
+    }))));
+  }
+}
+
 export class Layout {
   view({ children }) {
+    if (!getSchema()) return m(loadingScreen);
     const userRights = getUserRights();
     return m('div', [
       m('div.wrapper-main.smooth', [
@@ -174,37 +206,6 @@ export class Layout {
       // dialog element will show when Dialog.show() is called, this is only a placeholder
       m(Dialog),
     ]);
-  }
-}
-
-export class loadingScreen {
-  view() {
-    return m('div', {
-      style: {
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        'flex-direction': 'column',
-        'justify-content': 'center',
-        'align-items': 'center',
-        'animation-name': 'popup',
-        'animation-duration': '2000ms',
-      },
-    }, m('div', { style: { height: '5vh', 'font-size': '4em' } }, 'Loading...'), m('div', {
-      style: {
-        height: '20vh',
-        width: '20vh',
-        'animation-name': 'spin',
-        'animation-duration': '2500ms',
-        'animation-iteration-count': 'infinite',
-        'animation-timing-function': 'linear',
-      },
-    }, m('div', {
-      style: { height: '20vh', width: '20vh', display: 'inline-block' },
-    }, m(SVG, {
-      style: { width: 'inherit', height: 'inherit' },
-      content: m.trust(icons.amivWheel),
-    }))));
   }
 }
 

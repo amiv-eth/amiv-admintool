@@ -1,23 +1,9 @@
 import m from 'mithril';
 import { IconButton, Toolbar, ToolbarTitle, Button } from 'polythene-mithril';
 import { Form } from 'amiv-web-ui-components';
-// eslint-disable-next-line import/extensions
-import { apiUrl } from 'networkConfig';
 import ItemView from './itemView';
 import { icons } from './elements';
 import { colors } from '../style';
-
-// Mapper for resource vs schema-object names
-const objectNameForResource = {
-  users: 'User',
-  groupmemberships: 'Group Membership',
-  groups: 'Group',
-  eventsignups: 'Event Signup',
-  events: 'Event',
-  studydocuments: 'Study Document',
-  joboffers: 'Job Offer',
-  blacklist: 'Blacklist',
-};
 
 export default class EditView extends ItemView {
   /**
@@ -38,13 +24,7 @@ export default class EditView extends ItemView {
     const validInitially = this.controller.modus === 'edit';
     // start a form to collect the submit data
     this.form = new Form({}, validInitially, 4, Object.assign({}, this.controller.data));
-  }
-
-  oninit() {
-    // load schema
-    m.request(`${apiUrl}/docs/api-docs`).then((schema) => {
-      this.form.setSchema(schema.definitions[objectNameForResource[this.resource]]);
-    }).catch((error) => { console.log(error); });
+    this.form.setSchema(this.handler.schema);
   }
 
   /**
@@ -66,7 +46,6 @@ export default class EditView extends ItemView {
       request.then((response) => {
         resolve(response);
       }).catch((error) => {
-        console.log(error);
         // Process the API error
         if ('_issues' in error) {
           // there are problems with some fields, display them
@@ -74,10 +53,12 @@ export default class EditView extends ItemView {
             this.form.errors[field] = [error._issues[field]];
             this.form.valid = false;
           });
+          // eslint-disable-next-line no-console
           console.log(this.form.errors);
           m.redraw();
           reject(error);
         } else {
+          // eslint-disable-next-line no-console
           console.log(error);
         }
       });
