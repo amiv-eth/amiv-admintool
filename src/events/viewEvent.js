@@ -6,7 +6,6 @@ import { DropdownCard, DatalistController, Chip } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
-import { eventsignups as signupConfig } from '../resourceConfig.json';
 import TableView from '../views/tableView';
 import RelationlistController from '../relationlistcontroller';
 import { dateFormatter } from '../utils';
@@ -236,7 +235,6 @@ class ParticipantsTable {
         m(TableView, {
           tableHeight: '275px',
           controller: this.ctrl,
-          keys: signupConfig.tableKeys,
           tileContent: data => this.itemRow(data),
           clickOnRows: false,
           titles: [

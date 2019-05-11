@@ -3,7 +3,6 @@ import { DatalistController } from 'amiv-web-ui-components';
 import EditUser from './editUser';
 import ViewUser from './viewUser';
 import TableView from '../views/tableView';
-import { users as config } from '../resourceConfig.json';
 import ItemController from '../itemcontroller';
 import { loadingScreen } from '../layout';
 import { ResourceHandler } from '../auth';
@@ -31,10 +30,11 @@ export class UserTable {
     );
   }
   view() {
+    const tableKeys = ['firstname', 'lastname', 'nethz', 'legi', 'membership'];
     return m(TableView, {
       controller: this.ctrl,
-      keys: config.tableKeys,
-      titles: config.tableKeys.map(key => config.keyDescriptors[key] || key),
+      keys: tableKeys,
+      titles: tableKeys.map(key => this.handler.schema.properties[key].title || key),
       filters: [[
         { name: 'not members', query: { membership: 'none' } },
         { name: 'regular members', query: { membership: 'regular' } },

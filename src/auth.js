@@ -5,7 +5,6 @@ import { Snackbar } from 'polythene-mithril';
 // eslint-disable-next-line import/extensions
 import { apiUrl, ownUrl, oAuthID } from 'networkConfig';
 import * as localStorage from './localStorage';
-import config from './resourceConfig.json';
 
 // Object which stores the current login-state
 const APISession = {
@@ -160,15 +159,22 @@ export class ResourceHandler {
     this.rights = [];
     this.schema = JSON.parse(JSON.stringify(getSchema().definitions[
       objectNameForResource[this.resource]]));
+    // readOnly fields should be removed before patch
     this.noPatchKeys = Object.keys(this.schema.properties).filter(key =>
       this.schema.properties[key].readOnly);
-    // special case for users
+    // any field that is a string can be searched
+    const possibleSearchKeys = Object.keys(this.schema.properties).filter((key) => {
+      const field = this.schema.properties[key];
+      return field.type === 'string' && field.format !== 'objectid' &&
+        field.format !== 'date-time' && !key.startsWith('_');
+    });
+    // special case for users, we don't allow reverse search by legi or rfid
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];
-    else this.searchKeys = searchKeys || config[resource].searchKeys;
+    else this.searchKeys = searchKeys || possibleSearchKeys;
     checkAuthenticated().then(() => {
       // again special case for users
       if (resource === 'users' && APISession.isUserAdmin) {
-        this.searchKeys = searchKeys || config[resource].searchKeys;
+        this.searchKeys = searchKeys || possibleSearchKeys;
       }
     });
   }
