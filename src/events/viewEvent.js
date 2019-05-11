@@ -189,6 +189,7 @@ class ParticipantsTable {
     // TODO list should not have hardcoded size outside of stylesheet
     const hasPatchRights = data._links.self.methods.indexOf('PATCH') > -1;
     const additionalFields = data.additional_fields && JSON.parse(data.additional_fields);
+    const canBeAccepted = !data.accepted;
     return [
       m('div', { style: { width: '9em' } }, dateFormatter(data._created)),
       m('div', { style: { width: '16em' } }, [
@@ -196,12 +197,32 @@ class ParticipantsTable {
         data.email,
       ]),
       m(
-        'div', { style: { width: '16em' } },
+        'div', { style: { width: '14em' } },
         m('div', ...data.user ? `Membership: ${data.user.membership}` : ''),
         (additionalFields && this.add_fields_schema) ? Object.keys(additionalFields).map(key =>
           m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`)) : '',
       ),
       m('div', { style: { 'flex-grow': '100' } }),
+      canBeAccepted ? m('div', m(Button, {
+        // Button to accept this eventsignup
+        className: 'blue-row-button',
+        style: {
+          margin: '0px 4px',
+        },
+        borders: false,
+        label: 'accept',
+        events: {
+          onclick: () => {
+            // preapare data for patch request
+            const patch = (({ _id, _etag }) => ({ _id, _etag }))(data);
+            patch.accepted = true;
+            this.ctrl.handler.patch(patch).then(() => {
+              this.ctrl.refresh();
+              m.redraw();
+            });
+          },
+        },
+      })) : '',
       hasPatchRights ? m('div', m(Button, {
         // Button to remove this eventsignup
         className: 'red-row-button',
