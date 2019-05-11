@@ -46,7 +46,6 @@ export default class EditView extends ItemView {
       request.then((response) => {
         resolve(response);
       }).catch((error) => {
-        console.log(error);
         // Process the API error
         if ('_issues' in error) {
           // there are problems with some fields, display them
@@ -54,10 +53,12 @@ export default class EditView extends ItemView {
             this.form.errors[field] = [error._issues[field]];
             this.form.valid = false;
           });
+          // eslint-disable-next-line no-console
           console.log(this.form.errors);
           m.redraw();
           reject(error);
         } else {
+          // eslint-disable-next-line no-console
           console.log(error);
         }
       });

@@ -64,14 +64,12 @@ export function checkAuthenticated() {
     else {
       // let's see if we have a stored token
       const token = localStorage.get('token');
-      console.log(`found this token: ${token}`);
       if (token !== '') {
         // check of token is valid
         checkToken(token).then((session) => {
           APISession.token = token;
           APISession.authenticated = true;
           APISession.userID = session.user;
-          console.log(APISession);
           amivapi.get('/', {
             headers: { 'Content-Type': 'application/json', Authorization: token },
           }).then((response) => {
@@ -239,6 +237,7 @@ export class ResourceHandler {
   }
 
   networkError(e) {
+    // eslint-disable-next-line no-console
     console.log(e);
     Snackbar.show({ title: 'Network error, try again.', style: { color: 'red' } });
   }

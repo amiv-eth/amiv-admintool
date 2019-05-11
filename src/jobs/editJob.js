@@ -5,7 +5,6 @@ import EditView from '../views/editView';
 
 export default class newJob extends EditView {
   beforeSubmit() {
-    console.log(this.form.data);
     // remove all unchanged files
     if (this.form.data.pdf !== undefined &&
         (this.form.data.pdf === null || 'upload_date' in this.form.data.pdf)) {

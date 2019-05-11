@@ -7,7 +7,7 @@ module.exports = {
       "browser": true,
     },
     "rules": {
-        "no-console": 0,
+        "no-console": 1,
         "class-methods-use-this": 0,
         "prefer-destructuring": 1,
         "no-underscore-dangle": 0,

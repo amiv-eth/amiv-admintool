@@ -55,7 +55,7 @@ export default class NewBlacklist extends EditView {
           selection: this.form.data.user,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
-          onSelect: (data) => { console.log('data'); this.form.data.user = data; },
+          onSelect: (data) => { this.form.data.user = data; },
         })),
       ]),
       ...this.form.renderSchema(['reason', 'start_time', 'price']),

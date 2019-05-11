@@ -96,7 +96,7 @@ export default class NewGroup extends EditView {
           selection: this.form.data.moderator,
           listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
-          onSelect: (data) => { console.log('data'); this.form.data.moderator = data; },
+          onSelect: (data) => { this.form.data.moderator = data; },
         })),
       ]),
       m(PermissionEditor, {

@@ -271,7 +271,6 @@ export default class viewEvent extends ItemView {
 
   cloneEvent() {
     const event = Object.assign({}, this.data);
-    console.log(event);
 
     const eventInfoToDelete = [
       '_id',
@@ -284,7 +283,6 @@ export default class viewEvent extends ItemView {
       '__proto__',
     ];
     const now = new Date();
-    console.log(`${now.toISOString().slice(0, -5)}Z`);
     if (event.time_end < `${now.toISOString().slice(0, -5)}Z`) {
       eventInfoToDelete.push(...[
         'time_advertising_end',
@@ -299,7 +297,6 @@ export default class viewEvent extends ItemView {
       delete event[key];
     });
 
-    console.log(event);
     this.controller.changeModus('new');
     this.controller.data = event;
   }
