@@ -5,9 +5,8 @@ import EditView from '../views/editView';
 export default class UserEdit extends EditView {
   beforeSubmit() {
     if ('rfid' in this.form.data && !this.form.data.rfid) delete this.form.data.rfid;
-    this.submit(this.form.data);
+    this.submit(this.form.data).then(() => this.controller.changeModus('view'));
   }
-
 
   view() {
     return this.layout([
