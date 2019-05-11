@@ -2,7 +2,7 @@ import m from 'mithril';
 import { Toolbar, ToolbarTitle, Card, Button } from 'polythene-mithril';
 import Stream from 'mithril/stream';
 import { styler } from 'polythene-core-css';
-import { DropdownCard, DatalistController, Chip } from 'amiv-web-ui-components';
+import { DropdownCard, ListSelect, DatalistController, Chip } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
@@ -157,6 +157,13 @@ class ParticipantsTable {
     });
     this.add_fields_schema = additionalFieldsSchema
       ? JSON.parse(additionalFieldsSchema).properties : null;
+
+    // true while in the modus of adding a signup
+    this.addmode = false;
+    this.userHandler = new ResourceHandler('users');
+    this.userController = new DatalistController(
+      (query, search) => this.userHandler.get({ search, ...query }),
+    );
   }
 
   exportAsCSV(filePrefix) {
@@ -249,12 +256,35 @@ class ParticipantsTable {
     ];
   }
 
-  view({ attrs: { title, filePrefix } }) {
+  view({ attrs: { title, filePrefix, event, waitingList } }) {
     return m(Card, {
       style: { height: '400px', 'margin-bottom': '10px' },
       content: m('div', [
+        this.addmode ? m(ListSelect, {
+          controller: this.userController,
+          listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
+          selectedText: user => `${user.firstname} ${user.lastname}`,
+          onSubmit: (user) => {
+            this.addmode = false;
+            this.ctrl.handler.post({
+              user: user._id,
+              event,
+            }).then(() => {
+              this.ctrl.refresh();
+              m.redraw();
+            });
+          },
+          onCancel: () => { this.addmode = false; m.redraw(); },
+        }) : '',
         m(Toolbar, { compact: true }, [
           m(ToolbarTitle, { text: title }),
+          waitingList && m(Button, {
+            style: { margin: '0px 4px' },
+            className: 'blue-button',
+            borders: true,
+            label: 'add',
+            events: { onclick: () => { this.addmode = true; } },
+          }),
           m(Button, {
             className: 'blue-button',
             borders: true,
@@ -497,12 +527,16 @@ export default class viewEvent extends ItemView {
             where: { accepted: true, event: this.data._id },
             title: 'Accepted Participants',
             filePrefix: 'accepted',
+            event: this.data._id,
+            waitingList: false,
             additional_fields_schema: this.data.additional_fields,
           }) : '',
           this.data.time_register_start ? m(ParticipantsTable, {
             where: { accepted: false, event: this.data._id },
             title: 'Participants on Waiting List',
             filePrefix: 'waitinglist',
+            event: this.data._id,
+            waitingList: true,
             additional_fields_schema: this.data.additional_fields,
           }) : '',
         ]),
