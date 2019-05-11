@@ -144,6 +144,7 @@ const objectNameForResource = {
   studydocuments: 'Study Document',
   joboffers: 'Job Offer',
   blacklist: 'Blacklist',
+  sessions: 'Session',
 };
 
 export class ResourceHandler {
