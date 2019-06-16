@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { Toolbar, ToolbarTitle, Card, Button } from 'polythene-mithril';
+import { Toolbar, ToolbarTitle, Dialog, Card, Button } from 'polythene-mithril';
 import Stream from 'mithril/stream';
 import { styler } from 'polythene-core-css';
-import { DropdownCard, ListSelect, DatalistController, Chip } from 'amiv-web-ui-components';
+import { DropdownCard, ListSelect, DatalistController, Form, Chip } from 'amiv-web-ui-components';
 // eslint-disable-next-line import/extensions
 import { apiUrl } from 'networkConfig';
 import ItemView from '../views/itemView';
@@ -147,7 +147,7 @@ class ParticipantsSummary {
 // Helper class to either display the signed up participants or those on the
 // waiting list.
 class ParticipantsTable {
-  constructor({ attrs: { where, additional_fields_schema: additionalFieldsSchema } }) {
+  constructor({ attrs: { where, additional_fields_schema: additionalFieldsSchema, parent } }) {
     this.ctrl = new RelationlistController({
       primary: 'eventsignups',
       secondary: 'users',
@@ -155,6 +155,7 @@ class ParticipantsTable {
       searchKeys: ['email'],
       includeWithoutRelation: true,
     });
+    this.parent = parent;
     this.add_fields_schema = additionalFieldsSchema
       ? JSON.parse(additionalFieldsSchema).properties : null;
 
@@ -164,6 +165,11 @@ class ParticipantsTable {
     this.userController = new DatalistController(
       (query, search) => this.userHandler.get({ search, ...query }),
     );
+  }
+
+  oncreate(vnode) {
+    // passe reference to participantsTable to parent class
+    vnode.attrs.onRef(this);
   }
 
   exportAsCSV(filePrefix) {
@@ -233,8 +239,7 @@ class ParticipantsTable {
             const patch = (({ _id, _etag }) => ({ _id, _etag }))(data);
             patch.accepted = true;
             this.ctrl.handler.patch(patch).then(() => {
-              this.ctrl.refresh();
-              m.redraw();
+              this.parent.dataChanged();
             });
           },
         },
@@ -247,13 +252,53 @@ class ParticipantsTable {
         events: {
           onclick: () => {
             this.ctrl.handler.delete(data).then(() => {
-              this.ctrl.refresh();
-              m.redraw();
+              this.parent.dataChanged();
             });
           },
         },
       })) : '',
     ];
+  }
+
+  editEventSignup(user, event) {
+    const form = new Form();
+
+    const schema = JSON.parse(event.additional_fields);
+
+    if (schema && schema.$schema) {
+      // ajv fails to verify the v4 schema of some resources
+      schema.$schema = 'http://json-schema.org/draft-06/schema#';
+      form.setSchema(schema);
+    }
+
+    const elements = form.renderSchema();
+
+    Dialog.show({
+      body: m('form', { onsubmit: () => false }, elements),
+      backdrop: true,
+      footerButtons: [
+        m(Button, {
+          label: 'Cancel',
+          events: { onclick: () => Dialog.hide() },
+        }),
+        m(Button, {
+          label: 'Submit',
+          events: {
+            onclick: () => {
+              const additionalFieldsString = JSON.stringify(form.getData());
+              const data = {
+                event: event._id,
+                additional_fields: additionalFieldsString,
+              };
+              data.user = user._id;
+              this.ctrl.handler.post(data).then(() => {
+                Dialog.hide();
+                this.parent.dataChanged();
+              });
+            },
+          },
+        })],
+    });
   }
 
   view({ attrs: { title, filePrefix, event, waitingList } }) {
@@ -266,13 +311,16 @@ class ParticipantsTable {
           selectedText: user => `${user.firstname} ${user.lastname}`,
           onSubmit: (user) => {
             this.addmode = false;
-            this.ctrl.handler.post({
-              user: user._id,
-              event,
-            }).then(() => {
-              this.ctrl.refresh();
-              m.redraw();
-            });
+            if (event.additional_fields) {
+              this.editEventSignup(user, event);
+            } else {
+              this.ctrl.handler.post({
+                user: user._id,
+                event: event._id,
+              }).then(() => {
+                this.parent.dataChanged();
+              });
+            }
           },
           onCancel: () => { this.addmode = false; m.redraw(); },
         }) : '',
@@ -357,6 +405,12 @@ export default class viewEvent extends ItemView {
 
     this.controller.changeModus('new');
     this.controller.data = event;
+  }
+
+  dataChanged() {
+    this.participantsAccepted.ctrl.refresh();
+    this.participantsWaiting.ctrl.refresh();
+    m.redraw();
   }
 
   view() {
@@ -524,20 +578,24 @@ export default class viewEvent extends ItemView {
         ]),
         m('div.viewcontainercolumn', { style: { width: '50em' } }, [
           this.data.time_register_start ? m(ParticipantsTable, {
+            onRef: (ref) => { this.participantsAccepted = ref; m.redraw(); },
             where: { accepted: true, event: this.data._id },
             title: 'Accepted Participants',
             filePrefix: 'accepted',
-            event: this.data._id,
+            event: this.data,
             waitingList: false,
             additional_fields_schema: this.data.additional_fields,
+            parent: this,
           }) : '',
           this.data.time_register_start ? m(ParticipantsTable, {
+            onRef: (ref) => { this.participantsWaiting = ref; m.redraw(); },
             where: { accepted: false, event: this.data._id },
             title: 'Participants on Waiting List',
             filePrefix: 'waitinglist',
-            event: this.data._id,
+            event: this.data,
             waitingList: true,
             additional_fields_schema: this.data.additional_fields,
+            parent: this,
           }) : '',
         ]),
       ]),
