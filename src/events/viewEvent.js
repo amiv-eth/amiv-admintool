@@ -155,7 +155,14 @@ class ParticipantsTable {
     this.addmode = false;
     this.userHandler = new ResourceHandler('users');
     this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+      this.userHandler.get({ search, ...query }).then(data =>
+        ({
+          ...data,
+          _items: data._items.map(user => ({
+            hasSignup: parent.allParticipants.some(signupUser => user._id === signupUser.user),
+            ...user,
+          })),
+        })));
   }
 
   oncreate(vnode) {
@@ -297,7 +304,11 @@ class ParticipantsTable {
       content: m('div', [
         this.addmode ? m(ListSelect, {
           controller: this.userController,
-          listTileAttrs: user => Object.assign({}, { title: `${user.firstname} ${user.lastname}` }),
+          listTileAttrs: user => Object.assign({}, {
+            title: `${user.firstname} ${user.lastname}`,
+            style: (user.hasSignup ? { color: 'rgba(0, 0, 0, 0.2)' } : {}),
+            hoverable: !user.hasSignup,
+          }),
           selectedText: user => `${user.firstname} ${user.lastname}`,
           onSubmit: (user) => {
             this.addmode = false;
@@ -398,9 +409,13 @@ export default class viewEvent extends ItemView {
   }
 
   dataChanged() {
-    this.participantsAccepted.ctrl.refresh();
-    this.participantsWaiting.ctrl.refresh();
-    m.redraw();
+    this.signupCtrl.getFullList().then((list) => {
+      this.allParticipants = list;
+      this.participantsAccepted.ctrl.refresh();
+      this.participantsWaiting.ctrl.refresh();
+      this.participantsWaiting.userController.refresh();
+      m.redraw();
+    });
   }
 
   view() {
