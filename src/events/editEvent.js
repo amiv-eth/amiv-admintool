@@ -199,9 +199,20 @@ export default class newEvent extends EditView {
           Object.keys(images).forEach(key => imageForm.append(key, images[key]));
           imageForm.append('_id', _id);
           imageForm.append('_etag', _etag);
-          this.controller.patch(imageForm).then(() => this.controller.changeModus('view'));
+          this.controller.patch(imageForm).then(() => {
+            m.route.set(`/events/${_id}`);
+          })
+            .catch(() => {
+              this.controller.id = _id;
+              this.controller.handler.getItem(_id).then((item) => {
+                this.controller.data = item;
+                this.form.data = item;
+                this.controller.changeModus('edit');
+                window.history.replaceState({}, '', `/events/${_id}`);
+              });
+            });
         } else {
-          this.controller.changeModus('view');
+          m.route.set(`/events/${_id}`);
         }
       });
     } else {
