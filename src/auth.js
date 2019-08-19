@@ -161,13 +161,14 @@ export class ResourceHandler {
     this.schema = JSON.parse(JSON.stringify(getSchema().definitions[
       objectNameForResource[this.resource]]));
     // readOnly fields should be removed before patch
-    this.noPatchKeys = Object.keys(this.schema.properties).filter(key =>
-      this.schema.properties[key].readOnly);
+    this.noPatchKeys = Object.keys(this.schema.properties).filter(
+      key => this.schema.properties[key].readOnly,
+    );
     // any field that is a string can be searched
     const possibleSearchKeys = Object.keys(this.schema.properties).filter((key) => {
       const field = this.schema.properties[key];
-      return field.type === 'string' && field.format !== 'objectid' &&
-        field.format !== 'date-time' && !key.startsWith('_');
+      return field.type === 'string' && field.format !== 'objectid'
+        && field.format !== 'date-time' && !key.startsWith('_');
     });
     // special case for users, we don't allow reverse search by legi or rfid
     if (resource === 'users') this.searchKeys = ['firstname', 'lastname', 'nethz'];

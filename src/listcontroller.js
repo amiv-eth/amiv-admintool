@@ -74,8 +74,9 @@ export default class DatalistController {
           this.getPageData(pageNum).then((newPage) => {
             pages[pageNum] = newPage;
             // look if all pages were collected
-            const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(i =>
-              !(i in pages));
+            const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(
+              i => !(i in pages),
+            );
             console.log('missingPages', missingPages);
             if (missingPages.length === 0) {
               // collect all the so-far loaded pages in order (sorted keys)
@@ -102,4 +103,3 @@ export default class DatalistController {
     this.refresh();
   }
 }
-
