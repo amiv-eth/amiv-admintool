@@ -71,12 +71,13 @@ class ParticipantsSummary {
     // Parse the JSON from additional fields into an object
     const parsedParticipants = participants.map(signup => ({
       ...signup,
-      additional_fields: signup.additional_fields ?
-        JSON.parse(signup.additional_fields) : {},
+      additional_fields: signup.additional_fields
+        ? JSON.parse(signup.additional_fields) : {},
     }));
     // Filter if only accepted participants should be shown
-    const filteredParticipants = parsedParticipants.filter(participant =>
-      (this.onlyAccepted ? participant.accepted : true));
+    const filteredParticipants = parsedParticipants.filter(
+      participant => (this.onlyAccepted ? participant.accepted : true),
+    );
 
     // check which additional fields should get summarized
     let hasSBB = false;
@@ -102,22 +103,29 @@ class ParticipantsSummary {
         }, 'accepted users'),
       ])),
       hasSBB ? m('div', { style: { display: 'flex' } }, [
-        m(Property, { title: 'No SBB', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'None').length),
-        m(Property, { title: 'GA', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'GA').length),
-        m(Property, { title: 'Halbtax', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'Halbtax').length),
-        m(Property, { title: 'Gleis 7', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.sbb_abo === 'Gleis 7').length),
+        m(Property, { title: 'No SBB', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.sbb_abo === 'None',
+        ).length),
+        m(Property, { title: 'GA', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.sbb_abo === 'GA',
+        ).length),
+        m(Property, { title: 'Halbtax', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.sbb_abo === 'Halbtax',
+        ).length),
+        m(Property, { title: 'Gleis 7', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.sbb_abo === 'Gleis 7',
+        ).length),
       ]) : '',
       hasFood ? m('div', { style: { display: 'flex' } }, [
-        m(Property, { title: 'Omnivors', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Omnivor').length),
-        m(Property, { title: 'Vegis', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Vegi').length),
-        m(Property, { title: 'Vegans', leftAlign: false }, filteredParticipants.filter(signup =>
-          signup.additional_fields.food === 'Vegan').length),
+        m(Property, { title: 'Omnivors', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.food === 'Omnivor',
+        ).length),
+        m(Property, { title: 'Vegis', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.food === 'Vegi',
+        ).length),
+        m(Property, { title: 'Vegans', leftAlign: false }, filteredParticipants.filter(
+          signup => signup.additional_fields.food === 'Vegan',
+        ).length),
       ]) : '',
       m('textarea', {
         style: { opacity: '0', width: '0px' },
@@ -147,8 +155,8 @@ class ParticipantsTable {
       searchKeys: ['email'],
       includeWithoutRelation: true,
     });
-    this.add_fields_schema = additionalFieldsSchema ?
-      JSON.parse(additionalFieldsSchema).properties : null;
+    this.add_fields_schema = additionalFieldsSchema
+      ? JSON.parse(additionalFieldsSchema).properties : null;
   }
 
   exportAsCSV(filePrefix) {
@@ -165,8 +173,8 @@ class ParticipantsTable {
           item.email,
           item.accepted,
           item.confirmed,
-          ...Object.keys(this.add_fields_schema || {}).map(key =>
-            (additionalFields && additionalFields[key] ? additionalFields[key] : '')),
+          ...Object.keys(this.add_fields_schema || {}).map(key => (
+            additionalFields && additionalFields[key] ? additionalFields[key] : '')),
         ].join(',');
       })).join('\n');
 
@@ -198,8 +206,9 @@ class ParticipantsTable {
       m(
         'div', { style: { width: '16em' } },
         m('div', ...data.user ? `Membership: ${data.user.membership}` : ''),
-        (additionalFields && this.add_fields_schema) ? Object.keys(additionalFields).map(key =>
-          m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`)) : '',
+        (additionalFields && this.add_fields_schema) ? Object.keys(additionalFields).map(
+          key => m('div', `${this.add_fields_schema[key].title}: ${additionalFields[key]}`),
+        ) : '',
       ),
       m('div', { style: { 'flex-grow': '100' } }),
       hasPatchRights ? m('div', m(Button, {
@@ -325,8 +334,8 @@ export default class viewEvent extends ItemView {
       // below the title, most important details are listed
       m('div.maincontainer', { style: { display: 'flex' } }, [
         (this.data.spots !== null && 'signup_count' in this.data
-         && this.data.signup_count !== null) ?
-          m(Property, {
+         && this.data.signup_count !== null)
+          ? m(Property, {
             style: stdMargin,
             title: 'Signups',
           }, `${this.data.signup_count} / ${displaySpots}`) : '',
@@ -379,8 +388,8 @@ export default class viewEvent extends ItemView {
             this.data.time_advertising_start ? m(
               Property,
               { title: 'Advertising Time' },
-              `${dateFormatter(this.data.time_advertising_start)} - ` +
-              `${dateFormatter(this.data.time_advertising_end)}`,
+              `${dateFormatter(this.data.time_advertising_start)} - `
+              + `${dateFormatter(this.data.time_advertising_end)}`,
             ) : '',
             this.data.priority ? m(
               Property,
@@ -394,8 +403,8 @@ export default class viewEvent extends ItemView {
             this.data.time_register_start ? m(
               Property,
               { title: 'Registration Time' },
-              `${dateFormatter(this.data.time_register_start)} - ` +
-              `${dateFormatter(this.data.time_register_end)}`,
+              `${dateFormatter(this.data.time_register_start)} - `
+              + `${dateFormatter(this.data.time_register_end)}`,
             ) : '',
             this.data.selection_strategy ? m(
               Property,
