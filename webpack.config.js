@@ -37,28 +37,24 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        enforce: "pre",
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          emitWarning: true // don't fail the build for linting errors
-        }
-      },
-      {
         test: /\.js$/, // Check for all js files
         include: [
           path.resolve(__dirname, './src'),
           path.resolve(__dirname, 'node_modules/@material'),
           path.resolve(__dirname, 'node_modules/amiv-web-ui-components'),
         ],
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            presets: ['env'],
-            plugins: ['transform-object-rest-spread'],
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [['@babel/preset-env', { targets: 'last 2 years' }]],
+              plugins: [
+                '@babel/plugin-proposal-object-rest-spread',
+                '@babel/plugin-syntax-dynamic-import',
+              ],
+            },
           },
-        }],
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
