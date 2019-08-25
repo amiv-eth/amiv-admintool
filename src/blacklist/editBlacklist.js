@@ -34,8 +34,9 @@ export default class NewBlacklist extends EditView {
   constructor({ attrs }) {
     super({ attrs: { controller: new NanoController('blacklist'), ...attrs } });
     this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
-    this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+    this.userController = new DatalistController((query, search) => this.userHandler.get(
+      { search, ...query },
+    ));
   }
 
   beforeSubmit() {

@@ -85,13 +85,15 @@ export default class RelationlistController {
           const secondaryIds = secondaryData._items.map(item => item._id);
           // filter the primary list to only include those items that have a relation to
           // the queried secondary IDs
-          const filteredPrimaries = itemsWithRelation.filter(item =>
-            secondaryIds.includes(item[this.secondaryKey]));
+          const filteredPrimaries = itemsWithRelation.filter(
+            item => secondaryIds.includes(item[this.secondaryKey]),
+          );
           // embed the secondary data
           const embeddedList = filteredPrimaries.map((item) => {
             const itemCopy = Object.assign({}, item);
-            itemCopy[this.secondaryKey] = secondaryData._items.find(relItem =>
-              relItem._id === item[this.secondaryKey]);
+            itemCopy[this.secondaryKey] = secondaryData._items.find(
+              relItem => relItem._id === item[this.secondaryKey],
+            );
             return itemCopy;
           });
           // now return the list of filteredPrimaries with the secondary data embedded
@@ -123,8 +125,9 @@ export default class RelationlistController {
           this.getPageData(pageNum).then((newPage) => {
             pages[pageNum] = newPage;
             // look if all pages were collected
-            const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(i =>
-              !(i in pages));
+            const missingPages = Array.from(new Array(totalPages), (x, i) => i + 1).filter(
+              i => !(i in pages),
+            );
             // eslint-disable-next-line no-console
             console.log('missingPages', missingPages);
             if (missingPages.length === 0) {

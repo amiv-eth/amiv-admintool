@@ -29,6 +29,7 @@ export class UserTable {
       { sort: [['lastname', 1]] },
     );
   }
+
   view() {
     const tableKeys = ['firstname', 'lastname', 'nethz', 'legi', 'membership'];
     return m(TableView, {

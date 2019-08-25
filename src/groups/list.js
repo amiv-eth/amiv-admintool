@@ -66,8 +66,8 @@ export default class GroupList {
 
     return m('div', [
       // groups moderated by the current user
-      this.moderatedGroups.length > 0 &&
-        m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }),
+      this.moderatedGroups.length > 0
+      && m(GroupListCard, { title: 'moderated by you', groups: this.moderatedGroups }),
       // all groups
       m(GroupListCard, {
         title: 'all groups',

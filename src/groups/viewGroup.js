@@ -29,8 +29,9 @@ class MembersTable {
     // true while in the modus of adding a member
     this.addmode = false;
     this.userHandler = new ResourceHandler('users');
-    this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+    this.userController = new DatalistController((query, search) => this.userHandler.get(
+      { search, ...query },
+    ));
   }
 
   itemRow(data) {
@@ -207,8 +208,8 @@ export default class viewGroup extends ItemView {
           ...stdMargin,
         }, 'has a folder on the AMIV Cloud'),
         m('div', { style: { display: 'flex' } }, [
-          ('numMembers' in this) &&
-            m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
+          ('numMembers' in this)
+            && m(Property, { title: 'Members', style: stdMargin }, this.numMembers),
           this.data.moderator && m(Property, {
             title: 'Moderator',
             onclick: () => { m.route.set(`/users/${this.data.moderator._id}`); },

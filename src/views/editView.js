@@ -80,8 +80,8 @@ export default class EditView extends ItemView {
           icon: { svg: { content: m.trust(icons.clear) } },
           events: { onclick: () => { this.controller.cancel(); } },
         }),
-        m(ToolbarTitle, `${((this.controller.modus === 'new') ? 'New' : 'Edit')}` +
-          ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
+        m(ToolbarTitle, `${((this.controller.modus === 'new') ? 'New' : 'Edit')}`
+          + ` ${this.resource.charAt(0).toUpperCase()}${this.resource.slice(1, -1)}`),
         m(Button, {
           className: 'blue-button-filled',
           extraWide: true,

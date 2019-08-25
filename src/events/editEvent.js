@@ -59,8 +59,9 @@ export default class newEvent extends EditView {
 
     // Create a usercontroller to handle the moderator field
     this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
-    this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+    this.userController = new DatalistController((query, search) => this.userHandler.get(
+      { search, ...query },
+    ));
 
     // check whether the user has the right to create events or can only propose
     this.rightSubmit = !m.route.get().startsWith('/proposeevent');
@@ -333,8 +334,8 @@ export default class newEvent extends EditView {
           onclick: () => {
             let index = fieldIndex;
             while (`add_fields_text${index + 1}` in this.form.data) {
-              this.form.data[`add_fields_text${index}`] =
-                this.form.data[`add_fields_text${index + 1}`];
+              this.form.data[`add_fields_text${index}`] = this.form.data[
+                `add_fields_text${index + 1}`];
               index += 1;
             }
             delete this.form.data[`add_fields_text${index}`];
@@ -487,10 +488,10 @@ export default class newEvent extends EditView {
             type: 'boolean',
             label: 'Set high Priority',
           }),
-          m('div', 'Please send your announce text additionally via email to info@amiv.ch ' +
-          'until the new announce tool is ready.'),
-          m('div', 'Please send an email to info@amiv.ch in order to show your event on' +
-            'the infoscreen until the new infoscreen tool is ready.'),
+          m('div', 'Please send your announce text additionally via email to info@amiv.ch '
+          + 'until the new announce tool is ready.'),
+          m('div', 'Please send an email to info@amiv.ch in order to show your event on'
+          + 'the infoscreen until the new infoscreen tool is ready.'),
 
         ]),
 

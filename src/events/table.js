@@ -45,8 +45,8 @@ export default class EventTable {
       }]],
       // per default, enable the 'upcoming' filter
       initFilterIdxs: [[0, 0]],
-      onAdd: (this.handler.rights.length > 0) ?
-        () => {
+      onAdd: (this.handler.rights.length > 0)
+        ? () => {
           if (this.handler.rights.includes('POST')) {
             m.route.set('/newevent');
           } else {

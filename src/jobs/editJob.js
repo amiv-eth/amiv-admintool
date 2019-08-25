@@ -6,12 +6,12 @@ import EditView from '../views/editView';
 export default class newJob extends EditView {
   beforeSubmit() {
     // remove all unchanged files
-    if (this.form.data.pdf !== undefined &&
-        (this.form.data.pdf === null || 'upload_date' in this.form.data.pdf)) {
+    if (this.form.data.pdf !== undefined
+      && (this.form.data.pdf === null || 'upload_date' in this.form.data.pdf)) {
       delete this.form.data.pdf;
     }
-    if (this.form.data.logo !== undefined &&
-        (this.form.data.logo === null || 'upload_date' in this.form.data.logo)) {
+    if (this.form.data.logo !== undefined
+        && (this.form.data.logo === null || 'upload_date' in this.form.data.logo)) {
       delete this.form.data.logo;
     }
 
