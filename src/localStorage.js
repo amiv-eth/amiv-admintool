@@ -34,4 +34,3 @@ export function set(key, value, shortSession = false) {
     window.localStorage.setItem(`glob-${key}`, value);
   }
 }
-

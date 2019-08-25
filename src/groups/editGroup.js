@@ -73,8 +73,9 @@ export default class NewGroup extends EditView {
   constructor(vnode) {
     super(vnode);
     this.userHandler = new ResourceHandler('users', ['firstname', 'lastname', 'email', 'nethz']);
-    this.userController = new DatalistController((query, search) =>
-      this.userHandler.get({ search, ...query }));
+    this.userController = new DatalistController((query, search) => this.userHandler.get(
+      { search, ...query },
+    ));
   }
 
   beforeSubmit() {

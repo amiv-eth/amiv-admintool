@@ -24,8 +24,9 @@ export default class UserView extends ItemView {
     this.groupchoice = false;
     // a controller to handle the list of possible groups to join
     this.groupHandler = new ResourceHandler('groups', ['name']);
-    this.groupController = new DatalistController((query, search) =>
-      this.groupHandler.get({ search, ...query }));
+    this.groupController = new DatalistController(
+      (query, search) => this.groupHandler.get({ search, ...query }),
+    );
     // exclude the groups where the user is already a member
     this.groupmemberships.handler.get({ where: { user: this.data._id } })
       .then((data) => {

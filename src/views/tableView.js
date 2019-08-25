@@ -55,8 +55,9 @@ export default class TableView {
     this.clickOnTitles = clickOnTitles;
     this.searchValue = '';
     // make a copy of filters so we can toggle the selected status
-    this.filters = filters ? filters.map(filterGroup =>
-      filterGroup.map(filter => Object.assign({}, filter))) : null;
+    this.filters = filters ? filters.map(
+      filterGroup => filterGroup.map(filter => Object.assign({}, filter)),
+    ) : null;
   }
 
   /*
@@ -105,8 +106,9 @@ export default class TableView {
 
   getSelectedFilterQuery() {
     // produce a list of queries from the filters that are currently selected
-    const selectedFilters = [].concat(...this.filters.map(filterGroup =>
-      filterGroup.filter(filter => filter.selected === true).map(filter => filter.query)));
+    const selectedFilters = [].concat(...this.filters.map(filterGroup => filterGroup.filter(
+      filter => filter.selected === true,
+    ).map(filter => filter.query)));
     // now merge all queries into one new object
     return Object.assign({}, ...selectedFilters);
   }
@@ -117,8 +119,8 @@ export default class TableView {
     if (!controller.sort) return false;
     let i;
     for (i = 0; i < this.tableTitles.length; i += 1) {
-      const tableTitlei = this.tableTitles[i].width ?
-        this.tableTitles[i].text : this.tableTitles[i];
+      const tableTitlei = this.tableTitles[i].width
+        ? this.tableTitles[i].text : this.tableTitles[i];
       if (tableTitlei === titleText) break;
     }
     return this.tableKeys[i] === controller.sort[0][0];
@@ -136,8 +138,8 @@ export default class TableView {
       style: {
         display: 'grid',
         height: '100%',
-        'grid-template-rows': this.filters ?
-          '48px 40px calc(100% - 120px)' : '48px calc(100% - 80px)',
+        'grid-template-rows': this.filters
+          ? '48px 40px calc(100% - 120px)' : '48px calc(100% - 80px)',
         'background-color': 'white',
       },
     }, [
@@ -178,14 +180,14 @@ export default class TableView {
           'white-space': 'nowrap',
           padding: '0px 5px',
         },
-      }, [].concat(['Filters: '], ...[...this.filters.keys()].map(filterGroupIdx =>
-        [...this.filters[filterGroupIdx].keys()].map((filterIdx) => {
+      }, [].concat(['Filters: '], ...[...this.filters.keys()].map(
+        filterGroupIdx => [...this.filters[filterGroupIdx].keys()].map((filterIdx) => {
           const thisFilter = this.filters[filterGroupIdx][filterIdx];
           return m(FilterChip, {
             selected: thisFilter.selected,
             onclick: () => {
               if (!thisFilter.selected) {
-                // set all filters in this group to false
+              // set all filters in this group to false
                 [...this.filters[filterGroupIdx].keys()].forEach((i) => {
                   this.filters[filterGroupIdx][i].selected = false;
                 });
@@ -198,7 +200,8 @@ export default class TableView {
               controller.setFilter(this.getSelectedFilterQuery());
             },
           }, thisFilter.name);
-        })))),
+        }),
+      ))),
       m(List, {
         className: 'scrollTable',
         style: {
@@ -224,8 +227,8 @@ export default class TableView {
                   style: { width: title.width || `${98 / this.tableKeys.length}%` },
                 },
                 [title.width ? title.text : title,
-                  this.arrowOrNot(controller, title) ?
-                    m(Icon, { svg: { content: m.trust(icons.sortingArrow) } }) : ''],
+                  this.arrowOrNot(controller, title)
+                    ? m(Icon, { svg: { content: m.trust(icons.sortingArrow) } }) : ''],
               )),
             ),
           }),

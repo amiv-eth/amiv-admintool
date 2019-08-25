@@ -33,8 +33,7 @@ export default class BlacklistTable {
         data.price && m('div', `price: ${data.price}`),
       ),
       m('div', { style: { 'flex-grow': '100' } }),
-      m('div', (!data.end_time &&
-                this.ctrl.handler.rights.includes('POST')) && m(Button, {
+      m('div', (!data.end_time && this.ctrl.handler.rights.includes('POST')) && m(Button, {
         // Button to mark this entry as resolved
         className: 'blue-row-button',
         borders: false,
@@ -65,8 +64,9 @@ export default class BlacklistTable {
         { text: 'User', width: '18em' },
         { text: 'Detail', width: '9em' },
       ],
-      onAdd: (this.ctrl.handler.rights.includes('POST')) ?
-        () => { m.route.set('/newblacklistentry'); } : false,
+      onAdd: (this.ctrl.handler.rights.includes('POST')) ? () => {
+        m.route.set('/newblacklistentry');
+      } : false,
     });
   }
 }
