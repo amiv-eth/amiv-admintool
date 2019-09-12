@@ -13,7 +13,7 @@ config.optimization = {
   usedExports: true,
   sideEffects: true,
   splitChunks: {
-    chunks: 'all',
+    chunks: 'async', // TODO possibly set to all
     automaticNameDelimiter: '-',
     name: true,
   },
