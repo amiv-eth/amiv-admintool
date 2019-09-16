@@ -410,7 +410,7 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          ...this.hasprice && this.form.renderSchema(['price']),
+          ...(this.hasprice ? this.form.renderSchema(['price']) : []),
           m('br'),
           m(Switch, {
             label: 'people have to register to attend this event',
@@ -429,8 +429,8 @@ export default class newEvent extends EditView {
               }
             },
           }),
-          ...this.hasregistration && this.form.renderSchema([
-            'spots', 'time_register_start', 'time_register_end']),
+          ...(this.hasregistration ? this.form.renderSchema([
+            'spots', 'time_register_start', 'time_register_end']) : []),
           this.hasregistration && this.form._renderField('add_fields_food', {
             type: 'boolean',
             label: 'Food Limitations',
@@ -442,7 +442,7 @@ export default class newEvent extends EditView {
 
 
           m('br'),
-          ...this.hasregistration && addFieldsText,
+          ...(this.hasregistration ? addFieldsText : []),
           m('br'),
           this.hasregistration && m(Button, {
             label: 'Additional Textfield',
@@ -456,7 +456,7 @@ export default class newEvent extends EditView {
             },
           }),
           m('br'),
-          ...this.hasregistration && this.form.renderSchema(['allow_email_signup']),
+          ...(this.hasregistration ? this.form.renderSchema(['allow_email_signup']) : []),
           this.hasregistration && radioButtonSelectionMode,
         ]),
         // PAGE 4: Internal Info
